@@ -105,19 +105,25 @@ sub by_name {
     return wantarray? @found : @found ? $found[0] : undef;
 }
 
+
 sub by_type {
     my ($self, $type) = @_;
+    return by_attribute($self,'_type',$type);
+}
+
+
+sub by_attribute {
+    my ($self, $attrib, $value) = @_;
     my @found =();
     my $retvalue = wantarray ? 1 : 0;
     $self->walk_down({callback=>sub{
-        if ($_[0]->attributes->{_type} && $_[0]->attributes->{_type} =~ m/^$type$/i) {
+        if ($_[0]->attributes->{$attrib} && $_[0]->attributes->{$attrib} =~ m/^$value$/i) {
             push @found, $_[0];
             return $retvalue;
         }
         1}});
     return wantarray? @found : @found ? $found[0] : undef;
 }
-
 
 
 1;
