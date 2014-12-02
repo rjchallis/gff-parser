@@ -117,7 +117,7 @@ sub by_attribute {
     my @found =();
     my $retvalue = wantarray ? 1 : 0;
     $self->walk_down({callback=>sub{
-        if ($_[0]->attributes->{$attrib} && $_[0]->attributes->{$attrib} =~ m/^$value$/i) {
+        if ($_[0]->attributes->{$attrib} && (!defined $value || $_[0]->attributes->{$attrib} =~ m/^$value$/i)) {
             push @found, $_[0];
             return $retvalue;
         }
