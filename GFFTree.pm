@@ -126,4 +126,26 @@ sub by_attribute {
 }
 
 
+sub by_not_attribute {
+    my ($self, $attrib, $value) = @_;
+    my @found =();
+    my $retvalue = wantarray ? 1 : 0;
+    $self->walk_down({callback=>sub{
+    	if (defined $value){
+	        if ($_[0]->attributes->{$attrib} && $_[0]->attributes->{$attrib} !~ m/^$value$/i) {
+    	        push @found, $_[0];
+       	     	return $retvalue;
+       	 	}
+       	}
+       	else {
+       		if (!$_[0]->attributes->{$attrib}) {
+            	push @found, $_[0];
+            	return $retvalue;
+        	}
+        }
+        1}});
+    return wantarray? @found : @found ? $found[0] : undef;
+}
+
+
 1;
