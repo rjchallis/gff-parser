@@ -16,10 +16,24 @@ sub new {
 
 sub parse_file {
 	my $node = shift;
+	my %ids;
     while (<>){
 		next if is_comment($_);
 		my ($data,$attribs) = parse_gff_line($_);
-		
+		my %attributes;
+		$attributes{'_seq_name'} = $data->[0];
+		$attributes{'_source'} = $data->[1];
+		$attributes{'_type'} = $data->[2];
+		$attributes{'_start'} = $data->[3];
+		$attributes{'_end'} = $data->[4];
+		$attributes{'_score'} = $data->[5];
+		$attributes{'_strand'} = $data->[6].1;
+		$attributes{'_phase'} = $data->[7] eq '.' ? -1 : $data->[7];
+		if ($attribs->{'Parent'}){
+			$node = $ids{$attribs->{'Parent'}};
+		}
+		$ids{$attribs->{'ID'}} = $node->new_daughter({%attributes,%$attribs});
+		$ids{$attribs->{'ID'}}->name($attribs->{'ID'});	
 	}
 }
 
