@@ -27,13 +27,16 @@ sub parse_file {
 		$attributes{'_start'} = $data->[3];
 		$attributes{'_end'} = $data->[4];
 		$attributes{'_score'} = $data->[5];
-		$attributes{'_strand'} = $data->[6].1;
-		$attributes{'_phase'} = $data->[7] eq '.' ? -1 : $data->[7];
+		$attributes{'_strand'} = $data->[6];
+		$attributes{'_phase'} = $data->[7];
 		if ($attribs->{'Parent'}){
 			$node = $ids{$attribs->{'Parent'}};
 		}
+		else {
+			# check type to decide what to do with features without parents
+		}
 		$ids{$attribs->{'ID'}} = $node->new_daughter({%attributes,%$attribs});
-		$ids{$attribs->{'ID'}}->name($attribs->{'ID'});	
+		$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 	}
 }
 
