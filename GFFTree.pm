@@ -3,6 +3,8 @@ use strict;
 package GFFTree;
 use Tree::DAG_Node;
 our @ISA=qw(Tree::DAG_Node);
+use Encode::Escape::ASCII;
+
 
 sub new {
     my $class = shift;
@@ -12,6 +14,30 @@ sub new {
     return $self;
 }
 
+sub parse_file {
+	my $node = shift;
+    while (<>){
+		next if is_comment($_);
+		my ($data,$attribs) = parse_gff_line($_);
+		
+	}
+}
+
+sub is_comment {
+	return 1 if $_ =~ m/^#/;
+}
+
+sub parse_gff_line {
+	my @data = split /\t/,$_;
+	chomp $data[8];
+	my %attribs = split /[=;]/,$data[8];
+	pop @data;
+	foreach my $key (keys %attribs){
+		$attribs{$key} =~ s/\%/\\x/g;
+		$attribs{$key} = decode 'ascii-escape', $attribs{$key};
+	}
+	return \@data,\%attribs;
+}
 
 sub _seq_name {
     my $node = shift;
