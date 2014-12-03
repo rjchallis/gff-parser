@@ -91,6 +91,13 @@ sub make_introns {
 
 {
 	my %expectations;
+	my %actions = ( 'ignore' => \&validation_ignore,
+					'warn' => \&validation_warning,
+					'die' => \&validation_die,
+					'find' => \&validation_find,
+					'make' => \&validation_make,
+					'force' => \&validation_force,
+              );
 	sub add_expectation {
 		# define expectations for gff validation
 		# feature_type,relation,alt_type,flag
@@ -112,12 +119,41 @@ sub make_introns {
 		for (my $i = 0; $i < @{$expectations{$type}}; $i++){
 			my $hashref = $expectations{$type}[$i];
 			if ($hashref->{'relation'} eq 'hasParent'){
-				print $self->mother->{attributes}->{_type},"\n";
+				$actions{$hashref->{'flag'}}->($type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'}) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 			}
 		}
 	}
 	
 }
+
+sub validation_ignore {
+	# nothing happens
+}
+
+sub validation_warning {
+	my $message = shift;
+	warn "WARNING: $message\n";
+}
+
+sub validation_die {
+	my $message = shift;
+	die "ERROR: $message\n";
+}
+
+sub validation_find {
+	# TODO
+}
+
+sub validation_make {
+	# TODO
+}
+
+sub validation_force {
+	my $find = validation_find;
+	return $find if $find;
+	return validation_make;
+}
+
 
 sub is_comment {
 	return 1 if $_ =~ m/^#/;
