@@ -105,8 +105,8 @@ sub make_introns {
 		# flags: ignore, warn, die, find, make, force
 		# relations: hasParent, hasChild, >, gt, <, lt, ==, eq, >=, <=, !=, ne 
 		# mrna hasParent gene 
-		# mrna gteq[start] PARENT
-		# mrna lteq[end] PARENT
+		# mrna|exon <[start,end] SELF
+		# mrna <=[end] PARENT warn
 		# exon hasParent mrna|transcript|gene
 		# cds hasParent exon
 		
@@ -134,7 +134,11 @@ sub make_introns {
 				else {
 					my @relation = split /[\[\]]/,$hashref->{'relation'};
 					my @attrib = split /,/,$relation[1];
-					$actions{$hashref->{'flag'}}->($type.' '.$self->name.' '.$attrib[0].' is not '.$relation[0].' '.$hashref->{'alt_type'}.' '.$attrib[-1]) unless compare($self->{attributes}->{$attrib[0]},$self->{attributes}->{$attrib[-1]},$relation[0])
+					my $message = $type.' '.$self->name.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].')';
+					my $first = $self->{attributes}->{$attrib[0]};
+					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
+					print $first,"\t",$second,"\n";
+					$actions{$hashref->{'flag'}}->($message) unless compare($first,$second,$relation[0]);
 				}
 			}
 		}
