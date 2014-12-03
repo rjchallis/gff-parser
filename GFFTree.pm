@@ -45,8 +45,12 @@ sub parse_file {
 	my %features;
 	sub next_feature {
 		my ($self, $type) = @_;
-		@{$features{$type}} = (by_type($self,$type),0) unless $features{$type} && @{$features{$type}};
-		print scalar @{$features{$type}},"\n";
+		unless ($features{$type} && @{$features{$type}}){
+			@{$features{$type}} = by_type($self,$type);
+			# order features by start_position (and seq_name);
+			
+			push @{$features{$type}},0;
+		}
 		return shift @{$features{$type}};
 	}
 
@@ -85,6 +89,35 @@ sub make_introns {
     
 }
 
+{
+	my %expectations;
+	sub add_expectation {
+		# define expectations for gff validation
+		# feature_type,relation,alt_type,flag
+		# flags: ignore, warn, die, find, make, force
+		# relations: hasParent, hasChild, gt, lt, eq, gteq, lteq, ne 
+		# mrna hasParent gene 
+		# mrna gteq[start] PARENT
+		# mrna lteq[end] PARENT
+		# exon hasParent mrna|transcript|gene
+		# cds hasParent exon
+		
+		my ($self,$type,$relation,$alt_type,$flag) = @_;
+		push @{$expectations{$type}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag};
+	}
+	
+	sub validate {
+		my $self = shift;
+		my $type = $self->{attributes}->{_type};
+		for (my $i = 0; $i < @{$expectations{$type}}; $i++){
+			my $hashref = $expectations{$type}[$i];
+			if ($hashref->{'relation'} eq 'hasParent'){
+				print $self->mother->{attributes}->{_type},"\n";
+			}
+		}
+	}
+	
+}
 
 sub is_comment {
 	return 1 if $_ =~ m/^#/;
