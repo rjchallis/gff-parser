@@ -98,11 +98,12 @@ sub make_introns {
 					'make' => \&validation_make,
 					'force' => \&validation_force,
               );
+	
 	sub add_expectation {
 		# define expectations for gff validation
 		# feature_type,relation,alt_type,flag
 		# flags: ignore, warn, die, find, make, force
-		# relations: hasParent, hasChild, gt, lt, eq, gteq, lteq, ne 
+		# relations: hasParent, hasChild, >, gt, <, lt, ==, eq, >=, <=, !=, ne 
 		# mrna hasParent gene 
 		# mrna gteq[start] PARENT
 		# mrna lteq[end] PARENT
@@ -110,20 +111,48 @@ sub make_introns {
 		# cds hasParent exon
 		
 		my ($self,$type,$relation,$alt_type,$flag) = @_;
-		push @{$expectations{$type}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag};
+		my @type = split /\|/,$type;
+		for (my $t = 0; $t < @type; $t++){
+			print "$type[$t]\n";
+			push @{$expectations{$type[$t]}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag};
+		}
 	}
 	
 	sub validate {
 		my $self = shift;
 		my $type = $self->{attributes}->{_type};
-		for (my $i = 0; $i < @{$expectations{$type}}; $i++){
-			my $hashref = $expectations{$type}[$i];
-			if ($hashref->{'relation'} eq 'hasParent'){
-				$actions{$hashref->{'flag'}}->($type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'}) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
+		if ($expectations{$type}){
+			for (my $i = 0; $i < @{$expectations{$type}}; $i++){
+				my $hashref = $expectations{$type}[$i];
+				if ($hashref->{'relation'} eq 'hasParent'){
+					$actions{$hashref->{'flag'}}->($type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'}) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
+				}
+				elsif ($hashref->{'relation'} eq 'hasChild'){
+					#;
+				}
+				else {
+					my @relation = split /[\[\]]/,$hashref->{'relation'};
+					my @attrib = split /,/,$relation[1];
+					$actions{$hashref->{'flag'}}->($type.' '.$self->name.' '.$attrib[0].' is not '.$relation[0].' '.$hashref->{'alt_type'}.' '.$attrib[-1]) unless compare($self->{attributes}->{$attrib[0]},$self->{attributes}->{$attrib[-1]},$relation[0])
+				}
 			}
 		}
 	}
 	
+}
+
+sub compare {
+	my ($first,$second,$operator) = @_;
+	return $first > $second if $operator eq '>';
+	return $first gt $second if $operator eq 'gt';
+	return $first < $second if $operator eq '<';
+	return $first lt $second if $operator eq 'lt';
+	return $first == $second if $operator eq '==';
+	return $first eq $second if $operator eq 'eq';
+	return $first >= $second if $operator eq '>=';
+	return $first <= $second if $operator eq '<=';
+	return $first != $second if $operator eq '!=';
+	return $first ne $second if $operator eq 'ne';
 }
 
 sub validation_ignore {
