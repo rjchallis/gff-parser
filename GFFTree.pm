@@ -137,7 +137,6 @@ sub make_introns {
 					my $message = $type.' '.$self->name.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].')';
 					my $first = $self->{attributes}->{$attrib[0]};
 					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
-					print $first,"\t",$second,"\n";
 					$actions{$hashref->{'flag'}}->($message) unless compare($first,$second,$relation[0]);
 				}
 			}
