@@ -19,6 +19,7 @@ sub parse_file {
 	my %ids;
     while (<>){
 		next if is_comment($_);
+		my $parent = $node;
 		my ($data,$attribs) = parse_gff_line($_);
 		my %attributes;
 		$attributes{'_seq_name'} = $data->[0];
@@ -30,12 +31,12 @@ sub parse_file {
 		$attributes{'_strand'} = $data->[6];
 		$attributes{'_phase'} = $data->[7];
 		if ($attribs->{'Parent'}){
-			$node = $ids{$attribs->{'Parent'}};
+			$parent = $ids{$attribs->{'Parent'}};
 		}
 		else {
 			# check type to decide what to do with features without parents
 		}
-		$ids{$attribs->{'ID'}} = $node->new_daughter({%attributes,%$attribs});
+		$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 		$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 	}
 }
@@ -45,6 +46,7 @@ sub parse_file {
 	sub next_feature {
 		my ($self, $type) = @_;
 		@{$features{$type}} = (by_type($self,$type),0) unless $features{$type} && @{$features{$type}};
+		print scalar @{$features{$type}},"\n";
 		return shift @{$features{$type}};
 	}
 
