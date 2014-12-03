@@ -40,6 +40,16 @@ sub parse_file {
 	}
 }
 
+{
+	my %features;
+	sub next_feature {
+		my ($self, $type) = @_;
+		@{$features{$type}} = (by_type($self,$type),0) unless $features{$type} && @{$features{$type}};
+		return shift @{$features{$type}};
+	}
+
+}
+
 sub make_introns {
 	my $self = shift;
 	my @exons = by_attribute($self,'_type','exon');
@@ -63,12 +73,12 @@ sub make_introns {
     		}
     		if ($i == @exons - 1) {
     			if ($exons[$i]->{attributes}->{_end} < $parent->{attributes}->{_end}){
-    				push @introns,$i+1;
+    				push @introns,$i;
     			}
     		}
     	}
     }
-    print "$self->{name}\t@introns\n" if @introns;
+    print "$self->{name}\t@introns\t",scalar @exons,"\n" if @introns;
     
     
 }
