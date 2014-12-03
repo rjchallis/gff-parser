@@ -111,9 +111,9 @@ sub make_introns {
 		# cds hasParent exon
 		
 		my ($self,$type,$relation,$alt_type,$flag) = @_;
+		$type =~ tr/[A-Z]/[a-z]/;
 		my @type = split /\|/,$type;
 		for (my $t = 0; $t < @type; $t++){
-			print "$type[$t]\n";
 			push @{$expectations{$type[$t]}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag};
 		}
 	}
@@ -121,6 +121,7 @@ sub make_introns {
 	sub validate {
 		my $self = shift;
 		my $type = $self->{attributes}->{_type};
+		$type =~ tr/[A-Z]/[a-z]/;
 		if ($expectations{$type}){
 			for (my $i = 0; $i < @{$expectations{$type}}; $i++){
 				my $hashref = $expectations{$type}[$i];
