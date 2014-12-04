@@ -117,6 +117,24 @@ sub new {
 		my $id = pop;
 		return $ids{$id};
 	}
+
+=head2 make_id
+  Function : generate a unique id for a node
+  Example  : $id = $node->make_id('prefix');
+=cut
+
+	sub make_id  {
+		my $node = shift;
+		my $prefix = shift;
+		my $suffix = shift;
+		$suffix = 0 unless $suffix;
+		while (by_id($prefix.$suffix)){
+			$suffix++;
+		}
+		$ids{$prefix.$suffix} = $node;
+		return $prefix.$suffix;
+	}
+
 	
 =head2 by_start
   Function : Fetch an arrayref of nodes start position
@@ -146,10 +164,7 @@ sub new {
 	sub next_feature {
 		my ($self, $type) = @_;
 		unless ($features{$type} && @{$features{$type}}){
-			@{$features{$type}} = by_type($self,$type);
-			# order features by start_position (and seq_name);
-			
-			push @{$features{$type}},0;
+			$self->order_features($type);
 		}
 		return shift @{$features{$type}};
 	}
@@ -160,16 +175,49 @@ sub new {
 =cut
 
 	sub order_features {
-		# TODO
+		my ($self, $type) = @_;
+		my @unsorted = by_type($self,$type);
+		@{$features{$type}} = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
+		push @{$features{$type}},0;
 	}
 	
 =head2 fill_gaps
   Function : fill in gaps between features, eg make introns based on exons, should check 
   whether such features exist before running this (maybe need a fill_gaps_unless sub)
-  Example  : $gene->fill_gaps('exon','intron');
+  Example  : $gene->fill_gaps('exon','intron','internal');
+             $gene->fill_gaps('exon','utr','external');
+             $gene->fill_gaps('exon','5utr','before');
+             $gene->fill_gaps('exon','3utr','after');
 =cut
 
 	sub fill_gaps {
+		my ($self, $type, $new_type, $location) = @_;
+		$self->order_features($type);
+		# loop through features and create new ones in any gaps
+		# need a create feature sub
+		
+		if ($location eq 'internal'){
+			if (@{$features{$type}} > 2){
+				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
+				print $i,"\n";
+				print $features{$type}[$i]->name(),"\n";
+					my %attributes;
+					$attributes{'_seq_name'} = $features{$type}[$i]->{attributes}->{_seq_name};
+					$attributes{'_source'} = 'GFFTree';
+					$attributes{'_type'} = $new_type;
+					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
+					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
+					$attributes{'_score'} = '.';
+					$attributes{'_strand'} = $features{$type}[$i]->{attributes}->{_strand};
+					$attributes{'_phase'} = '.';
+					$attributes{'Parent'} = $self->name;
+					my $node = $self->new_daughter(\%attributes);
+					my $id = $node->make_id($new_type);
+					$node->name($id);
+					$node->{attributes}->{'ID'} = $id;
+				}
+			}
+		}
 		# TODO - check for existing features with validation_find()
 	}
 
