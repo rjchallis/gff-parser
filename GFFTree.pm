@@ -16,6 +16,7 @@ sub new {
 
 {
 	my %ids;
+	my %starts;
 
 	sub parse_file {
 		my $node = shift;
@@ -40,12 +41,20 @@ sub new {
 			}
 			$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 			$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
+			push @{$starts{$data->[0]}{$data->[2]}{$data->[3]}},$ids{$attribs->{'ID'}};
 		}
 	}
 
 	sub by_id  {
 		my $id = pop;
 		return $ids{$id};
+	}
+	
+	sub by_start  {
+		my $start = pop;
+		my $type = pop;
+		my $seq_name = pop;
+		return $starts{$seq_name}{$type}{$start};
 	}
 
 }
@@ -186,6 +195,9 @@ sub make_introns {
 		# TODO
 		my $self = shift;
 		my $expectation = shift;
+		if ($expectation->{'relation'} eq 'hasParent'){
+			$expectation->{'alt_type'};
+		}
 	}
 	
 	sub validation_make {
