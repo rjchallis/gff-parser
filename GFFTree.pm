@@ -153,6 +153,25 @@ sub new {
 		}
 		return shift @{$features{$type}};
 	}
+	
+=head2 order_features
+  Function : order daughter features of a given  type sequentially
+  Example  : $gene->order_feature('exon');
+=cut
+
+	sub order_features {
+		# TODO
+	}
+	
+=head2 fill_gaps
+  Function : fill in gaps between features, eg make introns based on exons, should check 
+  whether such features exist before running this (maybe need a fill_gaps_unless sub)
+  Example  : $gene->fill_gaps('exon','intron');
+=cut
+
+	sub fill_gaps {
+		# TODO - check for existing features with validation_find()
+	}
 
 }
 
