@@ -95,7 +95,7 @@ sub new {
 
 =head2 by_id
   Function : Fetch a node by unique id
-  Example  : my $node = by_id('id');
+  Example  : $node = by_id('id');
 =cut
 
 	sub by_id  {
@@ -105,7 +105,7 @@ sub new {
 	
 =head2 by_start
   Function : Fetch an arrayref of nodes start position
-  Example  : my $node_arrayref = by_start('scaf1','exon',432);
+  Example  : $node_arrayref = by_start('scaf1','exon',432);
 =cut
 
 	sub by_start  {
@@ -325,10 +325,20 @@ sub make_introns {
 
 }
 
+=head2 is_comment
+  Function : returns true if a line is a comment
+  Example  : is_comment($line);
+=cut
 
 sub is_comment {
 	return 1 if $_ =~ m/^#/;
 }
+
+=head2 parse_gff_line
+  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded 
+             characters
+  Example  : parse_gff_line($line);
+=cut
 
 sub parse_gff_line {
 	my @data = split /\t/,$_;
@@ -342,6 +352,12 @@ sub parse_gff_line {
 	return \@data,\%attribs;
 }
 
+=head2 _seq_name
+  Function : get/set the sequence name for a feature
+  Example  : $name = $node->_seq_name();
+             $node->_seq_name('new_name');
+=cut
+
 sub _seq_name {
     my $node = shift;
     my $val = shift;
@@ -349,11 +365,22 @@ sub _seq_name {
     return $node->attributes->{_seq_name};
 }
 
+=head2 _length
+  Function : get the length of a feature
+  Example  : $length = $node->_length();
+=cut
+
 sub _length {
     my $node = shift;
     my $length = $node->attributes->{_end} - $node->attributes->{_start} + 1;
     return $length;
 }
+
+=head2 _phase
+  Function : get/set the phase name for a feature
+  Example  : $phase = $node->_phase();
+             $node->_phase(2);
+=cut
 
 sub _phase {
     my $node = shift;
@@ -361,6 +388,12 @@ sub _phase {
     $node->attributes->{_phase} = $val if defined $val && length $val > 0;
     return $node->attributes->{_phase};
 }
+
+=head2 _end_phase
+  Function : get/set the end_phase name for a feature - ensembl specific at the moment
+  Example  : $phase = $node->_end_phase();
+             $node->_end_phase(2);
+=cut
 
 sub _end_phase {
     my $node = shift;
@@ -378,6 +411,13 @@ sub _end_phase {
     return $node->attributes->{_end_phase};
 }
 
+=head2 by_name
+  Function : walk through the tree to find a feature by name, works in scalar or array 
+             context
+  Example  : $node = $gff->by_name('id2');
+=cut
+
+
 sub by_name {
     my ($self, $name) = @_;
     my @found =();
@@ -391,12 +431,23 @@ sub by_name {
     return wantarray? @found : @found ? $found[0] : undef;
 }
 
+=head2 by_type
+  Function : calls by_attribute to find an array of features of a given type
+  Example  : @nodes = $gff->by_type('exon');
+=cut
+
 
 sub by_type {
     my ($self, $type) = @_;
     return by_attribute($self,'_type',$type);
 }
 
+=head2 by_attribute
+  Function : returns a scalar or array of features with a given attribute or where an 
+             attribute matches a specific value
+  Example  : @nodes = $gff->by_attribute('anything');
+  			 $node = $gff->by_attribute('anything','something');
+=cut
 
 sub by_attribute {
     my ($self, $attrib, $value) = @_;
@@ -411,6 +462,12 @@ sub by_attribute {
     return wantarray? @found : @found ? $found[0] : undef;
 }
 
+=head2 by_not_attribute
+  Function : returns a scalar or array of features without a given attribute or where an 
+             attribute does not match a specific value
+  Example  : @nodes = $gff->by_attribute('anything');
+  			 @nodes = $gff->by_attribute('anything','something');
+=cut
 
 sub by_not_attribute {
     my ($self, $attrib, $value) = @_;
