@@ -44,7 +44,7 @@ sub new {
 	}
 
 	sub by_id  {
-		my $id = @_[-1];
+		my $id = pop;
 		return $ids{$id};
 	}
 
@@ -135,7 +135,8 @@ sub make_introns {
 			for (my $i = 0; $i < @{$expectations{$type}}; $i++){
 				my $hashref = $expectations{$type}[$i];
 				if ($hashref->{'relation'} eq 'hasParent'){
-					$actions{$hashref->{'flag'}}->($type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'}) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
+					my $message = $type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'};
+					$actions{$hashref->{'flag'}}->($message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 				}
 				elsif ($hashref->{'relation'} eq 'hasChild'){
 					#;
@@ -152,48 +153,51 @@ sub make_introns {
 		}
 	}
 	
-}
 
-sub compare {
-	my ($first,$second,$operator) = @_;
-	return $first > $second if $operator eq '>';
-	return $first gt $second if $operator eq 'gt';
-	return $first < $second if $operator eq '<';
-	return $first lt $second if $operator eq 'lt';
-	return $first == $second if $operator eq '==';
-	return $first eq $second if $operator eq 'eq';
-	return $first >= $second if $operator eq '>=';
-	return $first <= $second if $operator eq '<=';
-	return $first != $second if $operator eq '!=';
-	return $first ne $second if $operator eq 'ne';
-}
+	sub compare {
+		my ($first,$second,$operator) = @_;
+		return $first > $second if $operator eq '>';
+		return $first gt $second if $operator eq 'gt';
+		return $first < $second if $operator eq '<';
+		return $first lt $second if $operator eq 'lt';
+		return $first == $second if $operator eq '==';
+		return $first eq $second if $operator eq 'eq';
+		return $first >= $second if $operator eq '>=';
+		return $first <= $second if $operator eq '<=';
+		return $first != $second if $operator eq '!=';
+		return $first ne $second if $operator eq 'ne';
+	}
+	
+	sub validation_ignore {
+		# nothing happens
+	}
+	
+	sub validation_warning {
+		my $message = shift;
+		warn "WARNING: $message\n";
+	}
+	
+	sub validation_die {
+		my $message = shift;
+		die "ERROR: $message\n";
+	}
+	
+	sub validation_find {
+		# TODO
+		my $self = shift;
+		my $expectation = shift;
+	}
+	
+	sub validation_make {
+		# TODO
+	}
+	
+	sub validation_force {
+		my $find = validation_find;
+		return $find if $find;
+		return validation_make;
+	}
 
-sub validation_ignore {
-	# nothing happens
-}
-
-sub validation_warning {
-	my $message = shift;
-	warn "WARNING: $message\n";
-}
-
-sub validation_die {
-	my $message = shift;
-	die "ERROR: $message\n";
-}
-
-sub validation_find {
-	# TODO
-}
-
-sub validation_make {
-	# TODO
-}
-
-sub validation_force {
-	my $find = validation_find;
-	return $find if $find;
-	return validation_make;
 }
 
 
