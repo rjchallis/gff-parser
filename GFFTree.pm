@@ -60,6 +60,21 @@ sub new {
 {
 	my %ids;
 	my %starts;
+	my %type_map;
+
+=head2 map_types
+  Function : Loads a mapping of types to allow treating of features with different types 
+             as one
+  Example  : $gff->map_types({'internal' => 'exon'});
+=cut
+
+	sub map_types {
+		my $mapping = pop;
+	    foreach my $type (keys %{$mapping}){
+	    	$type_map{$type} = $mapping->{$type};
+	    }
+	}
+
 
 =head2 parse_file
   Function : Reads a gff3 file into a tree structure
@@ -75,7 +90,7 @@ sub new {
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
 			$attributes{'_source'} = $data->[1];
-			$attributes{'_type'} = $data->[2];
+			$attributes{'_type'} = $type_map{$data->[2]} ? $type_map{$data->[2]} : $data->[2];
 			$attributes{'_start'} = $data->[3];
 			$attributes{'_end'} = $data->[4];
 			$attributes{'_score'} = $data->[5];
