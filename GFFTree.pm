@@ -44,8 +44,7 @@ sub new {
 	}
 
 	sub by_id  {
-		my $self = shift;
-		my $id = shift;
+		my $id = @_[-1];
 		return $ids{$id};
 	}
 
