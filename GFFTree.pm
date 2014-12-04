@@ -235,42 +235,6 @@ sub new {
 
 }
 
-=head2 make_introns
-  Function : Experimental feature to fill in gaps between exons, needs to become more 
-             generic and to actually create new features
-  Example  : $gene->make_introns();
-=cut
-
-sub make_introns {
-	my $self = shift;
-	my @exons = by_attribute($self,'_type','exon');
-	return unless $exons[0];
-	print $exons[0]->{name},"\n";
-	my $parent = $exons[0]->mother();
-	# TODO: sort exons by start value
-	# for now, assume exons are sequential
-	my @introns;
-	if ($exons[0]->{attributes}->{_start} <= $exons[-1]->{attributes}->{_start}){
-    	for (my $i = 0; $i < @exons; $i++){
-    		if ($i == 0){
-    			if ($exons[$i]->{attributes}->{_start} > $parent->{attributes}->{_start}){
-    				push @introns,$i;
-    			}
-    		}
-    		else {
-    			if ($exons[$i]->{attributes}->{_start} > $exons[($i-1)]->{attributes}->{_end} + 1){
-    				push @introns,$i;
-    			}
-    		}
-    		if ($i == @exons - 1) {
-    			if ($exons[$i]->{attributes}->{_end} < $parent->{attributes}->{_end}){
-    				push @introns,$i;
-    			}
-    		}
-    	}
-    }
-    print "$self->{name}\t@introns\t",scalar @exons,"\n" if @introns;
-}
 
 # use nesting to allow subs to share and retain access to private variables
 {
