@@ -197,6 +197,11 @@ sub make_introns {
 		my $expectation = pop;
 		if ($expectation->{'relation'} eq 'hasParent'){
 			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
+			while (my $parent = shift @possibles){
+				if ($self->{attributes}->{'_end'} == $parent->[0]->{attributes}->{'_end'}){
+					warn 'found '.$self->name.' a parent '.$expectation->{'alt_type'}.' '.$parent->[0]->name."\n";
+				}
+			}
 		}
 	}
 	
