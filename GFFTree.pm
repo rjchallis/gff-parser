@@ -42,6 +42,10 @@ use Tree::DAG_Node;
 our @ISA=qw(Tree::DAG_Node);
 use Encode::Escape::ASCII;
 
+=head2 new
+  Function : Creates a new GFFTree
+  Example  : $gff = GFFTree->new({});
+=cut
 
 sub new {
     my $class = shift;
@@ -51,9 +55,16 @@ sub new {
     return $self;
 }
 
+
+# use nesting to allow subs to share and retain access to private variables
 {
 	my %ids;
 	my %starts;
+
+=head2 parse_file
+  Function : Reads a gff3 file into a tree structure
+  Example  : $gff->parse_file();
+=cut
 
 	sub parse_file {
 		my $node = shift;
@@ -82,11 +93,21 @@ sub new {
 		}
 	}
 
+=head2 by_id
+  Function : Fetch a node by unique id
+  Example  : my $node = by_id('id');
+=cut
+
 	sub by_id  {
 		my $id = pop;
 		return $ids{$id};
 	}
 	
+=head2 by_start
+  Function : Fetch an arrayref of nodes start position
+  Example  : my $node_arrayref = by_start('scaf1','exon',432);
+=cut
+
 	sub by_start  {
 		my $start = pop;
 		my $type = pop;
@@ -96,8 +117,17 @@ sub new {
 
 }
 
+
+# use nesting to allow sub to retain access to private variables
+
 {
 	my %features;
+	
+=head2 next_feature
+  Function : Sequentially fetch daughter features of a node by type
+  Example  : $gene->next_feature('exon');
+=cut
+
 	sub next_feature {
 		my ($self, $type) = @_;
 		unless ($features{$type} && @{$features{$type}}){
@@ -110,6 +140,12 @@ sub new {
 	}
 
 }
+
+=head2 make_introns
+  Function : Experimental feature to fill in gaps between exons, needs to become more 
+             generic and to actually create new features
+  Example  : $gene->make_introns();
+=cut
 
 sub make_introns {
 	my $self = shift;
@@ -140,12 +176,12 @@ sub make_introns {
     	}
     }
     print "$self->{name}\t@introns\t",scalar @exons,"\n" if @introns;
-    
-    
 }
 
+# use nesting to allow subs to share and retain access to private variables
 {
 	my %expectations;
+	# lookup table for flags
 	my %actions = ( 'ignore' => \&validation_ignore,
 					'warn' => \&validation_warning,
 					'die' => \&validation_die,
@@ -154,6 +190,13 @@ sub make_introns {
 					'force' => \&validation_force,
               );
 	
+=head2 add_expectation
+  Function : Specify conditions that feature-types should meet in order to pass validation 
+             expectations can be applied to multiple feature types using the pipe symbol in 
+             $Arg[0]. More documentation to be written...
+  Example  : $gff->add_expectation('mrna','hasParent','gene','find');
+=cut
+
 	sub add_expectation {
 		# define expectations for gff validation
 		# feature_type,relation,alt_type,flag
@@ -172,6 +215,12 @@ sub make_introns {
 			push @{$expectations{$type[$t]}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag};
 		}
 	}
+
+=head2 validate
+  Function : Test whether a feature meets the conditions defined in any relevant added 
+             expectations and respond according to the specified flag
+  Example  : $mrna->validate();
+=cut
 	
 	sub validate {
 		my $self = shift;
@@ -199,7 +248,11 @@ sub make_introns {
 		}
 	}
 	
-
+=head2 compare
+  Function : compare two values based on a specified operator
+  Example  : compare(10,20,'<'); # returns true
+=cut
+	
 	sub compare {
 		my ($first,$second,$operator) = @_;
 		return $first > $second if $operator eq '>';
@@ -227,6 +280,11 @@ sub make_introns {
 		my $message = pop;
 		die "ERROR: $message\n";
 	}
+
+=head2 validation_find
+  Function : find a feature to satisfy an expectation - limited functionality at present
+  Example  : validation_find($expectation_hashref);
+=cut
 	
 	sub validation_find {
 		# TODO 	- add parent/child relationships
@@ -242,12 +300,23 @@ sub make_introns {
 			}
 		}
 	}
+
+=head2 validation_make
+  Function : make a feature to satisfy an expectation - to be implemented
+  Example  : validation_make($expectation_hashref);
+=cut
 	
 	sub validation_make {
 		# TODO 	- everything
 		# 		- need to generate a new feature with a new id (use by_id to check generated id is not already in use)
 	}
 	
+=head2 validation_force
+  Function : find a feature to satisfy an expectation if possible, otherwise make one - 
+             requires other functions to work first...
+  Example  : validation_force($expectation_hashref);
+=cut
+
 	sub validation_force {
 		my $find = validation_find;
 		return $find if $find;
