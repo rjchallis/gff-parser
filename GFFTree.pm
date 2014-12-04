@@ -73,6 +73,7 @@ sub new {
 	    foreach my $type (keys %{$mapping}){
 	    	$type_map{$type} = $mapping->{$type};
 	    }
+	    return scalar keys %type_map;
 	}
 
 
@@ -270,8 +271,9 @@ sub new {
 		$type =~ tr/[A-Z]/[a-z]/;
 		my @type = split /\|/,$type;
 		for (my $t = 0; $t < @type; $t++){
-			push @{$expectations{$type[$t]}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag};
+			push @{$expectations{$type[$t]}},{'relation' => $relation, 'alt_type' => $alt_type, 'flag' => $flag} || return;
 		}
+		return scalar keys %expectations;
 	}
 
 =head2 validate
@@ -366,7 +368,7 @@ sub new {
 	
 	sub validation_make {
 		# TODO 	- everything
-		# 		- need to generate a new feature with a new id (use by_id to check generated id is not already in use)
+		# 		- need to generate a new feature with a new id (use make_id to check generated id is not already in use)
 	}
 	
 =head2 validation_force
