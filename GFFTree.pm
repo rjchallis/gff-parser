@@ -131,8 +131,11 @@ sub new {
 		while (by_id($prefix.$suffix)){
 			$suffix++;
 		}
-		$ids{$prefix.$suffix} = $node;
-		return $prefix.$suffix;
+		my $id = $prefix.$suffix;
+		$node->name($id);
+		$node->{attributes}->{'ID'} = $id;
+		$ids{$id} = $node;
+		return $id;
 	}
 
 	
@@ -193,29 +196,38 @@ sub new {
 	sub fill_gaps {
 		my ($self, $type, $new_type, $location) = @_;
 		$self->order_features($type);
-		# loop through features and create new ones in any gaps
-		# need a create feature sub
-		
+		my %attributes;
+		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
+		$attributes{'_source'} = 'GFFTree';
+		$attributes{'_type'} = $new_type;
+		$attributes{'_score'} = '.';
+		$attributes{'_strand'} = $self->{attributes}->{_strand};
+		$attributes{'_phase'} = '.';
+		$attributes{'Parent'} = $self->name;
 		if ($location eq 'internal'){
 			if (@{$features{$type}} > 2){
 				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
-				print $i,"\n";
-				print $features{$type}[$i]->name(),"\n";
-					my %attributes;
-					$attributes{'_seq_name'} = $features{$type}[$i]->{attributes}->{_seq_name};
-					$attributes{'_source'} = 'GFFTree';
-					$attributes{'_type'} = $new_type;
 					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
 					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
-					$attributes{'_score'} = '.';
-					$attributes{'_strand'} = $features{$type}[$i]->{attributes}->{_strand};
-					$attributes{'_phase'} = '.';
-					$attributes{'Parent'} = $self->name;
 					my $node = $self->new_daughter(\%attributes);
-					my $id = $node->make_id($new_type);
-					$node->name($id);
-					$node->{attributes}->{'ID'} = $id;
+					$node->make_id($new_type);
 				}
+			}
+		}
+		if ($location eq 'before' || $location eq 'external'){
+			if (@{$features{$type}} > 1 && $features{$type}[0]->{attributes}->{_start} > $self->{attributes}->{_start}){
+				$attributes{'_start'} = $self->{attributes}->{_start};
+				$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
+				my $node = $self->new_daughter(\%attributes);
+				$node->make_id($new_type);
+			}
+		}
+		if ($location eq 'after' || $location eq 'external'){
+			if (@{$features{$type}} > 1 && $features{$type}[-2]->{attributes}->{_end} < $self->{attributes}->{_end}){
+				$attributes{'_end'} = $self->{attributes}->{_end};
+				$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
+				my $node = $self->new_daughter(\%attributes);
+				$node->make_id($new_type);
 			}
 		}
 		# TODO - check for existing features with validation_find()
