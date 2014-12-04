@@ -145,7 +145,7 @@ sub make_introns {
 				my $hashref = $expectations{$type}[$i];
 				if ($hashref->{'relation'} eq 'hasParent'){
 					my $message = $type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'};
-					$actions{$hashref->{'flag'}}->($message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
+					$actions{$hashref->{'flag'}}->($self,$message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 				}
 				elsif ($hashref->{'relation'} eq 'hasChild'){
 					#;
@@ -182,21 +182,21 @@ sub make_introns {
 	}
 	
 	sub validation_warning {
-		my $message = shift;
+		my $message = pop;
 		warn "WARNING: $message\n";
 	}
 	
 	sub validation_die {
-		my $message = shift;
+		my $message = pop;
 		die "ERROR: $message\n";
 	}
 	
 	sub validation_find {
 		# TODO
 		my $self = shift;
-		my $expectation = shift;
+		my $expectation = pop;
 		if ($expectation->{'relation'} eq 'hasParent'){
-			$expectation->{'alt_type'};
+			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
 		}
 	}
 	
