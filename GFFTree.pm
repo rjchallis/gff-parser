@@ -14,31 +14,41 @@ sub new {
     return $self;
 }
 
-sub parse_file {
-	my $node = shift;
+{
 	my %ids;
-    while (<>){
-		next if is_comment($_);
-		my $parent = $node;
-		my ($data,$attribs) = parse_gff_line($_);
-		my %attributes;
-		$attributes{'_seq_name'} = $data->[0];
-		$attributes{'_source'} = $data->[1];
-		$attributes{'_type'} = $data->[2];
-		$attributes{'_start'} = $data->[3];
-		$attributes{'_end'} = $data->[4];
-		$attributes{'_score'} = $data->[5];
-		$attributes{'_strand'} = $data->[6];
-		$attributes{'_phase'} = $data->[7];
-		if ($attribs->{'Parent'}){
-			$parent = $ids{$attribs->{'Parent'}};
+
+	sub parse_file {
+		my $node = shift;
+	    while (<>){
+			next if is_comment($_);
+			my $parent = $node;
+			my ($data,$attribs) = parse_gff_line($_);
+			my %attributes;
+			$attributes{'_seq_name'} = $data->[0];
+			$attributes{'_source'} = $data->[1];
+			$attributes{'_type'} = $data->[2];
+			$attributes{'_start'} = $data->[3];
+			$attributes{'_end'} = $data->[4];
+			$attributes{'_score'} = $data->[5];
+			$attributes{'_strand'} = $data->[6];
+			$attributes{'_phase'} = $data->[7];
+			if ($attribs->{'Parent'}){
+				$parent = $ids{$attribs->{'Parent'}};
+			}
+			else {
+				# check type to decide what to do with features without parents
+			}
+			$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
+			$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 		}
-		else {
-			# check type to decide what to do with features without parents
-		}
-		$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
-		$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 	}
+
+	sub by_id  {
+		my $self = shift;
+		my $id = shift;
+		return $ids{$id};
+	}
+
 }
 
 {
