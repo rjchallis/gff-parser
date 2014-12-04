@@ -1,4 +1,41 @@
 #!/usr/bin/perl -w
+
+=head1 NAME
+
+GFFTree
+
+=head1 SYNOPSIS
+
+  my $gff = GFFTree->new({});
+  $gff->name('GFF');
+  $gff->parse_file();
+  $gff->add_expectation('mrna','hasParent','gene','find');
+  $gff->add_expectation('mrna','<[_start,_end]','SELF','warn');
+  $gff->add_expectation('mrna','>=[_start]','PARENT','warn');
+  while (my $gene = $gff->next_feature('gene')){
+	while (my $mrna = $gene->next_feature('mrna')){
+		$mrna->validate;
+	}
+  }
+
+
+=head1 DESCRIPTION
+
+This module is intended to be as close as possible to a universal gff3 file parser. 
+
+Calling parse_file causes the gff3 file to be read into a graph structure, allowing 
+relationships to be queried and modified during an optional validation step, which can be 
+applied to individual features independently.
+
+The parser makes no assumptions about the feature types expected in column 3 nor the 
+content of column 9 (other than that it is a set of key-value pairs).  Expected properties 
+of, and relationships among and between, features may be defined as a set of expectations, 
+which can be tested during an optional validation step. The behaviour of the parser on 
+finding an unmet assumption (to ignore, warn, die, link to an existing feature or create a 
+new feature) can be defined independently for each assumption through the use of flags.
+
+=cut
+
 use strict;
 package GFFTree;
 use Tree::DAG_Node;
