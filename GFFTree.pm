@@ -192,7 +192,8 @@ sub make_introns {
 	}
 	
 	sub validation_find {
-		# TODO
+		# TODO 	- add parent/child relationships
+		# 		- handle relationships other than parent
 		my $self = shift;
 		my $expectation = pop;
 		if ($expectation->{'relation'} eq 'hasParent'){
@@ -206,7 +207,8 @@ sub make_introns {
 	}
 	
 	sub validation_make {
-		# TODO
+		# TODO 	- everything
+		# 		- need to generate a new feature with a new id (use by_id to check generated id is not already in use)
 	}
 	
 	sub validation_force {
