@@ -366,8 +366,8 @@ sub new {
 =cut
 	
 	sub validation_find {
-		# TODO 	- add parent/child relationships
-		# 		- handle relationships other than parent
+		# TODO 	- handle relationships other than parent
+		# 		- attach the element to its newfound relative
 		my $self = shift;
 		my $expectation = pop;
 		if ($expectation->{'relation'} eq 'hasParent'){
@@ -384,7 +384,6 @@ sub new {
 					warn 'found '.$self->name.' a parent '.$expectation->{'alt_type'}.' '.$parent->[0]->name."\n";
 				}
 			}
-			
 		}
 	}
 
@@ -396,6 +395,35 @@ sub new {
 	sub validation_make {
 		# TODO 	- everything
 		# 		- need to generate a new feature with a new id (use make_id to check generated id is not already in use)
+		my $self = shift;
+		my $expectation = pop;
+		my %attributes;
+		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
+		$attributes{'_source'} = 'GFFTree';
+		$attributes{'_type'} = $expectation->{'alt_type'};
+		$attributes{'_score'} = '.';
+		$attributes{'_strand'} = $self->{attributes}->{_strand};
+		$attributes{'_phase'} = '.';
+		$attributes{'Parent'} = $self->name;
+		if ($expectation->{'relation'} eq 'hasParent'){
+			print $self->name,"\n";
+			if ($expectation->{'alt_type'} eq 'region'){
+				# find limits of the region
+				my @features = by_attribute($self,'_seq_name',$self->{attributes}->{_seq_name});
+				my @sorted = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @features;
+				$attributes{'_start'} = $sorted[0]->{attributes}->{_start};
+				@sorted = sort { $b->{attributes}->{_end} <=> $a->{attributes}->{_end} } @features;
+				$attributes{'_end'} = $sorted[0]->{attributes}->{_end};
+				
+			}
+			else {
+				$attributes{'_start'} = $self->{attributes}->{_start};
+				$attributes{'_end'} = $self->{attributes}->{_end};
+			}
+		}
+		my $node = $self->new_daughter(\%attributes);
+		$node->make_id($expectation->{'alt_type'});
+		print $node->name(),"\n";
 	}
 	
 =head2 validation_force
