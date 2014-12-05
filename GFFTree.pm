@@ -424,6 +424,8 @@ sub new {
 		my $node = $self->new_daughter(\%attributes);
 		$node->make_id($expectation->{'alt_type'});
 		print $node->name(),"\n";
+		print $self->as_string();
+		print $node->as_string();
 	}
 	
 =head2 validation_force
@@ -439,6 +441,32 @@ sub new {
 	}
 
 }
+
+=head2 as_string
+  Function : returns a gff representation of a single feature
+  Example  : $gene->as_string();
+=cut
+
+sub as_string {
+	my $self = shift;
+	my $line;
+	$line = $self->{attributes}->{_seq_name}."\t";
+	$line .= $self->{attributes}->{_source}."\t";
+	$line .= $self->{attributes}->{_type}."\t";
+	$line .= $self->{attributes}->{_start}."\t";
+	$line .= $self->{attributes}->{_end}."\t";
+	$line .= $self->{attributes}->{_score}."\t";
+	$line .= $self->{attributes}->{_strand}."\t";
+	$line .= $self->{attributes}->{_phase}."\t";
+	my $col_nine;
+	foreach my $key (sort keys %{$self->{attributes}}){
+		$col_nine .= $key.'='.$self->{attributes}->{$key}.';' unless $key =~ m/^_/;
+	}
+	chop $col_nine;
+	$line .= $col_nine."\n";
+	return $line;
+}
+
 
 =head2 is_comment
   Function : returns true if a line is a comment
