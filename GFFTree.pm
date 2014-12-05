@@ -105,11 +105,9 @@ sub new {
 				$region = $node->by_attributes(['_type','region'],['_seq_name',$fasta]) unless $region;
 				unless ($region){
 					$region = $node->make_region($fasta,'region');
-					print $region->as_string();
 				}
 				$region->{attributes}->{_seq} = $seq;
 				$region->{attributes}->{_end} = length $seq;
-				print $region->as_string() if length $seq == 3081;
 				next;
 			}
 			my $parent = $node;
@@ -176,8 +174,7 @@ sub new {
 	sub by_start  {
 		my $start = pop;
 		my $type = pop;
-		my $seq_name = pop;
-		return $starts{$seq_name}{$type}{$start};
+		my $seq_name = pop;return $starts{$seq_name}{$type}{$start};
 	}
 
 =head2 nearest_start
@@ -416,7 +413,7 @@ sub new {
 			unless ($relative){
 				@possibles = nearest_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
 				while ($relative = shift @possibles){
-					if ($self->{attributes}->{'_end'} >= $relative->[0]->{attributes}->{'_end'}){
+					if ($self->{attributes}->{'_end'} <= $relative->[0]->{attributes}->{'_end'}){
 						last;
 					}
 				}
