@@ -85,7 +85,9 @@ sub new {
 	sub parse_file {
 		my $node = shift;
 	    while (<>){
-			next if is_comment($_);
+			if (my $ret = is_comment($_)){
+				next;
+			}
 			my $parent = $node;
 			my ($data,$attribs) = parse_gff_line($_);
 			my %attributes;
@@ -498,7 +500,8 @@ sub as_string {
 =cut
 
 sub is_comment {
-	return 1 if $_ =~ m/^#/;
+	return -1 if $_ =~ m/^$/;
+	return length($1) if $_ =~ m/^(#+)/;
 }
 
 =head2 parse_gff_line
