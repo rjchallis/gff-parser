@@ -102,11 +102,10 @@ sub new {
 			}
 			elsif ($fasta){
 				$seq .= $_;
-				unless ($region){
-					$region = $node->by_attributes(['_type','region'],['_seq_name',$fasta]) unless $region;
-				}
+				$region = $node->by_attributes(['_type','region'],['_seq_name',$fasta]) unless $region;
+				$region = $node->by_attribute('_seq_name',$fasta)->make_region('region') unless $region;
 				$region->{attributes}->{_seq} = $seq;
-				
+				$region->{attributes}->{_end} = length $seq;
 				next;
 			}
 			my $parent = $node;
@@ -436,8 +435,6 @@ sub new {
 =cut
 	
 	sub validation_make {
-		# TODO 	- everything
-		# 		- need to generate a new feature with a new id (use make_id to check generated id is not already in use)
 		my $self = shift;
 		my $expectation = pop;
 		my %attributes;
@@ -488,6 +485,28 @@ sub new {
 	}
 
 }
+
+=head2 make_region
+  Function : make a feature required during parsing, maybe combine with validation_make?
+  Example  : parse_make($expectation_hashref);
+=cut
+	
+sub make_region {
+	my $self = shift;
+	my $type = shift;
+	my %attributes;
+	$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
+	$attributes{'_source'} = 'GFFTree';
+	$attributes{'_type'} = $type;
+	$attributes{'_score'} = '.';
+	$attributes{'_strand'} = '+';
+	$attributes{'_phase'} = '.';
+	$attributes{'_start'} = 1;
+	my $node = $self->root()->new_daughter(\%attributes);
+	$node->make_id($type);
+	return $node;
+}
+
 
 =head2 as_string
   Function : returns a gff representation of a single feature
