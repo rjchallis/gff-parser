@@ -107,6 +107,7 @@ sub new {
 			$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 			push @{$starts{$data->[0]}{$data->[2]}{$data->[3]}},$ids{$attribs->{'ID'}};
 		}
+		return 1;
 	}
 
 =head2 by_id
@@ -152,6 +153,23 @@ sub new {
 		return $starts{$seq_name}{$type}{$start};
 	}
 
+=head2 nearest_start
+  Function : Fetch an arrayref of nodes as close as possible to the start position
+  Example  : $node_arrayref = nearest_start('scaf1','exon',432);
+=cut
+
+	sub nearest_start  {
+		my $start = pop;
+		my $type = pop;
+		my $seq_name = pop;
+		my $prev_begin = 0;
+		foreach my $begin (sort { $a <=> $b } keys %{$starts{$seq_name}{$type}}){
+			last if $begin > $start;
+			$prev_begin = $begin;
+		}	
+		return $starts{$seq_name}{$type}{$prev_begin};
+	}
+
 }
 
 
@@ -183,6 +201,7 @@ sub new {
 		my @unsorted = by_type($self,$type);
 		@{$features{$type}} = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
+		return (scalar(@{$features{$type}})-1);
 	}
 	
 =head2 fill_gaps
@@ -291,7 +310,7 @@ sub new {
 				my $hashref = $expectations{$type}[$i];
 				if ($hashref->{'relation'} eq 'hasParent'){
 					my $message = $type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'};
-					$actions{$hashref->{'flag'}}->($self,$message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
+					$actions{$hashref->{'flag'}}->($self,$message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} && $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 				}
 				elsif ($hashref->{'relation'} eq 'hasChild'){
 					#;
@@ -352,12 +371,20 @@ sub new {
 		my $self = shift;
 		my $expectation = pop;
 		if ($expectation->{'relation'} eq 'hasParent'){
+			print $self->name,"\n";
 			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
 			while (my $parent = shift @possibles){
 				if ($self->{attributes}->{'_end'} == $parent->[0]->{attributes}->{'_end'}){
 					warn 'found '.$self->name.' a parent '.$expectation->{'alt_type'}.' '.$parent->[0]->name."\n";
 				}
 			}
+			@possibles = nearest_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
+			while (my $parent = shift @possibles){
+				if ($self->{attributes}->{'_end'} >= $parent->[0]->{attributes}->{'_end'}){
+					warn 'found '.$self->name.' a parent '.$expectation->{'alt_type'}.' '.$parent->[0]->name."\n";
+				}
+			}
+			
 		}
 	}
 
