@@ -103,9 +103,13 @@ sub new {
 			elsif ($fasta){
 				$seq .= $_;
 				$region = $node->by_attributes(['_type','region'],['_seq_name',$fasta]) unless $region;
-				$region = $node->by_attribute('_seq_name',$fasta)->make_region('region') unless $region;
+				unless ($region){
+					$region = $node->make_region($fasta,'region');
+					print $region->as_string();
+				}
 				$region->{attributes}->{_seq} = $seq;
 				$region->{attributes}->{_end} = length $seq;
+				print $region->as_string() if length $seq == 3081;
 				next;
 			}
 			my $parent = $node;
@@ -159,6 +163,7 @@ sub new {
 		$node->name($id);
 		$node->{attributes}->{'ID'} = $id;
 		$ids{$id} = $node;
+		push @{$starts{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
 		return $id;
 	}
 
@@ -493,16 +498,17 @@ sub new {
 	
 sub make_region {
 	my $self = shift;
+	my $name = shift;
 	my $type = shift;
 	my %attributes;
-	$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
+	$attributes{'_seq_name'} = $name;
 	$attributes{'_source'} = 'GFFTree';
 	$attributes{'_type'} = $type;
 	$attributes{'_score'} = '.';
 	$attributes{'_strand'} = '+';
 	$attributes{'_phase'} = '.';
 	$attributes{'_start'} = 1;
-	my $node = $self->root()->new_daughter(\%attributes);
+	my $node = $self->new_daughter(\%attributes);
 	$node->make_id($type);
 	return $node;
 }
