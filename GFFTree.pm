@@ -84,8 +84,29 @@ sub new {
 
 	sub parse_file {
 		my $node = shift;
+		my $fasta;
+		my $region;
+		my $seq = '';
 	    while (<>){
+			chomp $_;
 			if (my $ret = is_comment($_)){
+				if ($ret == -9){
+					$fasta = substr $_,1;
+				}
+				else {
+					$fasta = undef;
+					$seq = '';
+					$region = undef;
+				}
+				next;
+			}
+			elsif ($fasta){
+				$seq .= $_;
+				unless ($region){
+					$region = $node->by_attributes(['_type','region'],['_seq_name',$fasta]) unless $region;
+				}
+				$region->{attributes}->{_seq} = $seq;
+				
 				next;
 			}
 			my $parent = $node;
@@ -501,6 +522,7 @@ sub as_string {
 
 sub is_comment {
 	return -1 if $_ =~ m/^$/;
+	return -9 if $_ =~ m/^>/;
 	return length($1) if $_ =~ m/^(#+)/;
 }
 
@@ -631,6 +653,42 @@ sub by_attribute {
         1}});
     return wantarray? @found : @found ? $found[0] : undef;
 }
+
+=head2 by_attributes
+  Function : returns a scalar or array of features with each of a given set of attributes 
+             or where each of a set of attributes match specific values
+  Example  : @nodes = $gff->by_attribute('anything','anything_else);
+  			 $node = $gff->by_attribute('anything','something','anythingelse','somethingelse');
+=cut
+
+sub by_attributes {
+    my $self = shift;
+    my @matches;
+    while (my $arrayref = shift){
+    	my @nodes;
+    	if ($arrayref->[1]){
+    		@nodes = $self->by_attribute($arrayref->[0],$arrayref->[1]);
+    	}
+    	else {
+    		@nodes = $self->by_attribute($arrayref->[0]);
+    	}
+    	if (@matches){
+    		my @tmp;
+    		for (my $i = 0; $i < @matches; $i++){
+    			for (my $j = 0; $j < @nodes; $j++){
+    				push @tmp,$matches[$i] if $matches[$i] == $nodes[$j];
+    			}
+    		}
+    		@matches = @tmp;
+    	}
+    	else {
+    		@matches = @nodes;
+    	}
+    	return undef unless @matches;
+    }
+    return wantarray? @matches : $matches[0];
+}
+
 
 =head2 by_not_attribute
   Function : returns a scalar or array of features without a given attribute or where an 
