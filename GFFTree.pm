@@ -370,21 +370,44 @@ sub new {
 		# 		- attach the element to its newfound relative
 		my $self = shift;
 		my $expectation = pop;
+		my %attributes;
+		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
+		$attributes{'_source'} = 'GFFTree';
+		$attributes{'_type'} = $expectation->{'alt_type'};
+		$attributes{'_score'} = '.';
+		$attributes{'_strand'} = $self->{attributes}->{_strand};
+		$attributes{'_phase'} = '.';
+		
+		my $relative;	
 		if ($expectation->{'relation'} eq 'hasParent'){
 			print $self->name,"\n";
 			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
-			while (my $parent = shift @possibles){
-				if ($self->{attributes}->{'_end'} == $parent->[0]->{attributes}->{'_end'}){
-					warn 'found '.$self->name.' a parent '.$expectation->{'alt_type'}.' '.$parent->[0]->name."\n";
+			while ($relative = shift @possibles){
+				if ($self->{attributes}->{'_end'} == $relative->[0]->{attributes}->{'_end'}){
+					last;
 				}
 			}
-			@possibles = nearest_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
-			while (my $parent = shift @possibles){
-				if ($self->{attributes}->{'_end'} >= $parent->[0]->{attributes}->{'_end'}){
-					warn 'found '.$self->name.' a parent '.$expectation->{'alt_type'}.' '.$parent->[0]->name."\n";
+			unless ($relative){
+				@possibles = nearest_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
+				while ($relative = shift @possibles){
+					if ($self->{attributes}->{'_end'} >= $relative->[0]->{attributes}->{'_end'}){
+						last;
+					}
 				}
 			}
+			if ($relative){
+				my $parent = $relative->[0];
+				$attributes{'_start'} = $parent->{attributes}->{_start};
+				$attributes{'_end'} = $parent->{attributes}->{_end};
+				$self->{attributes}->{Parent} = $parent->name();
+				$self->unlink_from_mother();
+				$parent->add_daughter($self);
+				print $self->as_string();
+				print $parent->as_string();
+			}
+			
 		}
+		return $relative->[0];
 	}
 
 =head2 validation_make
@@ -404,15 +427,16 @@ sub new {
 		$attributes{'_score'} = '.';
 		$attributes{'_strand'} = $self->{attributes}->{_strand};
 		$attributes{'_phase'} = '.';
-		$attributes{'Parent'} = $self->name;
 		if ($expectation->{'relation'} eq 'hasParent'){
 			print $self->name,"\n";
 			if ($expectation->{'alt_type'} eq 'region'){
 				# find limits of the region
 				my @features = by_attribute($self,'_seq_name',$self->{attributes}->{_seq_name});
-				my @sorted = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @features;
-				$attributes{'_start'} = $sorted[0]->{attributes}->{_start};
-				@sorted = sort { $b->{attributes}->{_end} <=> $a->{attributes}->{_end} } @features;
+				# assuming regions always start at 1, comment out the code below if not true
+				# my @sorted = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @features;
+				$attributes{'_start'} = 1; # $sorted[0]->{attributes}->{_start};
+				my @sorted = sort { $b->{attributes}->{_end} <=> $a->{attributes}->{_end} } @features;
+				# TODO - if a sequence is available, use that to find the length of a region
 				$attributes{'_end'} = $sorted[0]->{attributes}->{_end};
 				
 			}
@@ -421,11 +445,15 @@ sub new {
 				$attributes{'_end'} = $self->{attributes}->{_end};
 			}
 		}
-		my $node = $self->new_daughter(\%attributes);
+		$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
+		my $node = $self->mother->new_daughter(\%attributes);
 		$node->make_id($expectation->{'alt_type'});
-		print $node->name(),"\n";
+		$self->{attributes}->{Parent} = $node->name();
+		$self->unlink_from_mother();
+		$node->add_daughter($self);
 		print $self->as_string();
 		print $node->as_string();
+		return $node;
 	}
 	
 =head2 validation_force
@@ -435,9 +463,12 @@ sub new {
 =cut
 
 	sub validation_force {
-		my $find = validation_find;
-		return $find if $find;
-		return validation_make;
+		my $self = shift;
+		my $expectation = pop;
+		my $relative = $self->validation_find($expectation);
+		return $relative if $relative;
+		$relative = $self->validation_make($expectation);
+		return $relative;
 	}
 
 }
