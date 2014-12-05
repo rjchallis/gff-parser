@@ -438,7 +438,7 @@ sub new {
 				my @sorted = sort { $b->{attributes}->{_end} <=> $a->{attributes}->{_end} } @features;
 				# TODO - if a sequence is available, use that to find the length of a region
 				$attributes{'_end'} = $sorted[0]->{attributes}->{_end};
-				
+				$attributes{'_strand'} = '+';
 			}
 			else {
 				$attributes{'_start'} = $self->{attributes}->{_start};
