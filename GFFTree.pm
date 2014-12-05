@@ -380,7 +380,6 @@ sub new {
 		
 		my $relative;	
 		if ($expectation->{'relation'} eq 'hasParent'){
-			print $self->name,"\n";
 			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
 			while ($relative = shift @possibles){
 				if ($self->{attributes}->{'_end'} == $relative->[0]->{attributes}->{'_end'}){
@@ -402,8 +401,6 @@ sub new {
 				$self->{attributes}->{Parent} = $parent->name();
 				$self->unlink_from_mother();
 				$parent->add_daughter($self);
-				print $self->as_string();
-				print $parent->as_string();
 			}
 			
 		}
@@ -411,7 +408,7 @@ sub new {
 	}
 
 =head2 validation_make
-  Function : make a feature to satisfy an expectation - to be implemented
+  Function : make a feature to satisfy an expectation - limited to parents at the moment
   Example  : validation_make($expectation_hashref);
 =cut
 	
@@ -428,7 +425,6 @@ sub new {
 		$attributes{'_strand'} = $self->{attributes}->{_strand};
 		$attributes{'_phase'} = '.';
 		if ($expectation->{'relation'} eq 'hasParent'){
-			print $self->name,"\n";
 			if ($expectation->{'alt_type'} eq 'region'){
 				# find limits of the region
 				my @features = by_attribute($self,'_seq_name',$self->{attributes}->{_seq_name});
@@ -451,14 +447,11 @@ sub new {
 		$self->{attributes}->{Parent} = $node->name();
 		$self->unlink_from_mother();
 		$node->add_daughter($self);
-		print $self->as_string();
-		print $node->as_string();
 		return $node;
 	}
 	
 =head2 validation_force
-  Function : find a feature to satisfy an expectation if possible, otherwise make one - 
-             requires other functions to work first...
+  Function : find a feature to satisfy an expectation if possible, otherwise make one
   Example  : validation_force($expectation_hashref);
 =cut
 
