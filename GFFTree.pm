@@ -253,8 +253,13 @@ sub new {
 				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
 					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
 					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
-					my $node = $self->new_daughter(\%attributes);
-					$node->make_id($new_type);
+					if (my $feature = $self->find_daughter(\%attributes)){
+						$self->add_daughter($feature);
+					}
+					else {
+						my $node = $self->new_daughter(\%attributes);
+						$node->make_id($new_type);
+					}
 				}
 			}
 		}
@@ -262,19 +267,45 @@ sub new {
 			if (@{$features{$type}} > 1 && $features{$type}[0]->{attributes}->{_start} > $self->{attributes}->{_start}){
 				$attributes{'_start'} = $self->{attributes}->{_start};
 				$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
-				my $node = $self->new_daughter(\%attributes);
-				$node->make_id($new_type);
+				if (my $feature = $self->find_daughter(\%attributes)){
+					$self->add_daughter($feature);
+				}
+				else {
+					my $node = $self->new_daughter(\%attributes);
+					$node->make_id($new_type);
+				}
 			}
 		}
 		if ($location eq 'after' || $location eq 'external'){
 			if (@{$features{$type}} > 1 && $features{$type}[-2]->{attributes}->{_end} < $self->{attributes}->{_end}){
 				$attributes{'_end'} = $self->{attributes}->{_end};
 				$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
-				my $node = $self->new_daughter(\%attributes);
-				$node->make_id($new_type);
+				if (my $feature = $self->find_daughter(\%attributes)){
+					$self->add_daughter($feature);
+				}
+				else {
+					my $node = $self->new_daughter(\%attributes);
+					$node->make_id($new_type);
+				}
 			}
 		}
-		# TODO - check for existing features with validation_find()
+	}
+
+=head2 find_daughter
+  Function : Find out whether an element already has a daughter with a given set of 
+             attributes
+  Example  : $gene->find_daughter(\%attributes);
+=cut
+
+	sub find_daughter {
+		my $self = shift;
+		my $attributes = shift;
+		my @possibles = by_start($attributes->{'_seq_name'},$attributes->{'_type'},$attributes->{'_start'});
+		while (my $feature = shift @possibles){
+			if ($attributes->{'_end'} == $feature->[0]->{attributes}->{'_end'}){
+				return $feature->[0];
+			}
+		}
 	}
 
 }
@@ -391,7 +422,6 @@ sub new {
 	
 	sub validation_find {
 		# TODO 	- handle relationships other than parent
-		# 		- attach the element to its newfound relative
 		my $self = shift;
 		my $expectation = pop;
 		my %attributes;
