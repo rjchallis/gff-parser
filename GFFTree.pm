@@ -381,26 +381,7 @@ sub new {
 			}
 		}
 	}
-	
-=head2 compare
-  Function : compare two values based on a specified operator
-  Example  : compare(10,20,'<'); # returns true
-=cut
-	
-	sub compare {
-		my ($first,$second,$operator) = @_;
-		return $first > $second if $operator eq '>';
-		return $first gt $second if $operator eq 'gt';
-		return $first < $second if $operator eq '<';
-		return $first lt $second if $operator eq 'lt';
-		return $first == $second if $operator eq '==';
-		return $first eq $second if $operator eq 'eq';
-		return $first >= $second if $operator eq '>=';
-		return $first <= $second if $operator eq '<=';
-		return $first != $second if $operator eq '!=';
-		return $first ne $second if $operator eq 'ne';
-	}
-	
+		
 	sub validation_ignore {
 		# nothing happens
 	}
@@ -517,6 +498,26 @@ sub new {
 	}
 
 }
+
+=head2 compare
+  Function : compare two values based on a specified operator
+  Example  : compare(10,20,'<'); # returns true
+=cut
+	
+sub compare {
+	my ($first,$second,$operator) = @_;
+	return $first > $second if $operator eq '>';
+	return $first gt $second if $operator eq 'gt';
+	return $first < $second if $operator eq '<';
+	return $first lt $second if $operator eq 'lt';
+	return $first == $second if $operator eq '==';
+	return $first eq $second if $operator eq 'eq';
+	return $first >= $second if $operator eq '>=';
+	return $first <= $second if $operator eq '<=';
+	return $first != $second if $operator eq '!=';
+	return $first ne $second if $operator eq 'ne';
+}
+
 
 =head2 make_region
   Function : make a feature required during parsing, maybe combine with validation_make?
