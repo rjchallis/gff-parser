@@ -61,6 +61,7 @@ sub new {
 	my %ids;
 	my %starts;
 	my %type_map;
+	my %multiline;
 
 =head2 map_types
   Function : Loads a mapping of types to allow treating of features with different types 
@@ -74,6 +75,36 @@ sub new {
 	    	$type_map{$type} = $mapping->{$type};
 	    }
 	    return scalar keys %type_map;
+	}
+
+
+=head2 multiline
+  Function : Specify feature types that can be split over multiple lines use 'all' to 
+  allow any feature be multiline 
+  Example  : $gff->multiline('cds');
+=cut
+
+	sub multiline {
+		my $types = pop;
+		$types =~ tr/[A-Z]/[a-z]/;
+		my @types = split /\|/,$types;
+	    while (my $type = shift @types){
+	    	$multiline{$type} = 1;
+	    }
+	    return scalar keys %multiline;
+	}
+
+
+=head2 is_multiline
+  Function : Test whether feature type can be split ove multiple lines
+  Example  : $gff->is_multiline('cds');
+=cut
+
+	sub is_multiline {
+		return 1 if $multiline{'all'};
+		my $type = pop;
+		$type =~ tr/[A-Z]/[a-z]/;
+		return 1 if $multiline{$type};
 	}
 
 
@@ -126,6 +157,17 @@ sub new {
 			}
 			else {
 				# check type to decide what to do with features without parents
+			}
+			# test if ID already exists, then treat as clash or multline
+			if ($ids{$attribs->{'ID'}}){
+				if ($multiline{$attributes{'_type'}} &&
+					$ids{$attribs->{'ID'}}->{attributes}->{'_seq_name'} eq $attributes{'_seq_name'} &&
+					$ids{$attribs->{'ID'}}->{attributes}->{'_type'} eq $attributes{'_type'} &&
+					$ids{$attribs->{'ID'}}->{attributes}->{'_strand'} eq $attributes{'_strand'} &&
+					$ids{$attribs->{'ID'}}->{attributes}->{'Parent'} eq $attributes{'Parent'}
+					){
+					
+				}
 			}
 			$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 			$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
