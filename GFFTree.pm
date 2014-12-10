@@ -277,6 +277,7 @@ sub new {
 
 {
 	my %features;
+	my %parents;
 	
 =head2 next_feature
   Function : Sequentially fetch daughter features of a node by type
@@ -285,7 +286,7 @@ sub new {
 
 	sub next_feature {
 		my ($self, $type) = @_;
-		unless ($features{$type} && @{$features{$type}} && $features{$type}[0]){
+		unless ($features{$type} && @{$features{$type}} && $parents{$type} && $parents{$type} eq $self->name){
 			$self->order_features($type);
 		}
 		return shift @{$features{$type}};
@@ -302,6 +303,7 @@ sub new {
 		print "@unsorted\n";
 		@{$features{$type}} = ($strand && $strand eq '-') ? sort { $b->{attributes}->{_start} <=> $a->{attributes}->{_start} } @unsorted : sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
+		$parents{$type} = $self->name;
 		return (scalar(@{$features{$type}})-1);
 	}
 	
