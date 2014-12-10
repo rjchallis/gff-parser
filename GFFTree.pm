@@ -59,7 +59,7 @@ sub new {
 # use nesting to allow subs to share and retain access to private variables
 {
 	my %ids;
-	my %starts;
+	my %by_start;
 	my %type_map;
 	my %multiline;
 
@@ -109,7 +109,8 @@ sub new {
 
 
 =head2 parse_file
-  Function : Reads a gff3 file into a tree structure
+  Function : Reads a gff3 file into a tree structure, handling multiline features and 
+             ordering features on the same region
   Example  : $gff->parse_file();
 =cut
 
@@ -181,13 +182,13 @@ sub new {
 						unshift @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
 						unshift @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
 						unshift @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
-						for (my $s = 0; $s < @{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
-							my $possible = $starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
+						for (my $s = 0; $s < @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
+							my $possible = $by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
 							if ($possible eq $existing){
 								# remove and replace
-								splice(@{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}, $s, 1);
+								splice(@{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}, $s, 1);
 								$existing->{attributes}->{'_start'} = $attributes{'_start'};
-								push @{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$existing;
+								push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$existing;
 								last;
 							}
 						}
@@ -202,7 +203,7 @@ sub new {
 			else {
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 				$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
-				push @{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
+				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
 		}
 		return 1;
@@ -235,7 +236,7 @@ sub new {
 		$node->name($id);
 		$node->{attributes}->{'ID'} = $id;
 		$ids{$id} = $node;
-		push @{$starts{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
+		push @{$by_start{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
 		return $id;
 	}
 
@@ -248,7 +249,7 @@ sub new {
 	sub by_start  {
 		my $start = pop;
 		my $type = pop;
-		my $seq_name = pop;return $starts{$seq_name}{$type}{$start};
+		my $seq_name = pop;return $by_start{$seq_name}{$type}{$start};
 	}
 
 =head2 nearest_start
@@ -261,11 +262,11 @@ sub new {
 		my $type = pop;
 		my $seq_name = pop;
 		my $prev_begin = 0;
-		foreach my $begin (sort { $a <=> $b } keys %{$starts{$seq_name}{$type}}){
+		foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$type}}){
 			last if $begin > $start;
 			$prev_begin = $begin;
 		}	
-		return $starts{$seq_name}{$type}{$prev_begin};
+		return $by_start{$seq_name}{$type}{$prev_begin};
 	}
 
 }
