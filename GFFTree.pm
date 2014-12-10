@@ -331,6 +331,7 @@ sub new {
 				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
 					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
 					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
+					next if $attributes{'_end'} <= $attributes{'_start'};
 					if (my $feature = $self->find_daughter(\%attributes)){
 						$self->add_daughter($feature);
 					}
@@ -341,29 +342,45 @@ sub new {
 				}
 			}
 		}
-		if ($location eq 'before' || $location eq 'external'){
-			if (@{$features{$type}} > 1 && $features{$type}[0]->{attributes}->{_start} > $self->{attributes}->{_start}){
-				$attributes{'_start'} = $self->{attributes}->{_start};
-				$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
-				if (my $feature = $self->find_daughter(\%attributes)){
-					$self->add_daughter($feature);
-				}
-				else {
-					my $node = $self->new_daughter(\%attributes);
-					$node->make_id($new_type);
+		if ($features{$type} > 1){
+			if ($location eq 'before' || $location eq 'external'){
+				if ($features{$type}[0]->{attributes}->{_end} < $self->{attributes}->{_end}){
+					if ($features{$type}[0]->{attributes}->{_strand} eq '-'){
+						$attributes{'_start'} = $features{$type}[0]->{attributes}->{_end} + 1;
+						$attributes{'_end'} = $self->{attributes}->{_end};
+					}
+					else {
+						$attributes{'_start'} = $self->{attributes}->{_start};
+						$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
+					}
+					return if $attributes{'_end'} <= $attributes{'_start'};
+					if (my $feature = $self->find_daughter(\%attributes)){
+						$self->add_daughter($feature);
+					}
+					else {
+						my $node = $self->new_daughter(\%attributes);
+						$node->make_id($new_type);
+					}
 				}
 			}
-		}
-		if ($location eq 'after' || $location eq 'external'){
-			if (@{$features{$type}} > 1 && $features{$type}[-2]->{attributes}->{_end} < $self->{attributes}->{_end}){
-				$attributes{'_end'} = $self->{attributes}->{_end};
-				$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
-				if (my $feature = $self->find_daughter(\%attributes)){
-					$self->add_daughter($feature);
-				}
-				else {
-					my $node = $self->new_daughter(\%attributes);
-					$node->make_id($new_type);
+			if ($location eq 'after' || $location eq 'external'){
+				if ($features{$type}[-2]->{attributes}->{_end} < $self->{attributes}->{_end}){
+					if ($features{$type}[0]->{attributes}->{_strand} eq '-'){
+						$attributes{'_end'} = $features{$type}[-2]->{attributes}->{_start} - 1;
+						$attributes{'_start'} = $self->{attributes}->{_start};
+					}
+					else {
+						$attributes{'_end'} = $self->{attributes}->{_end};
+						$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
+					}
+					return if $attributes{'_end'} <= $attributes{'_start'};
+					if (my $feature = $self->find_daughter(\%attributes)){
+						$self->add_daughter($feature);
+					}
+					else {
+						my $node = $self->new_daughter(\%attributes);
+						$node->make_id($new_type);
+					}
 				}
 			}
 		}
