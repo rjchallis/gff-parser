@@ -285,7 +285,7 @@ sub new {
 
 	sub next_feature {
 		my ($self, $type) = @_;
-		unless ($features{$type} && @{$features{$type}}){
+		unless ($features{$type} && @{$features{$type}} && $features{$type}[0]){
 			$self->order_features($type);
 		}
 		return shift @{$features{$type}};
@@ -299,6 +299,7 @@ sub new {
 	sub order_features {
 		my ($self, $type, $strand) = @_;
 		my @unsorted = by_type($self,$type);
+		print "@unsorted\n";
 		@{$features{$type}} = ($strand && $strand eq '-') ? sort { $b->{attributes}->{_start} <=> $a->{attributes}->{_start} } @unsorted : sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
 		return (scalar(@{$features{$type}})-1);
@@ -327,14 +328,8 @@ sub new {
 		if ($location eq 'internal'){
 			if (@{$features{$type}} > 2){
 				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
-					if ($self->{attributes}->{_strand} eq '+'){
-						$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
-						$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
-					}
-					else {
-						$attributes{'_start'} = $features{$type}[(-$i-1)]->{attributes}->{_end} + 1;
-						$attributes{'_end'} = $features{$type}[-$i]->{attributes}->{_start} - 1;
-					}
+					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
+					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
 					if (my $feature = $self->find_daughter(\%attributes)){
 						$self->add_daughter($feature);
 					}
@@ -345,7 +340,7 @@ sub new {
 				}
 			}
 		}
-		if (($location eq 'before' && $self->{attributes}->{_strand} eq '+') || ($location eq 'after' && $self->{attributes}->{_strand} eq '-') || $location eq 'external'){
+		if ($location eq 'before' || $location eq 'external'){
 			if (@{$features{$type}} > 1 && $features{$type}[0]->{attributes}->{_start} > $self->{attributes}->{_start}){
 				$attributes{'_start'} = $self->{attributes}->{_start};
 				$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
@@ -358,7 +353,7 @@ sub new {
 				}
 			}
 		}
-		if (($location eq 'after' && $self->{attributes}->{_strand} eq '+') || ($location eq 'before' && $self->{attributes}->{_strand} eq '-') || $location eq 'external'){
+		if ($location eq 'after' || $location eq 'external'){
 			if (@{$features{$type}} > 1 && $features{$type}[-2]->{attributes}->{_end} < $self->{attributes}->{_end}){
 				$attributes{'_end'} = $self->{attributes}->{_end};
 				$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
