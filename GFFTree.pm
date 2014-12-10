@@ -623,21 +623,33 @@ sub make_region {
 
 sub as_string {
 	my $self = shift;
-	my $line;
-	$line = $self->{attributes}->{_seq_name}."\t";
-	$line .= $self->{attributes}->{_source}."\t";
-	$line .= $self->{attributes}->{_type}."\t";
-	$line .= $self->{attributes}->{_start}."\t";
-	$line .= $self->{attributes}->{_end}."\t";
-	$line .= $self->{attributes}->{_score}."\t";
-	$line .= $self->{attributes}->{_strand}."\t";
-	$line .= $self->{attributes}->{_phase}."\t";
+	my $line = '';
 	my $col_nine;
 	foreach my $key (sort keys %{$self->{attributes}}){
 		$col_nine .= $key.'='.$self->{attributes}->{$key}.';' unless $key =~ m/^_/;
 	}
 	chop $col_nine;
-	$line .= $col_nine."\n";
+	my @start_array = ($self->{attributes}->{_start});
+	my @end_array = ($self->{attributes}->{_end});
+	my @phase_array = ($self->{attributes}->{_phase});
+	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
+		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+			$start_array[$s] = $self->{attributes}->{_start_array}[$s];
+			$end_array[$s] = $self->{attributes}->{_end_array}[$s];
+			$phase_array[$s] = $self->{attributes}->{_phase_array}[$s];
+		}
+	}
+	for (my $s = 0; $s < @start_array; $s++){
+		$line .= $self->{attributes}->{_seq_name}."\t";
+		$line .= $self->{attributes}->{_source}."\t";
+		$line .= $self->{attributes}->{_type}."\t";
+		$line .= $start_array[$s]."\t";
+		$line .= $end_array[$s]."\t";
+		$line .= $self->{attributes}->{_score}."\t";
+		$line .= $self->{attributes}->{_strand}."\t";
+		$line .= $phase_array[$s]."\t";
+		$line .= $col_nine."\n";
+	}
 	return $line;
 }
 
