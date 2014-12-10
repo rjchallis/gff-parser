@@ -159,19 +159,51 @@ sub new {
 				# check type to decide what to do with features without parents
 			}
 			# test if ID already exists, then treat as clash or multline
-			if ($ids{$attribs->{'ID'}}){
-				if ($multiline{$attributes{'_type'}} &&
-					$ids{$attribs->{'ID'}}->{attributes}->{'_seq_name'} eq $attributes{'_seq_name'} &&
-					$ids{$attribs->{'ID'}}->{attributes}->{'_type'} eq $attributes{'_type'} &&
-					$ids{$attribs->{'ID'}}->{attributes}->{'_strand'} eq $attributes{'_strand'} &&
-					$ids{$attribs->{'ID'}}->{attributes}->{'Parent'} eq $attributes{'Parent'}
+			if (my $existing = $ids{$attribs->{'ID'}}){
+				if (is_multiline($attributes{'_type'}) &&
+					$existing->{attributes}->{'_seq_name'} eq $attributes{'_seq_name'} &&
+					$existing->{attributes}->{'_type'} eq $attributes{'_type'} &&
+					$existing->{attributes}->{'_strand'} eq $attributes{'_strand'} &&
+					$attribs->{'Parent'} &&
+					$existing->{attributes}->{'Parent'} eq $attribs->{'Parent'}
 					){
-					
+					# change _start and _end, storing individual component values in an array
+					push @{$existing->{attributes}->{'_start_array'}},$existing->{attributes}->{'_start'} unless $existing->{attributes}->{'_start_array'};
+					push @{$existing->{attributes}->{'_end_array'}},$existing->{attributes}->{'_end'} unless $existing->{attributes}->{'_end_array'};
+					push @{$existing->{attributes}->{'_phase_array'}},$existing->{attributes}->{'_phase'} unless $existing->{attributes}->{'_phase_array'};
+					if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
+						push @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
+						push @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
+						push @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
+						$existing->{attributes}->{'_end'} = $attributes{'_end'};
+					}
+					else {
+						unshift @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
+						unshift @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
+						unshift @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
+						for (my $s = 0; $s < @{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
+							my $possible = $starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
+							if ($possible eq $existing){
+								# remove and replace
+								splice(@{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}, $s, 1);
+								$existing->{attributes}->{'_start'} = $attributes{'_start'};
+								push @{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$existing;
+								last;
+							}
+						}
+						#
+						
+					}
+				}
+				else {
+					# ID clash
 				}
 			}
-			$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
-			$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
-			push @{$starts{$data->[0]}{$data->[2]}{$data->[3]}},$ids{$attribs->{'ID'}};
+			else {
+				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
+				$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
+				push @{$starts{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
+			}
 		}
 		return 1;
 	}
