@@ -327,8 +327,14 @@ sub new {
 		if ($location eq 'internal'){
 			if (@{$features{$type}} > 2){
 				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
-					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
-					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
+					if ($self->{attributes}->{_strand} eq '+'){
+						$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
+						$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
+					}
+					else {
+						$attributes{'_start'} = $features{$type}[(-$i-1)]->{attributes}->{_end} + 1;
+						$attributes{'_end'} = $features{$type}[-$i]->{attributes}->{_start} - 1;
+					}
 					if (my $feature = $self->find_daughter(\%attributes)){
 						$self->add_daughter($feature);
 					}
