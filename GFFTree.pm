@@ -299,7 +299,7 @@ sub new {
 	sub order_features {
 		my ($self, $type, $strand) = @_;
 		my @unsorted = by_type($self,$type);
-		@{$features{$type}} = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
+		@{$features{$type}} = ($strand && $strand eq '-') ? sort { $b->{attributes}->{_start} <=> $a->{attributes}->{_start} } @unsorted : sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
 		return (scalar(@{$features{$type}})-1);
 	}
