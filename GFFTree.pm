@@ -249,7 +249,8 @@ sub new {
 	sub by_start  {
 		my $start = pop;
 		my $type = pop;
-		my $seq_name = pop;return $by_start{$seq_name}{$type}{$start};
+		my $seq_name = pop;
+		return $by_start{$seq_name}{$type}{$start};
 	}
 
 =head2 nearest_start
@@ -296,7 +297,7 @@ sub new {
 =cut
 
 	sub order_features {
-		my ($self, $type) = @_;
+		my ($self, $type, $strand) = @_;
 		my @unsorted = by_type($self,$type);
 		@{$features{$type}} = sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
@@ -338,7 +339,7 @@ sub new {
 				}
 			}
 		}
-		if ($location eq 'before' || $location eq 'external'){
+		if (($location eq 'before' && $self->{attributes}->{_strand} eq '+') || ($location eq 'after' && $self->{attributes}->{_strand} eq '-') || $location eq 'external'){
 			if (@{$features{$type}} > 1 && $features{$type}[0]->{attributes}->{_start} > $self->{attributes}->{_start}){
 				$attributes{'_start'} = $self->{attributes}->{_start};
 				$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
@@ -351,7 +352,7 @@ sub new {
 				}
 			}
 		}
-		if ($location eq 'after' || $location eq 'external'){
+		if (($location eq 'after' && $self->{attributes}->{_strand} eq '+') || ($location eq 'before' && $self->{attributes}->{_strand} eq '-') || $location eq 'external'){
 			if (@{$features{$type}} > 1 && $features{$type}[-2]->{attributes}->{_end} < $self->{attributes}->{_end}){
 				$attributes{'_end'} = $self->{attributes}->{_end};
 				$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
