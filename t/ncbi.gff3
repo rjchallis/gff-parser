@@ -1,0 +1,504 @@
+##gff-version 3
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+##sequence-region NW_004581268.1 1 3773
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581268.1	RefSeq	region	1	3773	.	+	.	ID=id0;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581269.1 1 7196
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581269.1	RefSeq	region	1	7196	.	+	.	ID=id1;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581270.1 1 3397
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581270.1	RefSeq	region	1	3397	.	+	.	ID=id2;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581271.1 1 3385
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581271.1	RefSeq	region	1	3385	.	+	.	ID=id3;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581272.1 1 5608
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581272.1	RefSeq	region	1	5608	.	+	.	ID=id4;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581272.1	BestRefSeq	gene	4869	5608	.	-	.	ID=gene0;Name=Titin1;Dbxref=GeneID:100141452;description=Titin-like protein;gbkey=Gene;gene=Titin1;gene_synonym=Bmtitin1;partial=true
+NW_004581272.1	BestRefSeq	mRNA	4869	5608	.	-	.	ID=rna0;Name=NM_001114933.1;Parent=gene0;Note=The RefSeq transcript has 3 indels and aligns at 7%25 coverage compared to this genomic sequence;Dbxref=GeneID:100141452,Genbank:NM_001114933.1;exception=annotated by transcript or proteomic data;gbkey=mRNA;gene=Titin1;product=Titin-like protein;transcript_id=NM_001114933.1
+NW_004581272.1	BestRefSeq	exon	4869	5608	.	-	.	ID=id5;Parent=rna0;Note=The RefSeq transcript has 3 indels and aligns at 7%25 coverage compared to this genomic sequence;Dbxref=GeneID:100141452,Genbank:NM_001114933.1;exception=annotated by transcript or proteomic data;gbkey=mRNA;gene=Titin1;product=Titin-like protein;transcript_id=NM_001114933.1
+NW_004581272.1	BestRefSeq	CDS	4869	5608	.	-	2	ID=cds0;Name=NP_001108405.1;Parent=rna0;Note=The RefSeq protein has 3 indels and aligns at 7%25 coverage compared to this genomic sequence;Dbxref=GeneID:100141452,Genbank:NP_001108405.1;exception=annotated by transcript or proteomic data;gbkey=CDS;product=titin1;protein_id=NP_001108405.1
+NW_004581272.1	RefSeq	cDNA_match	4869	5608	730.271	-	.	ID=1;Target=NM_001114933.1 8978 9720 +;matches=740;identity=0.0761317;splices=0;consensus_splices=0;product_coverage=0.0764403;exon_identity=0.995962;pct_identity_gap=99.5962;num_ident=740;num_mismatch=0;pct_identity_ungap=100;gap_count=3;pct_coverage=7.61317;pct_coverage_hiqual=7.61317;weighted_identity=0.991957;rank=1;for_remapping=0;idty=0.995962;Gap=M13 I1 M30 I1 M684 I1 M13
+##sequence-region NW_004581273.1 1 3831
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581273.1	RefSeq	region	1	3831	.	+	.	ID=id6;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581274.1 1 3589
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581274.1	RefSeq	region	1	3589	.	+	.	ID=id7;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581275.1 1 3475
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581275.1	RefSeq	region	1	3475	.	+	.	ID=id8;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581276.1 1 4404
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581276.1	RefSeq	region	1	4404	.	+	.	ID=id9;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581277.1 1 4006
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581277.1	RefSeq	region	1	4006	.	+	.	ID=id10;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581278.1 1 3921
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581278.1	RefSeq	region	1	3921	.	+	.	ID=id11;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581279.1 1 3267
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581279.1	RefSeq	region	1	3267	.	+	.	ID=id12;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581280.1 1 3705
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581280.1	RefSeq	region	1	3705	.	+	.	ID=id13;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581281.1 1 3426
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581281.1	RefSeq	region	1	3426	.	+	.	ID=id14;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581282.1 1 4001
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581282.1	RefSeq	region	1	4001	.	+	.	ID=id15;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581283.1 1 3171
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581283.1	RefSeq	region	1	3171	.	+	.	ID=id16;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581284.1 1 4321
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581284.1	RefSeq	region	1	4321	.	+	.	ID=id17;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581285.1 1 3359
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581285.1	RefSeq	region	1	3359	.	+	.	ID=id18;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581286.1 1 3641
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581286.1	RefSeq	region	1	3641	.	+	.	ID=id19;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581286.1	BestRefSeq	gene	1962	3321	.	+	.	ID=gene1;Name=Or-34;Dbxref=GeneID:100126205;description=olfactory receptor 34;gbkey=Gene;gene=Or-34;gene_synonym=BmOr-34,Or34;partial=true
+NW_004581286.1	BestRefSeq	mRNA	1962	3321	.	+	.	ID=rna1;Name=NM_001110154.1;Parent=gene1;Note=The RefSeq transcript has 54 substitutions and 1 indel and aligns at 69%25 coverage compared to this genomic sequence;Dbxref=GeneID:100126205,Genbank:NM_001110154.1;exception=annotated by transcript or proteomic data;gbkey=mRNA;gene=Or-34;product=olfactory receptor 34;transcript_id=NM_001110154.1
+NW_004581286.1	BestRefSeq	exon	1962	2843	.	+	.	ID=id20;Parent=rna1;Note=The RefSeq transcript has 54 substitutions and 1 indel and aligns at 69%25 coverage compared to this genomic sequence;Dbxref=GeneID:100126205,Genbank:NM_001110154.1;exception=annotated by transcript or proteomic data;gbkey=mRNA;gene=Or-34;product=olfactory receptor 34;transcript_id=NM_001110154.1
+NW_004581286.1	BestRefSeq	exon	3221	3321	.	+	.	ID=id21;Parent=rna1;Note=The RefSeq transcript has 54 substitutions and 1 indel and aligns at 69%25 coverage compared to this genomic sequence;Dbxref=GeneID:100126205,Genbank:NM_001110154.1;exception=annotated by transcript or proteomic data;gbkey=mRNA;gene=Or-34;product=olfactory receptor 34;transcript_id=NM_001110154.1
+NW_004581286.1	BestRefSeq	CDS	1962	2843	.	+	0	ID=cds1;Name=NP_001103624.1;Parent=rna1;Note=The RefSeq protein has 19 substitutions and 1 indel and aligns at 73%25 coverage compared to this genomic sequence;Dbxref=GeneID:100126205,Genbank:NP_001103624.1;exception=annotated by transcript or proteomic data;gbkey=CDS;product=olfactory receptor 34;protein_id=NP_001103624.1
+NW_004581286.1	BestRefSeq	CDS	3221	3321	.	+	0	ID=cds1;Name=NP_001103624.1;Parent=rna1;Note=The RefSeq protein has 19 substitutions and 1 indel and aligns at 73%25 coverage compared to this genomic sequence;Dbxref=GeneID:100126205,Genbank:NP_001103624.1;exception=annotated by transcript or proteomic data;gbkey=CDS;product=olfactory receptor 34;protein_id=NP_001103624.1
+NW_004581286.1	RefSeq	cDNA_match	1962	2843	425	+	.	ID=2;Target=NM_001110154.1 1 788 +;matches=835;identity=0.694098;splices=2;consensus_splices=2;product_coverage=0.694929;exon_identity=0.998804;pct_identity_gap=99.8804;num_ident=835;num_mismatch=1;pct_identity_ungap=99.8804;gap_count=0;pct_coverage=69.4929;pct_coverage_hiqual=69.4929;weighted_identity=0.998815;rank=1;for_remapping=0;idty=0.996774;idty=1;Gap=M336 D94 M452
+NW_004581286.1	RefSeq	cDNA_match	3221	3321	101	+	.	ID=2;Target=NM_001110154.1 789 889 +;matches=835;identity=0.694098;splices=2;consensus_splices=2;product_coverage=0.694929;exon_identity=0.998804;pct_identity_gap=99.8804;num_ident=835;num_mismatch=1;pct_identity_ungap=99.8804;gap_count=0;pct_coverage=69.4929;pct_coverage_hiqual=69.4929;weighted_identity=0.998815;rank=1;for_remapping=0;idty=1
+##sequence-region NW_004581287.1 1 3756
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581287.1	RefSeq	region	1	3756	.	+	.	ID=id22;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581288.1 1 3831
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581288.1	RefSeq	region	1	3831	.	+	.	ID=id23;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581289.1 1 3750
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581289.1	RefSeq	region	1	3750	.	+	.	ID=id24;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581290.1 1 3334
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581290.1	RefSeq	region	1	3334	.	+	.	ID=id25;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581291.1 1 3114
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581291.1	RefSeq	region	1	3114	.	+	.	ID=id26;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581292.1 1 3111
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581292.1	RefSeq	region	1	3111	.	+	.	ID=id27;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581293.1 1 4593
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581293.1	RefSeq	region	1	4593	.	+	.	ID=id28;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581293.1	Gnomon	gene	2227	3188	.	-	.	ID=gene2;Name=LOC101735631;Dbxref=GeneID:101735631;gbkey=Gene;gene=LOC101735631;partial=true
+NW_004581293.1	Gnomon	mRNA	2227	3188	.	-	.	ID=rna2;Name=XM_004921463.1;Parent=gene2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
+NW_004581293.1	Gnomon	exon	3045	3188	.	-	.	ID=id29;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
+NW_004581293.1	Gnomon	exon	2607	2893	.	-	.	ID=id30;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
+NW_004581293.1	Gnomon	exon	2227	2447	.	-	.	ID=id31;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
+NW_004581293.1	Gnomon	CDS	3045	3188	.	-	1	ID=cds2;Name=XP_004921520.1;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XP_004921520.1;gbkey=CDS;product=putative nuclease HARBI1-like;protein_id=XP_004921520.1
+NW_004581293.1	Gnomon	CDS	2607	2893	.	-	1	ID=cds2;Name=XP_004921520.1;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XP_004921520.1;gbkey=CDS;product=putative nuclease HARBI1-like;protein_id=XP_004921520.1
+NW_004581293.1	Gnomon	CDS	2227	2447	.	-	2	ID=cds2;Name=XP_004921520.1;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XP_004921520.1;gbkey=CDS;product=putative nuclease HARBI1-like;protein_id=XP_004921520.1
+##sequence-region NW_004581294.1 1 5597
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581294.1	RefSeq	region	1	5597	.	+	.	ID=id32;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581295.1 1 3267
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581295.1	RefSeq	region	1	3267	.	+	.	ID=id33;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581296.1 1 3908
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581296.1	RefSeq	region	1	3908	.	+	.	ID=id34;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581296.1	Gnomon	gene	2333	3869	.	+	.	ID=gene3;Name=LOC101735773;Dbxref=GeneID:101735773;gbkey=Gene;gene=LOC101735773;partial=true
+NW_004581296.1	Gnomon	mRNA	2333	3869	.	+	.	ID=rna3;Name=XM_004921464.1;Parent=gene3;Dbxref=GeneID:101735773,Genbank:XM_004921464.1;gbkey=mRNA;gene=LOC101735773;product=tenascin-like;transcript_id=XM_004921464.1
+NW_004581296.1	Gnomon	exon	2333	2527	.	+	.	ID=id35;Parent=rna3;Dbxref=GeneID:101735773,Genbank:XM_004921464.1;gbkey=mRNA;gene=LOC101735773;product=tenascin-like;transcript_id=XM_004921464.1
+NW_004581296.1	Gnomon	exon	2817	3002	.	+	.	ID=id36;Parent=rna3;Dbxref=GeneID:101735773,Genbank:XM_004921464.1;gbkey=mRNA;gene=LOC101735773;product=tenascin-like;transcript_id=XM_004921464.1
+NW_004581296.1	Gnomon	exon	3675	3869	.	+	.	ID=id37;Parent=rna3;Dbxref=GeneID:101735773,Genbank:XM_004921464.1;gbkey=mRNA;gene=LOC101735773;product=tenascin-like;transcript_id=XM_004921464.1
+NW_004581296.1	Gnomon	CDS	2333	2527	.	+	2	ID=cds3;Name=XP_004921521.1;Parent=rna3;Dbxref=GeneID:101735773,Genbank:XP_004921521.1;gbkey=CDS;product=tenascin-like;protein_id=XP_004921521.1
+NW_004581296.1	Gnomon	CDS	2817	3002	.	+	2	ID=cds3;Name=XP_004921521.1;Parent=rna3;Dbxref=GeneID:101735773,Genbank:XP_004921521.1;gbkey=CDS;product=tenascin-like;protein_id=XP_004921521.1
+NW_004581296.1	Gnomon	CDS	3675	3869	.	+	2	ID=cds3;Name=XP_004921521.1;Parent=rna3;Dbxref=GeneID:101735773,Genbank:XP_004921521.1;gbkey=CDS;product=tenascin-like;protein_id=XP_004921521.1
+##sequence-region NW_004581297.1 1 4040
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581297.1	RefSeq	region	1	4040	.	+	.	ID=id38;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581298.1 1 3086
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581298.1	RefSeq	region	1	3086	.	+	.	ID=id39;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581299.1 1 3509
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581299.1	RefSeq	region	1	3509	.	+	.	ID=id40;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581300.1 1 3501
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581300.1	RefSeq	region	1	3501	.	+	.	ID=id41;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581300.1	Gnomon	gene	1643	2892	.	+	.	ID=gene4;Name=LOC101735903;Dbxref=GeneID:101735903;gbkey=Gene;gene=LOC101735903;partial=true;pseudo=true
+NW_004581300.1	Gnomon	exon	1643	2078	.	+	.	ID=id42;Parent=gene4;Dbxref=GeneID:101735903;exon_number=1;gbkey=exon
+NW_004581300.1	Gnomon	exon	2651	2800	.	+	.	ID=id43;Parent=gene4;Dbxref=GeneID:101735903;exon_number=2;gbkey=exon
+##sequence-region NW_004581301.1 1 3415
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581301.1	RefSeq	region	1	3415	.	+	.	ID=id44;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581302.1 1 3606
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581302.1	RefSeq	region	1	3606	.	+	.	ID=id45;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581303.1 1 3705
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581303.1	RefSeq	region	1	3705	.	+	.	ID=id46;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581304.1 1 2965
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581304.1	RefSeq	region	1	2965	.	+	.	ID=id47;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581305.1 1 3821
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581305.1	RefSeq	region	1	3821	.	+	.	ID=id48;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581306.1 1 3103
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581306.1	RefSeq	region	1	3103	.	+	.	ID=id49;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581307.1 1 3412
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581307.1	RefSeq	region	1	3412	.	+	.	ID=id50;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581308.1 1 3505
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581308.1	RefSeq	region	1	3505	.	+	.	ID=id51;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581309.1 1 3286
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581309.1	RefSeq	region	1	3286	.	+	.	ID=id52;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581310.1 1 3734
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581310.1	RefSeq	region	1	3734	.	+	.	ID=id53;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581311.1 1 3812
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581311.1	RefSeq	region	1	3812	.	+	.	ID=id54;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581312.1 1 10563
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581312.1	RefSeq	region	1	10563	.	+	.	ID=id55;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581312.1	Gnomon	gene	10284	10363	.	-	.	ID=gene5;Name=LOC101736028;Dbxref=GeneID:101736028;gbkey=Gene;gene=LOC101736028;partial=true
+NW_004581312.1	Gnomon	mRNA	10284	10363	.	-	.	ID=rna4;Name=XM_004921465.1;Parent=gene5;Dbxref=GeneID:101736028,Genbank:XM_004921465.1;gbkey=mRNA;gene=LOC101736028;product=uncharacterized LOC101736028;transcript_id=XM_004921465.1
+NW_004581312.1	Gnomon	exon	10284	10363	.	-	.	ID=id56;Parent=rna4;Dbxref=GeneID:101736028,Genbank:XM_004921465.1;gbkey=mRNA;gene=LOC101736028;product=uncharacterized LOC101736028;transcript_id=XM_004921465.1
+NW_004581312.1	Gnomon	CDS	10284	10363	.	-	0	ID=cds4;Name=XP_004921522.1;Parent=rna4;Dbxref=GeneID:101736028,Genbank:XP_004921522.1;gbkey=CDS;product=uncharacterized protein LOC101736028;protein_id=XP_004921522.1
+##sequence-region NW_004581313.1 1 3342
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581313.1	RefSeq	region	1	3342	.	+	.	ID=id57;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581314.1 1 2981
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581314.1	RefSeq	region	1	2981	.	+	.	ID=id58;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581315.1 1 3962
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581315.1	RefSeq	region	1	3962	.	+	.	ID=id59;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581316.1 1 3031
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581316.1	RefSeq	region	1	3031	.	+	.	ID=id60;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581316.1	tRNAscan-SE	gene	662	734	.	-	.	ID=gene6;Name=TRNAR-CCU;Dbxref=GeneID:101696273;gbkey=Gene;gene=TRNAR-CCU
+NW_004581316.1	tRNAscan-SE	tRNA	662	734	.	-	.	ID=rna5;Note=transfer RNA arginine %28anticodon CCU%29;Dbxref=GeneID:101696273;anticodon=%28pos:complement%28699..701%29%29;gbkey=tRNA;product=tRNA-Arg
+NW_004581316.1	tRNAscan-SE	exon	662	734	.	-	.	ID=id61;Parent=rna5;Note=transfer RNA arginine %28anticodon CCU%29;Dbxref=GeneID:101696273;anticodon=%28pos:complement%28699..701%29%29;gbkey=tRNA;product=tRNA-Arg
+NW_004581316.1	Gnomon	gene	1820	2184	.	-	.	ID=gene7;Name=LOC101736165;Dbxref=GeneID:101736165;gbkey=Gene;gene=LOC101736165
+NW_004581316.1	Gnomon	transcript	1820	2184	.	-	.	ID=rna6;Name=XR_209540.1;Parent=gene7;Dbxref=GeneID:101736165,Genbank:XR_209540.1;gbkey=misc_RNA;product=uncharacterized LOC101736165;transcript_id=XR_209540.1
+NW_004581316.1	Gnomon	exon	2093	2184	.	-	.	ID=id62;Parent=rna6;Dbxref=GeneID:101736165,Genbank:XR_209540.1;gbkey=misc_RNA;product=uncharacterized LOC101736165;transcript_id=XR_209540.1
+NW_004581316.1	Gnomon	exon	1918	2011	.	-	.	ID=id63;Parent=rna6;Dbxref=GeneID:101736165,Genbank:XR_209540.1;gbkey=misc_RNA;product=uncharacterized LOC101736165;transcript_id=XR_209540.1
+NW_004581316.1	Gnomon	exon	1820	1838	.	-	.	ID=id64;Parent=rna6;Dbxref=GeneID:101736165,Genbank:XR_209540.1;gbkey=misc_RNA;product=uncharacterized LOC101736165;transcript_id=XR_209540.1
+##sequence-region NW_004581317.1 1 3606
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581317.1	RefSeq	region	1	3606	.	+	.	ID=id65;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581317.1	Gnomon	gene	157	3516	.	+	.	ID=gene8;Name=LOC101736348;Dbxref=GeneID:101736348;gbkey=Gene;gene=LOC101736348;partial=true
+NW_004581317.1	Gnomon	mRNA	157	3516	.	+	.	ID=rna7;Name=XM_004921466.1;Parent=gene8;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	157	258	.	+	.	ID=id66;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	533	747	.	+	.	ID=id67;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	1778	1880	.	+	.	ID=id68;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	2242	2373	.	+	.	ID=id69;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	2417	2561	.	+	.	ID=id70;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	3049	3286	.	+	.	ID=id71;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	exon	3375	3516	.	+	.	ID=id72;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XM_004921466.1;gbkey=mRNA;gene=LOC101736348;product=uncharacterized LOC101736348;transcript_id=XM_004921466.1
+NW_004581317.1	Gnomon	CDS	160	258	.	+	0	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+NW_004581317.1	Gnomon	CDS	533	747	.	+	0	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+NW_004581317.1	Gnomon	CDS	1778	1880	.	+	1	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+NW_004581317.1	Gnomon	CDS	2242	2373	.	+	0	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+NW_004581317.1	Gnomon	CDS	2417	2561	.	+	0	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+NW_004581317.1	Gnomon	CDS	3049	3286	.	+	2	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+NW_004581317.1	Gnomon	CDS	3375	3516	.	+	1	ID=cds5;Name=XP_004921523.1;Parent=rna7;Dbxref=GeneID:101736348,Genbank:XP_004921523.1;gbkey=CDS;product=uncharacterized protein LOC101736348;protein_id=XP_004921523.1
+##sequence-region NW_004581318.1 1 3073
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581318.1	RefSeq	region	1	3073	.	+	.	ID=id73;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581319.1 1 3597
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581319.1	RefSeq	region	1	3597	.	+	.	ID=id74;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581320.1 1 2976
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581320.1	RefSeq	region	1	2976	.	+	.	ID=id75;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581321.1 1 2976
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581321.1	RefSeq	region	1	2976	.	+	.	ID=id76;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581321.1	Gnomon	gene	99	1281	.	-	.	ID=gene9;Name=LOC101736468;Dbxref=GeneID:101736468;gbkey=Gene;gene=LOC101736468;partial=true
+NW_004581321.1	Gnomon	mRNA	99	1281	.	-	.	ID=rna8;Name=XM_004921467.1;Parent=gene9;Dbxref=GeneID:101736468,Genbank:XM_004921467.1;gbkey=mRNA;gene=LOC101736468;product=uncharacterized LOC101736468;transcript_id=XM_004921467.1
+NW_004581321.1	Gnomon	exon	99	1281	.	-	.	ID=id77;Parent=rna8;Dbxref=GeneID:101736468,Genbank:XM_004921467.1;gbkey=mRNA;gene=LOC101736468;product=uncharacterized LOC101736468;transcript_id=XM_004921467.1
+NW_004581321.1	Gnomon	CDS	99	1172	.	-	0	ID=cds6;Name=XP_004921524.1;Parent=rna8;Dbxref=GeneID:101736468,Genbank:XP_004921524.1;gbkey=CDS;product=uncharacterized protein LOC101736468;protein_id=XP_004921524.1
+##sequence-region NW_004581322.1 1 3742
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581322.1	RefSeq	region	1	3742	.	+	.	ID=id78;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581323.1 1 3895
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581323.1	RefSeq	region	1	3895	.	+	.	ID=id79;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581323.1	Gnomon	gene	2944	3867	.	-	.	ID=gene10;Name=LOC101736602;Dbxref=GeneID:101736602;gbkey=Gene;gene=LOC101736602
+NW_004581323.1	Gnomon	transcript	2944	3867	.	-	.	ID=rna9;Name=XR_209541.1;Parent=gene10;Dbxref=GeneID:101736602,Genbank:XR_209541.1;gbkey=misc_RNA;product=uncharacterized LOC101736602;transcript_id=XR_209541.1
+NW_004581323.1	Gnomon	exon	3708	3867	.	-	.	ID=id80;Parent=rna9;Dbxref=GeneID:101736602,Genbank:XR_209541.1;gbkey=misc_RNA;product=uncharacterized LOC101736602;transcript_id=XR_209541.1
+NW_004581323.1	Gnomon	exon	2944	3055	.	-	.	ID=id81;Parent=rna9;Dbxref=GeneID:101736602,Genbank:XR_209541.1;gbkey=misc_RNA;product=uncharacterized LOC101736602;transcript_id=XR_209541.1
+##sequence-region NW_004581324.1 1 3604
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581324.1	RefSeq	region	1	3604	.	+	.	ID=id82;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581325.1 1 3122
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581325.1	RefSeq	region	1	3122	.	+	.	ID=id83;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581326.1 1 5359
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581326.1	RefSeq	region	1	5359	.	+	.	ID=id84;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581327.1 1 3242
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581327.1	RefSeq	region	1	3242	.	+	.	ID=id85;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581328.1 1 4204
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581328.1	RefSeq	region	1	4204	.	+	.	ID=id86;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581329.1 1 2929
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581329.1	RefSeq	region	1	2929	.	+	.	ID=id87;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581330.1 1 3458
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581330.1	RefSeq	region	1	3458	.	+	.	ID=id88;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581331.1 1 4615
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581331.1	RefSeq	region	1	4615	.	+	.	ID=id89;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581332.1 1 3170
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581332.1	RefSeq	region	1	3170	.	+	.	ID=id90;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581333.1 1 3385
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581333.1	RefSeq	region	1	3385	.	+	.	ID=id91;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581333.1	Gnomon	gene	1713	1903	.	-	.	ID=gene11;Name=LOC101736695;Dbxref=GeneID:101736695;gbkey=Gene;gene=LOC101736695;partial=true
+NW_004581333.1	Gnomon	mRNA	1713	1903	.	-	.	ID=rna10;Name=XM_004921468.1;Parent=gene11;Dbxref=GeneID:101736695,Genbank:XM_004921468.1;gbkey=mRNA;gene=LOC101736695;product=uncharacterized LOC101736695;transcript_id=XM_004921468.1
+NW_004581333.1	Gnomon	exon	1713	1903	.	-	.	ID=id92;Parent=rna10;Dbxref=GeneID:101736695,Genbank:XM_004921468.1;gbkey=mRNA;gene=LOC101736695;product=uncharacterized LOC101736695;transcript_id=XM_004921468.1
+NW_004581333.1	Gnomon	CDS	1713	1903	.	-	2	ID=cds7;Name=XP_004921525.1;Parent=rna10;Dbxref=GeneID:101736695,Genbank:XP_004921525.1;gbkey=CDS;product=uncharacterized protein LOC101736695;protein_id=XP_004921525.1
+##sequence-region NW_004581334.1 1 3179
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581334.1	RefSeq	region	1	3179	.	+	.	ID=id93;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581335.1 1 3038
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581335.1	RefSeq	region	1	3038	.	+	.	ID=id94;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581336.1 1 3452
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581336.1	RefSeq	region	1	3452	.	+	.	ID=id95;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581337.1 1 3824
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581337.1	RefSeq	region	1	3824	.	+	.	ID=id96;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581338.1 1 3335
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581338.1	RefSeq	region	1	3335	.	+	.	ID=id97;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581339.1 1 3408
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581339.1	RefSeq	region	1	3408	.	+	.	ID=id98;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581340.1 1 4668
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581340.1	RefSeq	region	1	4668	.	+	.	ID=id99;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581341.1 1 5162
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581341.1	RefSeq	region	1	5162	.	+	.	ID=id100;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581342.1 1 2852
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581342.1	RefSeq	region	1	2852	.	+	.	ID=id101;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581343.1 1 3013
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581343.1	RefSeq	region	1	3013	.	+	.	ID=id102;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581344.1 1 3270
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581344.1	RefSeq	region	1	3270	.	+	.	ID=id103;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581345.1 1 3113
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581345.1	RefSeq	region	1	3113	.	+	.	ID=id104;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581346.1 1 3494
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581346.1	RefSeq	region	1	3494	.	+	.	ID=id105;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581347.1 1 3172
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581347.1	RefSeq	region	1	3172	.	+	.	ID=id106;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581348.1 1 3611
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581348.1	RefSeq	region	1	3611	.	+	.	ID=id107;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581348.1	Gnomon	gene	114	1135	.	+	.	ID=gene12;Name=LOC101736828;Dbxref=GeneID:101736828;gbkey=Gene;gene=LOC101736828;partial=true
+NW_004581348.1	Gnomon	mRNA	114	1135	.	+	.	ID=rna11;Name=XM_004921469.1;Parent=gene12;Dbxref=GeneID:101736828,Genbank:XM_004921469.1;gbkey=mRNA;gene=LOC101736828;product=FK506-binding protein 59-like;transcript_id=XM_004921469.1
+NW_004581348.1	Gnomon	exon	114	385	.	+	.	ID=id108;Parent=rna11;Dbxref=GeneID:101736828,Genbank:XM_004921469.1;gbkey=mRNA;gene=LOC101736828;product=FK506-binding protein 59-like;transcript_id=XM_004921469.1
+NW_004581348.1	Gnomon	exon	1018	1135	.	+	.	ID=id109;Parent=rna11;Dbxref=GeneID:101736828,Genbank:XM_004921469.1;gbkey=mRNA;gene=LOC101736828;product=FK506-binding protein 59-like;transcript_id=XM_004921469.1
+NW_004581348.1	Gnomon	CDS	114	385	.	+	2	ID=cds8;Name=XP_004921526.1;Parent=rna11;Dbxref=GeneID:101736828,Genbank:XP_004921526.1;gbkey=CDS;product=FK506-binding protein 59-like;protein_id=XP_004921526.1
+NW_004581348.1	Gnomon	CDS	1018	1135	.	+	0	ID=cds8;Name=XP_004921526.1;Parent=rna11;Dbxref=GeneID:101736828,Genbank:XP_004921526.1;gbkey=CDS;product=FK506-binding protein 59-like;protein_id=XP_004921526.1
+##sequence-region NW_004581349.1 1 3178
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581349.1	RefSeq	region	1	3178	.	+	.	ID=id110;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581350.1 1 3494
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581350.1	RefSeq	region	1	3494	.	+	.	ID=id111;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581351.1 1 3040
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581351.1	RefSeq	region	1	3040	.	+	.	ID=id112;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581352.1 1 4418
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581352.1	RefSeq	region	1	4418	.	+	.	ID=id113;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581352.1	Gnomon	gene	1947	2815	.	-	.	ID=gene13;Name=LOC101736957;Dbxref=GeneID:101736957;gbkey=Gene;gene=LOC101736957;partial=true
+NW_004581352.1	Gnomon	mRNA	1947	2815	.	-	.	ID=rna12;Name=XM_004921470.1;Parent=gene13;Dbxref=GeneID:101736957,Genbank:XM_004921470.1;gbkey=mRNA;gene=LOC101736957;product=zinc finger protein 239-like;transcript_id=XM_004921470.1
+NW_004581352.1	Gnomon	exon	2696	2815	.	-	.	ID=id114;Parent=rna12;Dbxref=GeneID:101736957,Genbank:XM_004921470.1;gbkey=mRNA;gene=LOC101736957;product=zinc finger protein 239-like;transcript_id=XM_004921470.1
+NW_004581352.1	Gnomon	exon	1947	2088	.	-	.	ID=id115;Parent=rna12;Dbxref=GeneID:101736957,Genbank:XM_004921470.1;gbkey=mRNA;gene=LOC101736957;product=zinc finger protein 239-like;transcript_id=XM_004921470.1
+NW_004581352.1	Gnomon	CDS	2696	2815	.	-	2	ID=cds9;Name=XP_004921527.1;Parent=rna12;Dbxref=GeneID:101736957,Genbank:XP_004921527.1;gbkey=CDS;product=zinc finger protein 239-like;protein_id=XP_004921527.1
+NW_004581352.1	Gnomon	CDS	1947	2088	.	-	2	ID=cds9;Name=XP_004921527.1;Parent=rna12;Dbxref=GeneID:101736957,Genbank:XP_004921527.1;gbkey=CDS;product=zinc finger protein 239-like;protein_id=XP_004921527.1
+##sequence-region NW_004581353.1 1 3538
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581353.1	RefSeq	region	1	3538	.	+	.	ID=id116;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581354.1 1 2822
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581354.1	RefSeq	region	1	2822	.	+	.	ID=id117;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581355.1 1 4177
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581355.1	RefSeq	region	1	4177	.	+	.	ID=id118;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581355.1	Gnomon	gene	408	3994	.	+	.	ID=gene14;Name=LOC101737090;Dbxref=GeneID:101737090;gbkey=Gene;gene=LOC101737090;partial=true
+NW_004581355.1	Gnomon	mRNA	408	3994	.	+	.	ID=rna13;Name=XM_004921471.1;Parent=gene14;Dbxref=GeneID:101737090,Genbank:XM_004921471.1;gbkey=mRNA;gene=LOC101737090;product=uncharacterized LOC101737090;transcript_id=XM_004921471.1
+NW_004581355.1	Gnomon	exon	408	560	.	+	.	ID=id119;Parent=rna13;Dbxref=GeneID:101737090,Genbank:XM_004921471.1;gbkey=mRNA;gene=LOC101737090;product=uncharacterized LOC101737090;transcript_id=XM_004921471.1
+NW_004581355.1	Gnomon	exon	1327	2342	.	+	.	ID=id120;Parent=rna13;Dbxref=GeneID:101737090,Genbank:XM_004921471.1;gbkey=mRNA;gene=LOC101737090;product=uncharacterized LOC101737090;transcript_id=XM_004921471.1
+NW_004581355.1	Gnomon	exon	3223	3994	.	+	.	ID=id121;Parent=rna13;Dbxref=GeneID:101737090,Genbank:XM_004921471.1;gbkey=mRNA;gene=LOC101737090;product=uncharacterized LOC101737090;transcript_id=XM_004921471.1
+NW_004581355.1	Gnomon	CDS	408	560	.	+	0	ID=cds10;Name=XP_004921528.1;Parent=rna13;Dbxref=GeneID:101737090,Genbank:XP_004921528.1;gbkey=CDS;product=uncharacterized protein LOC101737090;protein_id=XP_004921528.1
+NW_004581355.1	Gnomon	CDS	1327	2342	.	+	0	ID=cds10;Name=XP_004921528.1;Parent=rna13;Dbxref=GeneID:101737090,Genbank:XP_004921528.1;gbkey=CDS;product=uncharacterized protein LOC101737090;protein_id=XP_004921528.1
+NW_004581355.1	Gnomon	CDS	3223	3994	.	+	1	ID=cds10;Name=XP_004921528.1;Parent=rna13;Dbxref=GeneID:101737090,Genbank:XP_004921528.1;gbkey=CDS;product=uncharacterized protein LOC101737090;protein_id=XP_004921528.1
+##sequence-region NW_004581356.1 1 4153
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581356.1	RefSeq	region	1	4153	.	+	.	ID=id122;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581357.1 1 3122
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581357.1	RefSeq	region	1	3122	.	+	.	ID=id123;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581358.1 1 3782
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581358.1	RefSeq	region	1	3782	.	+	.	ID=id124;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581359.1 1 2959
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581359.1	RefSeq	region	1	2959	.	+	.	ID=id125;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581360.1 1 3367
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581360.1	RefSeq	region	1	3367	.	+	.	ID=id126;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581361.1 1 3706
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581361.1	RefSeq	region	1	3706	.	+	.	ID=id127;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581362.1 1 3434
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581362.1	RefSeq	region	1	3434	.	+	.	ID=id128;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581363.1 1 3223
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581363.1	RefSeq	region	1	3223	.	+	.	ID=id129;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581363.1	Gnomon	gene	199	621	.	+	.	ID=gene15;Name=LOC101737234;Dbxref=GeneID:101737234;gbkey=Gene;gene=LOC101737234
+NW_004581363.1	Gnomon	mRNA	199	621	.	+	.	ID=rna14;Name=XM_004921472.1;Parent=gene15;Dbxref=GeneID:101737234,Genbank:XM_004921472.1;gbkey=mRNA;gene=LOC101737234;product=alcohol dehydrogenase 2-like;transcript_id=XM_004921472.1
+NW_004581363.1	Gnomon	exon	199	621	.	+	.	ID=id130;Parent=rna14;Dbxref=GeneID:101737234,Genbank:XM_004921472.1;gbkey=mRNA;gene=LOC101737234;product=alcohol dehydrogenase 2-like;transcript_id=XM_004921472.1
+NW_004581363.1	Gnomon	CDS	199	621	.	+	0	ID=cds11;Name=XP_004921529.1;Parent=rna14;Dbxref=GeneID:101737234,Genbank:XP_004921529.1;gbkey=CDS;product=alcohol dehydrogenase 2-like;protein_id=XP_004921529.1
+##sequence-region NW_004581364.1 1 2762
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581364.1	RefSeq	region	1	2762	.	+	.	ID=id131;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581365.1 1 3450
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581365.1	RefSeq	region	1	3450	.	+	.	ID=id132;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581366.1 1 4763
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581366.1	RefSeq	region	1	4763	.	+	.	ID=id133;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581367.1 1 3843
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581367.1	RefSeq	region	1	3843	.	+	.	ID=id134;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581368.1 1 3979
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581368.1	RefSeq	region	1	3979	.	+	.	ID=id135;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581369.1 1 3455
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581369.1	RefSeq	region	1	3455	.	+	.	ID=id136;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581370.1 1 3003
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581370.1	RefSeq	region	1	3003	.	+	.	ID=id137;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581371.1 1 3623
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581371.1	RefSeq	region	1	3623	.	+	.	ID=id138;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581372.1 1 3103
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581372.1	RefSeq	region	1	3103	.	+	.	ID=id139;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581373.1 1 3239
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581373.1	RefSeq	region	1	3239	.	+	.	ID=id140;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581374.1 1 3713
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581374.1	RefSeq	region	1	3713	.	+	.	ID=id141;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581375.1 1 2964
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581375.1	RefSeq	region	1	2964	.	+	.	ID=id142;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581376.1 1 3477
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581376.1	RefSeq	region	1	3477	.	+	.	ID=id143;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581377.1 1 3344
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581377.1	RefSeq	region	1	3344	.	+	.	ID=id144;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581378.1 1 3180
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581378.1	RefSeq	region	1	3180	.	+	.	ID=id145;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581379.1 1 2724
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581379.1	RefSeq	region	1	2724	.	+	.	ID=id146;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581380.1 1 2952
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581380.1	RefSeq	region	1	2952	.	+	.	ID=id147;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581381.1 1 3564
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581381.1	RefSeq	region	1	3564	.	+	.	ID=id148;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581382.1 1 3954
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581382.1	RefSeq	region	1	3954	.	+	.	ID=id149;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581383.1 1 3971
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581383.1	RefSeq	region	1	3971	.	+	.	ID=id150;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581384.1 1 3234
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581384.1	RefSeq	region	1	3234	.	+	.	ID=id151;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581385.1 1 3331
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581385.1	RefSeq	region	1	3331	.	+	.	ID=id152;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581386.1 1 3161
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581386.1	RefSeq	region	1	3161	.	+	.	ID=id153;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581387.1 1 2738
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581387.1	RefSeq	region	1	2738	.	+	.	ID=id154;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581388.1 1 2960
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581388.1	RefSeq	region	1	2960	.	+	.	ID=id155;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581389.1 1 3282
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581389.1	RefSeq	region	1	3282	.	+	.	ID=id156;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581390.1 1 3309
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581390.1	RefSeq	region	1	3309	.	+	.	ID=id157;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581391.1 1 3074
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581391.1	RefSeq	region	1	3074	.	+	.	ID=id158;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581392.1 1 3800
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581392.1	RefSeq	region	1	3800	.	+	.	ID=id159;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581393.1 1 3340
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581393.1	RefSeq	region	1	3340	.	+	.	ID=id160;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581394.1 1 4002
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581394.1	RefSeq	region	1	4002	.	+	.	ID=id161;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581395.1 1 2997
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581395.1	RefSeq	region	1	2997	.	+	.	ID=id162;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581396.1 1 3251
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581396.1	RefSeq	region	1	3251	.	+	.	ID=id163;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581397.1 1 3269
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+NW_004581397.1	RefSeq	region	1	3269	.	+	.	ID=id164;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+##sequence-region NW_004581398.1 1 3081
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
+#NW_004581398.1	RefSeq	region	1	3081	.	+	.	ID=id165;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
+NW_004581398.1	Gnomon	gene	499	2961	.	-	.	ID=gene16;Name=LOC101737381;Dbxref=GeneID:101737381;gbkey=Gene;gene=LOC101737381;partial=true
+NW_004581398.1	Gnomon	mRNA	499	2961	.	-	.	ID=rna15;Name=XM_004921473.1;Parent=gene16;Dbxref=GeneID:101737381,Genbank:XM_004921473.1;gbkey=mRNA;gene=LOC101737381;product=fatty acid synthase-like;transcript_id=XM_004921473.1
+NW_004581398.1	Gnomon	exon	2907	2961	.	-	.	ID=id166;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XM_004921473.1;gbkey=mRNA;gene=LOC101737381;product=fatty acid synthase-like;transcript_id=XM_004921473.1
+NW_004581398.1	Gnomon	exon	2519	2639	.	-	.	ID=id167;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XM_004921473.1;gbkey=mRNA;gene=LOC101737381;product=fatty acid synthase-like;transcript_id=XM_004921473.1
+NW_004581398.1	Gnomon	exon	1468	1618	.	-	.	ID=id168;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XM_004921473.1;gbkey=mRNA;gene=LOC101737381;product=fatty acid synthase-like;transcript_id=XM_004921473.1
+NW_004581398.1	Gnomon	exon	786	805	.	-	.	ID=id169;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XM_004921473.1;gbkey=mRNA;gene=LOC101737381;product=fatty acid synthase-like;transcript_id=XM_004921473.1
+NW_004581398.1	Gnomon	exon	499	677	.	-	.	ID=id170;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XM_004921473.1;gbkey=mRNA;gene=LOC101737381;product=fatty acid synthase-like;transcript_id=XM_004921473.1
+NW_004581398.1	Gnomon	CDS	2907	2961	.	-	0	ID=cds12;Name=XP_004921530.1;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XP_004921530.1;gbkey=CDS;product=fatty acid synthase-like;protein_id=XP_004921530.1
+NW_004581398.1	Gnomon	CDS	2519	2639	.	-	2	ID=cds12;Name=XP_004921530.1;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XP_004921530.1;gbkey=CDS;product=fatty acid synthase-like;protein_id=XP_004921530.1
+NW_004581398.1	Gnomon	CDS	1468	1618	.	-	1	ID=cds12;Name=XP_004921530.1;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XP_004921530.1;gbkey=CDS;product=fatty acid synthase-like;protein_id=XP_004921530.1
+NW_004581398.1	Gnomon	CDS	786	805	.	-	0	ID=cds12;Name=XP_004921530.1;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XP_004921530.1;gbkey=CDS;product=fatty acid synthase-like;protein_id=XP_004921530.1
+NW_004581398.1	Gnomon	CDS	499	677	.	-	1	ID=cds12;Name=XP_004921530.1;Parent=rna15;Dbxref=GeneID:101737381,Genbank:XP_004921530.1;gbkey=CDS;product=fatty acid synthase-like;protein_id=XP_004921530.1
