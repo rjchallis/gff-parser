@@ -300,7 +300,6 @@ sub new {
 	sub order_features {
 		my ($self, $type, $strand) = @_;
 		my @unsorted = by_type($self,$type);
-		print "@unsorted\n";
 		@{$features{$type}} = ($strand && $strand eq '-') ? sort { $b->{attributes}->{_start} <=> $a->{attributes}->{_start} } @unsorted : sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
 		$parents{$type} = $self->name;
