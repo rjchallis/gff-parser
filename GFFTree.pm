@@ -159,8 +159,35 @@ sub new {
 			else {
 				# check type to decide what to do with features without parents
 			}
-			# test if ID already exists, then treat as clash or multline
-			if (my $existing = $ids{$attribs->{'ID'}}){
+			
+			$attribs->{'ID'} =~ s/'//g;
+				
+			if (ref $attribs->{'Parent'} eq 'ARRAY'){ # multiparent feature
+				my $base_id = $attribs->{'ID'};
+				delete $attribs->{'ID'};
+				my @parents = @{$attribs->{'Parent'}};
+				#delete $attribs->{'Parent'};
+				for (my $p = 0; $p < @parents; $p++){
+					#$attributes{'Parent'} = $parents[$p];
+					my $id;
+					if ($p == 0){
+						$attributes{'_duplicate'} = 0;
+						$id = $base_id;
+					}
+					else {
+						$attributes{'_duplicate'} = 1;
+						$id = $base_id.'._'.$p;
+					}
+					print $base_id,"\n";
+					my $id = $p == 0 ? $base_id : $base_id.'._'.$p;
+					print $id,"\n";
+					$attributes{'ID'} = $id;
+					$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
+					$ids{$id}->name($id);
+					push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$id;
+				}
+			}
+			elsif (my $existing = $ids{$attribs->{'ID'}}){ # test if ID already exists, then treat as clash or multline
 				if (is_multiline($attributes{'_type'}) &&
 					$existing->{attributes}->{'_seq_name'} eq $attributes{'_seq_name'} &&
 					$existing->{attributes}->{'_type'} eq $attributes{'_type'} &&
@@ -640,14 +667,24 @@ sub make_region {
 =head2 as_string
   Function : returns a gff representation of a single feature
   Example  : $gene->as_string();
+  Example  : $gene->as_string(1); # skip features labeled as duplicates
 =cut
 
 sub as_string {
 	my $self = shift;
+	my $skip_dups = shift;
 	my $line = '';
 	my $col_nine;
 	foreach my $key (sort keys %{$self->{attributes}}){
-		$col_nine .= $key.'='.$self->{attributes}->{$key}.';' unless $key =~ m/^_/;
+		next if $key =~ m/^_/;
+		if (ref $self->{attributes}->{$key} eq 'ARRAY') {
+  			$col_nine .= $key.'='.join(',',@{$self->{attributes}->{$key}}).';'; 
+		}
+		else {
+			my $value = $self->{attributes}->{$key};
+			$value =~ s/\._\d+$//;
+			$col_nine .= $key.'='.$value.';'; 
+		}
 	}
 	chop $col_nine;
 	my @start_array = ($self->{attributes}->{_start});
@@ -661,6 +698,7 @@ sub as_string {
 		}
 	}
 	for (my $s = 0; $s < @start_array; $s++){
+		next if $skip_dups && $self->{attributes}->{_duplicate};
 		$line .= $self->{attributes}->{_seq_name}."\t";
 		$line .= $self->{attributes}->{_source}."\t";
 		$line .= $self->{attributes}->{_type}."\t";
@@ -673,6 +711,7 @@ sub as_string {
 	}
 	return $line;
 }
+
 
 
 =head2 is_comment
@@ -692,17 +731,36 @@ sub is_comment {
   Example  : parse_gff_line($line);
 =cut
 
+=head2 parse_gff_line
+  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded 
+             characters and building arrays of comma-separated values
+  Example  : parse_gff_line($line);
+=cut
+
 sub parse_gff_line {
 	my @data = split /\t/,$_;
 	chomp $data[8];
 	my %attribs = split /[=;]/,$data[8];
 	pop @data;
 	foreach my $key (keys %attribs){
-		$attribs{$key} =~ s/\%/\\x/g;
-		$attribs{$key} = decode 'ascii-escape', $attribs{$key};
+		# treat differently if commas are present
+		my @parts = split /,/,$attribs{$key};
+		if ($parts[1]){
+			$attribs{$key} = [];
+			while (my $part = shift @parts){
+				$part =~ s/\%/\\x/g;
+				$part = decode 'ascii-escape', $part;
+				push @{$attribs{$key}},$part;
+			}
+		}
+		else {
+			$attribs{$key} =~ s/\%/\\x/g;
+			$attribs{$key} = decode 'ascii-escape', $attribs{$key};
+		}
 	}
 	return \@data,\%attribs;
 }
+
 
 =head2 _seq_name
   Function : get/set the sequence name for a feature
@@ -806,19 +864,36 @@ sub by_attribute {
     my @found =();
     my $retvalue = wantarray ? 1 : 0;
     $self->walk_down({callback=>sub{
-        if ($_[0]->attributes->{$attrib} && (!defined $value || $_[0]->attributes->{$attrib} =~ m/^$value$/i)) {
-            push @found, $_[0];
-            return $retvalue;
+        if ($_[0]->attributes->{$attrib}){
+        	my $match  = 0;
+        	if (!defined $value) {
+        		$match++;
+            }
+            elsif (ref $_[0]->attributes->{$attrib} eq 'ARRAY'){
+            	for (my $i = 0; $i < @{$_[0]->attributes->{$attrib}}; $i++){
+            		if ($_[0]->attributes->{$attrib}->[$i] =~ m/^$value$/i){
+        				$match++;
+            		}
+            	}
+            }
+            elsif ($_[0]->attributes->{$attrib} =~ m/^$value$/i){
+            	$match++;
+            }
+            if ($match > 0){
+            	push @found, $_[0];
+            	return $retvalue;
+            }
         }
         1}});
     return wantarray? @found : @found ? $found[0] : undef;
 }
 
+
 =head2 by_attributes
   Function : returns a scalar or array of features with each of a given set of attributes 
              or where each of a set of attributes match specific values
-  Example  : @nodes = $gff->by_attribute('anything','anything_else);
-  			 $node = $gff->by_attribute('anything','something','anythingelse','somethingelse');
+  Example  : @nodes = $gff->by_attributes(['anything','anything_else]);
+  			 $node = $gff->by_attribute(['anything','something'],['anythingelse','somethingelse']);
 =cut
 
 sub by_attributes {
@@ -862,18 +937,28 @@ sub by_not_attribute {
     my @found =();
     my $retvalue = wantarray ? 1 : 0;
     $self->walk_down({callback=>sub{
-    	if (defined $value){
-	        if ($_[0]->attributes->{$attrib} && $_[0]->attributes->{$attrib} !~ m/^$value$/i) {
-    	        push @found, $_[0];
-       	     	return $retvalue;
+    	my $match  = 0;
+    	if ($_[0]->attributes->{$attrib}){
+    		if (defined $value){
+    			if (ref $_[0]->attributes->{$attrib} eq 'ARRAY'){
+    				for (my $i = 0; $i < @{$_[0]->attributes->{$attrib}}; $i++){
+            			if ($_[0]->attributes->{$attrib}->[$i] =~ m/^$value$/i){
+        					$match++;
+            			}
+            		}
+    			}
+    			elsif ($_[0]->attributes->{$attrib} =~ m/^$value$/i) {
+    				$match++;
+       	 		}
+       	 	}
+       	 	else {
+       	 		$match++;
        	 	}
        	}
-       	else {
-       		if (!$_[0]->attributes->{$attrib}) {
-            	push @found, $_[0];
-            	return $retvalue;
-        	}
-        }
+        if ($match == 0){
+            push @found, $_[0];
+       	    return $retvalue;
+        }   
         1}});
     return wantarray? @found : @found ? $found[0] : undef;
 }
