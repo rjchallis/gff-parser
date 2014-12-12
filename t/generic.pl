@@ -23,10 +23,10 @@ ok($gff->parse_file(),'parse_file()');
 
 ok(my $gene = $gff->by_type('gene'),"by_type('gene') as scalar");
 
-is(my @genes = $gff->by_type('gene'),17,"by_type('gene') as array");
+is(my @genes = $gff->by_type('gene'),18,"by_type('gene') as array");
 
 # Test 10
-is($gff->order_features('gene'),17,"order_features('gene')");
+is($gff->order_features('gene'),18,"order_features('gene')");
 
 is($gene->next_feature('exon')->name,'id5',"next_feature('exon')");
 
@@ -48,6 +48,22 @@ $gene = $gff->by_id('gene9');
 $gene->fill_gaps('cds','5utr','before');
 # Test 18
 is($gene->next_feature('5utr')->_length(),109,"fill_gaps('exon','5utr','external')");
+
+my $mrna = $gff->by_id('mRNA00002');
+
+print $mrna->as_string();
+my @exons = $mrna->order_features('exon');
+print scalar @exons,"\n";
+while (my $exon = $mrna->next_feature('exon')){
+	print $exon->as_string();
+
+}
+print "\n";
+print $mrna->mother->as_string();
+while (my $exon = $mrna->mother->next_feature('exon')){
+	print $exon->as_string(1);
+
+}
 
 __END__
 	# next_feature is broken for exon so really need to include seq_name in any ordering - maybe make seq_regions become parents
