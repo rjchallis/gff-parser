@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 19;
+use Test::More tests => 21;
 use GFFTree;
 
 
@@ -10,7 +10,7 @@ my $gff = GFFTree->new({});
 ok( defined $gff, 'new()' );
 
 is($gff->add_expectation('exon','<[_start,_end]','PARENT','warn'), 1, 'add_expectation()');
-
+$gff->add_expectation('mrna','hasParent','gene','force');
 is($gff->multiline('cds'),1,'multiline()');
 
 is($gff->is_multiline('cds'),1,'is_multiline()');
@@ -22,11 +22,16 @@ is($gff->map_types({'initial' => 'exon', 'internal' => 'exon', 'terminal' => 'ex
 $gff->lacks_id('make');
 is($gff->lacks_id(),'make','lacks_id()');
 
+$gff->undefined_parent('make');
+is($gff->undefined_parent(),'make','undefined_parent()');
+
 ok($gff->parse_file(),'parse_file()');
+
+# Test 10
+ok($gff->validate_all('exon'),"validate_all('exon')");
 
 ok(my $gene = $gff->by_type('gene'),"by_type('gene') as scalar");
 
-# Test 10
 is(my @genes = $gff->by_type('gene'),18,"by_type('gene') as array");
 
 is($gff->order_features('gene'),18,"order_features('gene')");
@@ -45,6 +50,7 @@ is(length $gene->as_string(), 136 ,"\$gene->as_string()");
 my $cds = $gff->by_id('cds2');
 is($cds->{attributes}->{'_start_array'}[0],2227,"\$cds->{attributes}->{'_start_array'}");
 
+# Test 20
 is(length $cds->as_string(), 609 ,"\$cds->as_string()");
 
 $gene = $gff->by_id('gene9');
@@ -52,12 +58,11 @@ $gene->fill_gaps('cds','5utr','before');
 
 is($gene->next_feature('5utr')->_length(),109,"fill_gaps('exon','5utr','external')");
 
-# Test 20
 
 
 
 my $mrna = $gff->by_id('mRNA00002');
-
+$mrna->validate();
 print $mrna->as_string();
 my @exons = $mrna->order_features('exon');
 print scalar @exons,"\n";
