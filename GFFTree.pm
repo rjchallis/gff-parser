@@ -276,7 +276,7 @@ sub new {
 					die "ERROR: no parent feature exists for ",$orphans[$o]->{attributes}->{_type}," ",$orphans[$o]->name()," with the ID $orphans[$o]->{attributes}->{'Parent'}, cannot continue\n";
 				}
 				else {
-					# wait for validation to take care of things
+					# wait for validation to take care of things - needs improving
 				}
 			}
 		}
@@ -581,6 +581,30 @@ sub undefined_parent  {
 			}
 		}
 	}
+
+=head2 validate_all
+  Function : run validate on all features, optionally of type specified in parentheses
+  Example  : $gff->validate_all();
+  Example  : $gff->validate_all('gene');
+  Example  : $gff->validate_all('exon');
+=cut
+	
+	sub validate_all {
+		my $self = shift;
+		my $type = shift;
+		my @features;
+		if ($type){
+			@features = $self->by_type($type);
+		}
+		else {
+			@features = $self->descendants();
+		}
+		while (my $feature = shift @features){
+			$feature->validate();
+		}
+		1;
+	}
+
 		
 	sub validation_ignore {
 		# nothing happens
