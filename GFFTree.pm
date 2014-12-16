@@ -160,6 +160,26 @@ sub new {
 				# check type to decide what to do with features without parents
 			}
 			
+			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
+				my $behaviour = $node->lacks_id();
+				next if $behaviour eq 'ignore';
+				if ($behaviour eq 'warn'){
+					warn "WARNING: the feature on line $. does not have an ID, skipping feature\n";
+					next;
+				}
+				elsif ($behaviour eq 'die'){
+					die "ERROR: the feature on line $. does not have an ID, cannot continue\n";
+				}
+				else {
+					my $prefix = $attributes{'_type'}.'___';
+					my $suffix = 0;
+					while (by_id($prefix.$suffix)){
+						$suffix++;
+					}
+					$attribs->{'ID'} = $prefix.$suffix;
+				}
+			}
+			
 			$attribs->{'ID'} =~ s/'//g;
 				
 			if (ref $attribs->{'Parent'} eq 'ARRAY'){ # multiparent feature
@@ -178,7 +198,7 @@ sub new {
 						$attributes{'_duplicate'} = 1;
 						$id = $base_id.'._'.$p;
 					}
-					my $id = $p == 0 ? $base_id : $base_id.'._'.$p;
+					$id = $p == 0 ? $base_id : $base_id.'._'.$p;
 					$attributes{'ID'} = $id;
 					$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
 					$ids{$id}->name($id);
