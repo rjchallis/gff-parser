@@ -119,6 +119,7 @@ sub new {
 		my $fasta;
 		my $region;
 		my $seq = '';
+		my $ctr = 0;
 	    while (<>){
 			chomp $_;
 			if (my $ret = is_comment($_)){
@@ -155,11 +156,11 @@ sub new {
 			$attributes{'_phase'} = $data->[7];
 			if ($attribs->{'Parent'} && $ids{$attribs->{'Parent'}}){
 				$parent = $ids{$attribs->{'Parent'}};
+				$ctr++;
 			}
 			else {
-				# make sure there is an orphanage and add as child of orphanage
-				$ids{'orphanage'} = $node->new_daughter({}) unless $ids{'orphanage'};
-				$parent = $ids{'orphanage'};
+				# use the root node as an orphanage
+				$parent = $node;
 			}
 			
 			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
@@ -253,6 +254,33 @@ sub new {
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
 		}
+		
+		# loop through orphanage to see if anything can be done with unparented features
+		my $orphans = 0;
+		my @orphans = $node->daughters();
+		while (scalar @orphans != $orphans){
+			$orphans = scalar @orphans;
+			for (my $o = 0; $o < @orphans; $o++){
+				if ($orphans[$o]->{attributes}->{'Parent'} && $ids{$orphans[$o]->{attributes}->{'Parent'}}){
+					# move the orphan node to a new parent
+					$orphans[$o]->unlink_from_mother();
+					$ids{$orphans[$o]->{attributes}->{'Parent'}}->add_daughter($orphans[$o]);
+				}
+			}
+			@orphans = $node->daughters();
+		}
+		for (my $o = 0; $o < @orphans; $o++){
+			if ($orphans[$o]->{attributes}->{'Parent'}){
+				my $behaviour = $node->undefined_parent();
+				if ($behaviour eq 'die'){
+					die "ERROR: no parent feature exists for ",$orphans[$o]->{attributes}->{_type}," ",$orphans[$o]->name()," with the ID $orphans[$o]->{attributes}->{'Parent'}, cannot continue\n";
+				}
+				else {
+					# wait for validation to take care of things
+				}
+			}
+		}
+			
 		return 1;
 	}
 
