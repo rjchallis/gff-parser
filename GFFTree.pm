@@ -119,6 +119,7 @@ sub new {
 		my $fasta;
 		my $region;
 		my $seq = '';
+		my $ctr = 0;
 	    while (<>){
 			chomp $_;
 			if (my $ret = is_comment($_)){
@@ -153,11 +154,33 @@ sub new {
 			$attributes{'_score'} = $data->[5];
 			$attributes{'_strand'} = $data->[6];
 			$attributes{'_phase'} = $data->[7];
-			if ($attribs->{'Parent'}){
+			if ($attribs->{'Parent'} && $ids{$attribs->{'Parent'}}){
 				$parent = $ids{$attribs->{'Parent'}};
+				$ctr++;
 			}
 			else {
-				# check type to decide what to do with features without parents
+				# use the root node as an orphanage
+				$parent = $node;
+			}
+			
+			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
+				my $behaviour = $node->lacks_id();
+				next if $behaviour eq 'ignore';
+				if ($behaviour eq 'warn'){
+					warn "WARNING: the feature on line $. does not have an ID, skipping feature\n";
+					next;
+				}
+				elsif ($behaviour eq 'die'){
+					die "ERROR: the feature on line $. does not have an ID, cannot continue\n";
+				}
+				else {
+					my $prefix = $attributes{'_type'}.'___';
+					my $suffix = 0;
+					while (by_id($prefix.$suffix)){
+						$suffix++;
+					}
+					$attribs->{'ID'} = $prefix.$suffix;
+				}
 			}
 			
 			$attribs->{'ID'} =~ s/'//g;
@@ -178,9 +201,7 @@ sub new {
 						$attributes{'_duplicate'} = 1;
 						$id = $base_id.'._'.$p;
 					}
-					print $base_id,"\n";
-					my $id = $p == 0 ? $base_id : $base_id.'._'.$p;
-					print $id,"\n";
+					$id = $p == 0 ? $base_id : $base_id.'._'.$p;
 					$attributes{'ID'} = $id;
 					$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
 					$ids{$id}->name($id);
@@ -233,6 +254,33 @@ sub new {
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
 		}
+		
+		# loop through orphanage to see if anything can be done with unparented features
+		my $orphans = 0;
+		my @orphans = $node->daughters();
+		while (scalar @orphans != $orphans){
+			$orphans = scalar @orphans;
+			for (my $o = 0; $o < @orphans; $o++){
+				if ($orphans[$o]->{attributes}->{'Parent'} && $ids{$orphans[$o]->{attributes}->{'Parent'}}){
+					# move the orphan node to a new parent
+					$orphans[$o]->unlink_from_mother();
+					$ids{$orphans[$o]->{attributes}->{'Parent'}}->add_daughter($orphans[$o]);
+				}
+			}
+			@orphans = $node->daughters();
+		}
+		for (my $o = 0; $o < @orphans; $o++){
+			if ($orphans[$o]->{attributes}->{'Parent'}){
+				my $behaviour = $node->undefined_parent();
+				if ($behaviour eq 'die'){
+					die "ERROR: no parent feature exists for ",$orphans[$o]->{attributes}->{_type}," ",$orphans[$o]->name()," with the ID $orphans[$o]->{attributes}->{'Parent'}, cannot continue\n";
+				}
+				else {
+					# wait for validation to take care of things - needs improving
+				}
+			}
+		}
+			
 		return 1;
 	}
 
@@ -297,6 +345,36 @@ sub new {
 		return $by_start{$seq_name}{$type}{$prev_begin};
 	}
 
+}
+
+=head2 lacks_id
+  Function : get/set behaviour for features that lack an id
+  Example  : $gff->lacks_id('ignore');
+  Example  : $gff->lacks_id('warn');
+  Example  : $gff->lacks_id('die');
+  Example  : $gff->lacks_id('make'); # default
+  Example  : $behaviour = $gff->lacks_id();
+=cut
+
+sub lacks_id  {
+	my $node = shift;
+	my $behaviour = shift;
+	$node->{_attributes}->{'_lacks_id'} = $behaviour if $behaviour;
+	return $node->{_attributes}->{'_lacks_id'} ? $node->{_attributes}->{'_lacks_id'} : 'make';
+}
+
+=head2 undefined_parent
+  Function : get/set behaviour for features that should have a parent but don't
+  Example  : $gff->undefined_parent('die');
+  Example  : $gff->undefined_parent('make'); # default
+  Example  : $behaviour = $gff->undefined_parent();
+=cut
+
+sub undefined_parent  {
+	my $node = shift;
+	my $behaviour = shift;
+	$node->{_attributes}->{'_undefined_parent'} = $behaviour if $behaviour;
+	return $node->{_attributes}->{'_undefined_parent'} ? $node->{_attributes}->{'_undefined_parent'} : 'make';
 }
 
 
@@ -503,6 +581,30 @@ sub new {
 			}
 		}
 	}
+
+=head2 validate_all
+  Function : run validate on all features, optionally of type specified in parentheses
+  Example  : $gff->validate_all();
+  Example  : $gff->validate_all('gene');
+  Example  : $gff->validate_all('exon');
+=cut
+	
+	sub validate_all {
+		my $self = shift;
+		my $type = shift;
+		my @features;
+		if ($type){
+			@features = $self->by_type($type);
+		}
+		else {
+			@features = $self->descendants();
+		}
+		while (my $feature = shift @features){
+			$feature->validate();
+		}
+		1;
+	}
+
 		
 	sub validation_ignore {
 		# nothing happens
