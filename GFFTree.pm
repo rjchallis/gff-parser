@@ -153,11 +153,13 @@ sub new {
 			$attributes{'_score'} = $data->[5];
 			$attributes{'_strand'} = $data->[6];
 			$attributes{'_phase'} = $data->[7];
-			if ($attribs->{'Parent'}){
+			if ($attribs->{'Parent'} && $ids{$attribs->{'Parent'}}){
 				$parent = $ids{$attribs->{'Parent'}};
 			}
 			else {
-				# check type to decide what to do with features without parents
+				# make sure there is an orphanage and add as child of orphanage
+				$ids{'orphanage'} = $node->new_daughter({}) unless $ids{'orphanage'};
+				$parent = $ids{'orphanage'};
 			}
 			
 			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
@@ -336,8 +338,7 @@ sub lacks_id  {
 =head2 undefined_parent
   Function : get/set behaviour for features that should have a parent but don't
   Example  : $gff->undefined_parent('die');
-  Example  : $gff->undefined_parent('make');
-  Example  : $gff->undefined_parent('loop'); # default
+  Example  : $gff->undefined_parent('make'); # default
   Example  : $behaviour = $gff->undefined_parent();
 =cut
 
