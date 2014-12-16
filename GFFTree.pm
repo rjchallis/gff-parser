@@ -333,6 +333,21 @@ sub lacks_id  {
 	return $node->{_attributes}->{'_lacks_id'} ? $node->{_attributes}->{'_lacks_id'} : 'make';
 }
 
+=head2 undefined_parent
+  Function : get/set behaviour for features that should have a parent but don't
+  Example  : $gff->undefined_parent('die');
+  Example  : $gff->undefined_parent('make');
+  Example  : $gff->undefined_parent('loop'); # default
+  Example  : $behaviour = $gff->undefined_parent();
+=cut
+
+sub undefined_parent  {
+	my $node = shift;
+	my $behaviour = shift;
+	$node->{_attributes}->{'_undefined_parent'} = $behaviour if $behaviour;
+	return $node->{_attributes}->{'_undefined_parent'} ? $node->{_attributes}->{'_undefined_parent'} : 'make';
+}
+
 
 # use nesting to allow sub to retain access to private variables
 
