@@ -178,9 +178,7 @@ sub new {
 						$attributes{'_duplicate'} = 1;
 						$id = $base_id.'._'.$p;
 					}
-					print $base_id,"\n";
 					my $id = $p == 0 ? $base_id : $base_id.'._'.$p;
-					print $id,"\n";
 					$attributes{'ID'} = $id;
 					$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
 					$ids{$id}->name($id);
@@ -297,6 +295,22 @@ sub new {
 		return $by_start{$seq_name}{$type}{$prev_begin};
 	}
 
+}
+
+=head2 lacks_id
+  Function : get/set behaviour for features that lack an id
+  Example  : $gff->lacks_id('ignore');
+  Example  : $gff->lacks_id('warn');
+  Example  : $gff->lacks_id('die');
+  Example  : $gff->lacks_id('make'); # default
+  Example  : $behaviour = $gff->lacks_id();
+=cut
+
+sub lacks_id  {
+	my $node = shift;
+	my $behaviour = shift;
+	$node->{_attributes}->{'_lacks_id'} = $behaviour if $behaviour;
+	return $node->{_attributes}->{'_lacks_id'} ? $node->{_attributes}->{'_lacks_id'} : 'make';
 }
 
 

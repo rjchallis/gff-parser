@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 18;
+use Test::More tests => 19;
 use GFFTree;
 
 
@@ -64,6 +64,8 @@ while (my $exon = $mrna->mother->next_feature('exon')){
 	print $exon->as_string(1);
 
 }
+
+is($gff->lacks_id(),'make','lacks_id()');
 
 __END__
 	# next_feature is broken for exon so really need to include seq_name in any ordering - maybe make seq_regions become parents
