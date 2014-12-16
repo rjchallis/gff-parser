@@ -37,6 +37,7 @@ sub new {
     my $gff = GFFTree->new($options);
     $gff->add_expectation('gene','hasParent','region','force');
 	$gff->add_expectation('mrna','hasParent','gene','find');
+	$gff->add_expectation('trna','hasParent','gene','find');
 	$gff->add_expectation('exon','hasParent','mrna','find');
 	$gff->add_expectation('cds','hasParent','mrna','find');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<[_start,_end]','SELF','warn');
