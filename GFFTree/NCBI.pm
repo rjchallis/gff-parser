@@ -43,6 +43,7 @@ sub new {
 	$gff->multiline('CDS');
 	$gff->multiline('tRNA');
 	$gff->multiline('cDNA_match');
+	$gff->multiline('match');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<=[_start,_end]','SELF','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','>=[_start]','PARENT','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','<=[_end]','PARENT','warn');
