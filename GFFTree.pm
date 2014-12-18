@@ -246,6 +246,7 @@ sub new {
 				}
 				else {
 					# ID clash
+					die "ERROR: feature ID $attribs->{'ID'} has already been used (line $.)\n";
 				}
 			}
 			else {
