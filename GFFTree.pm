@@ -213,8 +213,9 @@ sub new {
 					$existing->{attributes}->{'_seq_name'} eq $attributes{'_seq_name'} &&
 					$existing->{attributes}->{'_type'} eq $attributes{'_type'} &&
 					$existing->{attributes}->{'_strand'} eq $attributes{'_strand'} &&
-					$attribs->{'Parent'} &&
-					$existing->{attributes}->{'Parent'} eq $attribs->{'Parent'}
+					(!$attribs->{'Parent'} ||
+					($attribs->{'Parent'} &&
+					$existing->{attributes}->{'Parent'} eq $attribs->{'Parent'}))
 					){
 					# change _start and _end, storing individual component values in an array
 					push @{$existing->{attributes}->{'_start_array'}},$existing->{attributes}->{'_start'} unless $existing->{attributes}->{'_start_array'};
@@ -246,14 +247,14 @@ sub new {
 				}
 				else {
 					# ID clash
-					print $parent->name(),"\n";
-					print $attributes{'_type'},"\n";
-					print is_multiline($attributes{'_type'}),"\n";
+					#print $parent->name(),"\n";
+					#print $attributes{'_type'},"\n";
+					#print is_multiline($attributes{'_type'}),"\n";
 					die "ERROR: feature ID $attribs->{'ID'} has already been used (line $.)\n";
 				}
 			}
 			else {
-				print "$attribs->{'ID'}\n";
+				#print "$attribs->{'ID'}\n";
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 				$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
