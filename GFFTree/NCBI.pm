@@ -42,6 +42,7 @@ sub new {
 	$gff->add_expectation('cds','hasParent','mrna','find');
 	$gff->multiline('cds');
 	$gff->multiline('trna');
+	$gff->multiline('cdnamatch');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<=[_start,_end]','SELF','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','>=[_start]','PARENT','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','<=[_end]','PARENT','warn');
