@@ -40,7 +40,8 @@ sub new {
 	$gff->add_expectation('trna','hasParent','gene','find');
 	$gff->add_expectation('exon','hasParent','mrna','find');
 	$gff->add_expectation('cds','hasParent','mrna','find');
-	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<[_start,_end]','SELF','warn');
+	$gff->is_multiline('trna');
+	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<=[_start,_end]','SELF','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','>=[_start]','PARENT','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','<=[_end]','PARENT','warn');
 
