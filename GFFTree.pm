@@ -246,6 +246,7 @@ sub new {
 				}
 				else {
 					# ID clash
+					print $parent->as_string();
 					die "ERROR: feature ID $attribs->{'ID'} has already been used (line $.)\n";
 				}
 			}
