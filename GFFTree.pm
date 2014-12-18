@@ -250,6 +250,7 @@ sub new {
 				}
 			}
 			else {
+				print "$attribs->{'ID'}\n";
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 				$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
