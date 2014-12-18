@@ -907,27 +907,6 @@ sub _phase {
     return $node->attributes->{_phase};
 }
 
-=head2 _end_phase
-  Function : get/set the end_phase name for a feature - ensembl specific at the moment
-  Example  : $phase = $node->_end_phase();
-             $node->_end_phase(2);
-=cut
-
-sub _end_phase {
-    my $node = shift;
-    my $val = shift;
-    $node->attributes->{_end_phase} = $val if defined $val && length $val > 0;
-    unless (defined $node->attributes->{_end_phase}){
-    	if ($node->_phase eq '-1'){
-    		$node->attributes->{_end_phase} = '-1';
-    	}
-    	else {
-	    	$node->attributes->{_end_phase} = $node->_phase + $node->_length % 3;
-    		$node->attributes->{_end_phase} -= 3 if $node->attributes->{_end_phase} > 2;
-    	}
-    }
-    return $node->attributes->{_end_phase};
-}
 
 =head2 by_name
   Function : walk through the tree to find a feature by name, works in scalar or array 
