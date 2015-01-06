@@ -250,7 +250,7 @@ sub new {
 					#print $parent->name(),"\n";
 					#print $attributes{'_type'},"\n";
 					#print is_multiline($attributes{'_type'}),"\n";
-					die "ERROR: feature ID $attribs->{'ID'} has already been used (line $.)\n";
+					die "ERROR: feature ID $attribs->{'ID'} has already been used (line $.)\nERROR: should you call multiline('".$attributes{'_type'}."') before parse_file()?\n";
 				}
 			}
 			else {
