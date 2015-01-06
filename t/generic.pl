@@ -14,6 +14,7 @@ $gff->add_expectation('mrna','hasParent','gene','force');
 is($gff->multiline('cds'),1,'multiline()');
 
 is($gff->is_multiline('cds'),1,'is_multiline()');
+$gff->multiline('cdna_match');
 
 is($gff->name('GFF'), 'GFF', 'name()');
 

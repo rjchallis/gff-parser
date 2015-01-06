@@ -893,7 +893,7 @@ sub _length {
     my $length = $node->attributes->{_end} - $node->attributes->{_start} + 1;
     return $length;
 }
-
+	
 =head2 _phase
   Function : get/set the phase name for a feature
   Example  : $phase = $node->_phase();
@@ -901,12 +901,32 @@ sub _length {
 =cut
 
 sub _phase {
-    my $node = shift;
-    my $val = shift;
-    $node->attributes->{_phase} = $val if defined $val && length $val > 0;
-    return $node->attributes->{_phase};
+	my $node = shift;
+	my $val = shift;
+	$node->attributes->{_phase} = $val if defined $val && length $val > 0;
+	return $node->attributes->{_phase};
 }
 
+# use nesting to allow sub to retain access to private variable
+{
+	my %pf_conv = ( 0 => 0, 1 => 2, 2 => 1 );
+
+=head2 _frame
+  Function : get/set the frame name for a feature
+  Example  : $frame = $node->_frame();
+             $node->_frame(1);
+=cut
+
+	sub _frame {
+		my $node = shift;
+		my $val = shift;
+		if (defined $val && length $val > 0){
+			$node->attributes->{_phase} = $pf_conv{$val} ;
+		}
+		return $pf_conv{$node->attributes->{_phase}};
+	}
+	
+}
 
 =head2 by_name
   Function : walk through the tree to find a feature by name, works in scalar or array 
