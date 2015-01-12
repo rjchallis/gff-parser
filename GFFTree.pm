@@ -221,16 +221,20 @@ sub new {
 					push @{$existing->{attributes}->{'_start_array'}},$existing->{attributes}->{'_start'} unless $existing->{attributes}->{'_start_array'};
 					push @{$existing->{attributes}->{'_end_array'}},$existing->{attributes}->{'_end'} unless $existing->{attributes}->{'_end_array'};
 					push @{$existing->{attributes}->{'_phase_array'}},$existing->{attributes}->{'_phase'} unless $existing->{attributes}->{'_phase_array'};
+					push @{$existing->{attributes}->{'_score_array'}},$existing->{attributes}->{'_score'} unless $existing->{attributes}->{'_score_array'};
+					
 					if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
 						push @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
 						push @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
 						push @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
+						push @{$existing->{attributes}->{'_score_array'}},$attributes{'_score'};
 						$existing->{attributes}->{'_end'} = $attributes{'_end'};
 					}
 					else {
 						unshift @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
 						unshift @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
 						unshift @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
+						unshift @{$existing->{attributes}->{'_score_array'}},$attributes{'_score'};
 						for (my $s = 0; $s < @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
 							my $possible = $by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
 							if ($possible eq $existing){
@@ -244,6 +248,29 @@ sub new {
 						#
 						
 					}
+					# add features to arrays if the current value doesn't match the single stored value or if there is already an array
+					foreach my $attr (keys %$attribs){
+						if ($existing->{attributes}->{$attr.'_array'}){
+							if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
+								push @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
+							}
+							else {
+								unshift @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
+							}
+						}
+						elsif ($existing->{attributes}->{$attr} && $attribs->{$attr} ne $existing->{attributes}->{$attr}){
+							for (my $i = 0; $i < @{$existing->{attributes}->{'_start_array'}}; $i++){
+								push @{$existing->{attributes}->{$attr.'_array'}},$existing->{attributes}->{$attr};
+							}
+							if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
+								push @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
+							}
+							else {
+								unshift @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
+							}
+						}
+					}
+					
 				}
 				else {
 					# ID clash
@@ -782,27 +809,52 @@ sub as_string {
 	my $self = shift;
 	my $skip_dups = shift;
 	my $line = '';
-	my $col_nine;
-	foreach my $key (sort keys %{$self->{attributes}}){
-		next if $key =~ m/^_/;
-		if (ref $self->{attributes}->{$key} eq 'ARRAY') {
-  			$col_nine .= $key.'='.join(',',@{$self->{attributes}->{$key}}).';'; 
-		}
-		else {
-			my $value = $self->{attributes}->{$key};
-			$value =~ s/\._\d+$//;
-			$col_nine .= $key.'='.$value.';'; 
+	my @col_nine;
+	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
+		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+			foreach my $key (sort keys %{$self->{attributes}}){
+				next if $key =~ m/^_/;
+				next if $key =~ m/_array$/;
+				my $attr = $self->{attributes}->{$key};
+				if ($self->{attributes}->{$key.'_array'}){
+					$attr = $self->{attributes}->{$key.'_array'}[$s];
+				}
+				if (ref $attr eq 'ARRAY') {
+  					$col_nine[$s] .= $key.'='.join(',',@{$attr}).';'; 
+				}
+				else {
+					my $value = $attr;
+					$value =~ s/\._\d+$//;
+					$col_nine[$s] .= $key.'='.$value.';'; 
+				}
+			}
+			chop $col_nine[$s];
 		}
 	}
-	chop $col_nine;
+	else {
+		foreach my $key (sort keys %{$self->{attributes}}){
+			next if $key =~ m/^_/;
+			if (ref $self->{attributes}->{$key} eq 'ARRAY') {
+	  			$col_nine[0] .= $key.'='.join(',',@{$self->{attributes}->{$key}}).';'; 
+			}
+			else {
+				my $value = $self->{attributes}->{$key};
+				$value =~ s/\._\d+$//;
+				$col_nine[0] .= $key.'='.$value.';'; 
+			}
+		}
+		chop $col_nine[0];
+	}
 	my @start_array = ($self->{attributes}->{_start});
 	my @end_array = ($self->{attributes}->{_end});
 	my @phase_array = ($self->{attributes}->{_phase});
+	my @score_array = ($self->{attributes}->{_score});
 	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
 		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
 			$start_array[$s] = $self->{attributes}->{_start_array}[$s];
 			$end_array[$s] = $self->{attributes}->{_end_array}[$s];
 			$phase_array[$s] = $self->{attributes}->{_phase_array}[$s];
+			$score_array[$s] = $self->{attributes}->{_score_array}[$s];
 		}
 	}
 	for (my $s = 0; $s < @start_array; $s++){
@@ -812,10 +864,10 @@ sub as_string {
 		$line .= $self->{attributes}->{_type}."\t";
 		$line .= $start_array[$s]."\t";
 		$line .= $end_array[$s]."\t";
-		$line .= $self->{attributes}->{_score}."\t";
+		$line .= $score_array[$s]."\t";
 		$line .= $self->{attributes}->{_strand}."\t";
 		$line .= $phase_array[$s]."\t";
-		$line .= $col_nine."\n";
+		$line .= $col_nine[$s]."\n";
 	}
 	return $line;
 }
