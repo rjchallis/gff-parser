@@ -26,6 +26,9 @@ is($gff->lacks_id(),'make','lacks_id()');
 $gff->undefined_parent('make');
 is($gff->undefined_parent(),'make','undefined_parent()');
 
+$gff->separator('\t');
+
+
 ok($gff->parse_file(),'parse_file()');
 
 # Test 10
@@ -78,6 +81,9 @@ while (my $exon = $mrna->mother->next_feature('exon')){
 
 }
 
+my @match = ($gff->by_type('match'),$gff->by_type('cdna_match'));
+print $match[0]->{attributes}->{Target},"\n";
+print $match[1]->{attributes}->{Target},"\n";
 
 __END__
 	# next_feature is broken for exon so really need to include seq_name in any ordering - maybe make seq_regions become parents

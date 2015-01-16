@@ -62,6 +62,22 @@ sub new {
 	my %by_start;
 	my %type_map;
 	my %multiline;
+	my $separator = '\t';
+
+
+=head2 separator
+  Function : Sets/returns the separator to be used when parsing a gff file
+  Example  : $gff->separator('\t');
+=cut
+
+	sub separator {
+		my $sep = pop;
+		unless (ref $sep eq 'HASH'){
+	    	$separator = $sep;
+	    }
+	    return $separator;
+	}
+
 
 =head2 map_types
   Function : Loads a mapping of types to allow treating of features with different types 
@@ -144,7 +160,7 @@ sub new {
 				next;
 			}
 			my $parent = $node;
-			my ($data,$attribs) = parse_gff_line($_);
+			my ($data,$attribs) = parse_gff_line($_,$separator);
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
 			$attributes{'_source'} = $data->[1];
@@ -270,7 +286,6 @@ sub new {
 							}
 						}
 					}
-					
 				}
 				else {
 					# ID clash
@@ -898,7 +913,7 @@ sub is_comment {
 =cut
 
 sub parse_gff_line {
-	my @data = split /\t/,$_;
+	my @data = split /$_[1]/,$_[0];
 	chomp $data[8];
 	my %attribs = split /[=;]/,$data[8];
 	pop @data;
