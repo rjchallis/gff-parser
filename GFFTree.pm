@@ -63,6 +63,7 @@ sub new {
 	my %type_map;
 	my %multiline;
 	my $separator = '\t';
+	my $has_comments = undef;
 
 
 =head2 separator
@@ -76,6 +77,22 @@ sub new {
 	    	$separator = $sep;
 	    }
 	    return $separator;
+	}
+
+
+=head2 has_comments
+  Function : treat anything after (optionally between) specified characters as a comment
+			 each call will overwrite any previous values
+  Example  : $gff->has_comments('#'); # anything after the hash character will be ignored
+  			 $gff->has_comments(['[',']']); # anything in square brackets will be ignored
+  			 $gff->has_comments('#', ['[',']']); # multiple comments can be specified at once
+  			 $gff->has_comments(); # the file has no comments
+=cut
+
+	sub has_comments {
+		my $node = shift;
+		$has_comments = \@_;
+	    return scalar @_;
 	}
 
 
