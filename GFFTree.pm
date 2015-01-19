@@ -416,6 +416,12 @@ sub new {
 		my $start = pop;
 		my $type = pop;
 		my $seq_name = pop;
+		if ($type =~ m/\|/){
+			my @types = split /\|/,$type;
+			while (shift @types){
+				return $by_start{$seq_name}{$_}{$start} if $by_start{$seq_name}{$_};
+			}
+		} 
 		return $by_start{$seq_name}{$type}{$start};
 	}
 
