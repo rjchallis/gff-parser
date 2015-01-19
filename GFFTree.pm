@@ -425,6 +425,7 @@ sub new {
 		return $by_start{$seq_name}{$type}{$start};
 	}
 
+
 =head2 nearest_start
   Function : Fetch an arrayref of nodes as close as possible to the start position
   Example  : $node_arrayref = nearest_start('scaf1','exon',432);
@@ -435,10 +436,22 @@ sub new {
 		my $type = pop;
 		my $seq_name = pop;
 		my $prev_begin = 0;
-		foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$type}}){
-			last if $begin > $start;
-			$prev_begin = $begin;
-		}	
+		my @types;
+		if ($type =~ m/\|/){
+			@types = split /\|/,$type;
+		}
+		else {
+			push @types, $type;
+		}
+		while (shift @types){
+			next unless $by_start{$seq_name}{$_};
+			foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$_}}){
+				next if $begin < $prev_begin;
+				last if $begin > $start;
+				$prev_begin = $begin;
+				$type = $_;
+			}	
+		} 
 		return $by_start{$seq_name}{$type}{$prev_begin};
 	}
 
