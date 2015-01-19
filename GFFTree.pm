@@ -408,8 +408,11 @@ sub new {
 
 	
 =head2 by_start
-  Function : Fetch an arrayref of nodes start position
+  Function : Fetch an arrayref of nodes start position. If multiple types are given, and 
+             more than one type has a match, the first specified type will be returned 
+             preferentially.
   Example  : $node_arrayref = by_start('scaf1','exon',432);
+             $node_arrayref = by_start('scaf1','mrna|exon',432); 
 =cut
 
 	sub by_start  {
@@ -427,7 +430,9 @@ sub new {
 
 
 =head2 nearest_start
-  Function : Fetch an arrayref of nodes as close as possible to the start position
+  Function : Fetch an arrayref of nodes as close as possible to the start position. If 
+             multiple types are given, and more than one type has a closest match, the 
+             first specified type will be returned preferentially.
   Example  : $node_arrayref = nearest_start('scaf1','exon',432);
 =cut
 
