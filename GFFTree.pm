@@ -96,6 +96,29 @@ sub new {
 	}
 
 
+=head2 delete_comments
+  Function : delete comments from lines (as specified by has_comments)
+  Example  : delete_comments($line); 
+=cut
+
+	sub delete_comments {
+		my $line = pop;
+		my @array = @$has_comments;
+		while (my $char = shift @array){
+			if (ref $char && ref $char eq 'ARRAY'){
+				my $pattern = $char->[0].'.+?'.$char->[1];
+				$line =~ s/$pattern//g;
+			}
+			else {
+				my $pattern = $char.'.+';
+				$line =~ s/$pattern//;
+			}
+		}
+		return $line;
+	}
+
+
+
 =head2 map_types
   Function : Loads a mapping of types to allow treating of features with different types 
              as one
@@ -177,6 +200,9 @@ sub new {
 				next;
 			}
 			my $parent = $node;
+			if ($has_comments){ 
+				$_ = delete_comments($_);
+			}
 			my ($data,$attribs) = parse_gff_line($_,$separator);
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
