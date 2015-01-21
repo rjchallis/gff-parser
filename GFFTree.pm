@@ -421,8 +421,8 @@ sub new {
 		my $seq_name = pop;
 		if ($type =~ m/\|/){
 			my @types = split /\|/,$type;
-			while (shift @types){
-				return $by_start{$seq_name}{$_}{$start} if $by_start{$seq_name}{$_};
+			while ($type = shift @types){
+				return $by_start{$seq_name}{$type}{$start} if $by_start{$seq_name}{$type};
 			}
 		} 
 		return $by_start{$seq_name}{$type}{$start};
@@ -448,13 +448,13 @@ sub new {
 		else {
 			push @types, $type;
 		}
-		while (shift @types){
-			next unless $by_start{$seq_name}{$_};
-			foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$_}}){
+		while (my $mtype = shift @types){
+			next unless $by_start{$seq_name}{$mtype};
+			foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$mtype}}){
 				next if $begin < $prev_begin;
 				last if $begin > $start;
 				$prev_begin = $begin;
-				$type = $_;
+				$type = $mtype;
 			}	
 		} 
 		return $by_start{$seq_name}{$type}{$prev_begin};
