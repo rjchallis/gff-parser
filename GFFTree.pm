@@ -309,7 +309,7 @@ sub new {
 					}
 					# TODO make something more generic for cases like only one Target line having a Gap specified
 					if ($attribs->{Target} && !$attribs->{Gap}){
-						$attribs->{Gap} = ($attributes{'_end'} - $attributes{'_start'} + 1).'M';
+						$attribs->{Gap} = 'M'.($attributes{'_end'} - $attributes{'_start'} + 1);
 					}
 					# add features to arrays if the current value doesn't match the single stored value or if there is already an array
 					foreach my $attr (keys %$attribs){
