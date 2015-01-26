@@ -299,7 +299,7 @@ sub new {
 					}
 					else {
 						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
-							unshift @{$existing->{attributes}->{$attr.'_array'}},$attributes{$attr} ? $attributes{$attr} : $attribs->{$attr} ? $attribs->{$attr} : undef;
+							unshift @{$existing->{attributes}->{$attr.'_array'}},defined $attributes{$attr} ? $attributes{$attr} : defined $attribs->{$attr} ? $attribs->{$attr} : undef;
 						}
 						for (my $s = 0; $s < @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
 							my $possible = $by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
