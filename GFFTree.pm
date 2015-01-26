@@ -285,7 +285,7 @@ sub new {
 					# change _start and _end, storing individual component values in an array
 					if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
 						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
-							push @{$existing->{attributes}->{$attr.'_array'}},defined $attributes{$attr} ? $attributes{$attr} : $attribs->{$attr} ? defined $attribs->{$attr} : undef;
+							push @{$existing->{attributes}->{$attr.'_array'}},defined $attributes{$attr} ? $attributes{$attr} : defined $attribs->{$attr} ? $attribs->{$attr} : undef;
 						}
 						foreach my $attr (keys %$attribs){
 							unless ($existing->{attributes}->{'_attributes'}->{$attr}){
