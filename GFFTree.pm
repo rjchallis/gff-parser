@@ -276,24 +276,30 @@ sub new {
 					($attribs->{'Parent'} &&
 					$existing->{attributes}->{'Parent'} eq $attribs->{'Parent'}))
 					){
+					unless ($existing->{attributes}->{'_attributes'}){
+						foreach my $attr (keys %{$existing->{attributes}}){
+							$existing->{attributes}->{'_attributes'}->{$attr} = 1;
+							push @{$existing->{attributes}->{$attr.'_array'}},$existing->{attributes}->{$attr};
+						}
+					}
 					# change _start and _end, storing individual component values in an array
-					push @{$existing->{attributes}->{'_start_array'}},$existing->{attributes}->{'_start'} unless $existing->{attributes}->{'_start_array'};
-					push @{$existing->{attributes}->{'_end_array'}},$existing->{attributes}->{'_end'} unless $existing->{attributes}->{'_end_array'};
-					push @{$existing->{attributes}->{'_phase_array'}},$existing->{attributes}->{'_phase'} unless $existing->{attributes}->{'_phase_array'};
-					push @{$existing->{attributes}->{'_score_array'}},$existing->{attributes}->{'_score'} unless $existing->{attributes}->{'_score_array'};
-					
 					if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
-						push @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
-						push @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
-						push @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
-						push @{$existing->{attributes}->{'_score_array'}},$attributes{'_score'};
-						$existing->{attributes}->{'_end'} = $attributes{'_end'};
+						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
+							push @{$existing->{attributes}->{$attr.'_array'}},$attributes{$attr} ? $attributes{$attr} : $attribs->{$attr} ? $attribs->{$attr} : undef;
+						}
+						foreach my $attr (keys %$attribs){
+							unless ($existing->{attributes}->{'_attributes'}->{$attr}){
+								for (my $i = 0; $i - 1 < @{$existing->{attributes}->{'_start_array'}}; $i++){
+									push @{$existing->{attributes}->{$attr.'_array'}},undef;
+								}
+								push @{$existing->{attributes}->{$attr.'_array'}},$attribs -> {$attr};
+							}
+						}
 					}
 					else {
-						unshift @{$existing->{attributes}->{'_start_array'}},$attributes{'_start'};
-						unshift @{$existing->{attributes}->{'_end_array'}},$attributes{'_end'};
-						unshift @{$existing->{attributes}->{'_phase_array'}},$attributes{'_phase'};
-						unshift @{$existing->{attributes}->{'_score_array'}},$attributes{'_score'};
+						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
+							unshift @{$existing->{attributes}->{$attr.'_array'}},$attributes{$attr} ? $attributes{$attr} : $attribs->{$attr} ? $attribs->{$attr} : undef;
+						}
 						for (my $s = 0; $s < @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
 							my $possible = $by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
 							if ($possible eq $existing){
@@ -304,32 +310,12 @@ sub new {
 								last;
 							}
 						}
-						#
-						
-					}
-					# TODO make something more generic for cases like only one Target line having a Gap specified
-					if ($attribs->{Target} && !$attribs->{Gap}){
-						$attribs->{Gap} = 'M'.($attributes{'_end'} - $attributes{'_start'} + 1);
-					}
-					# add features to arrays if the current value doesn't match the single stored value or if there is already an array
-					foreach my $attr (keys %$attribs){
-						if ($existing->{attributes}->{$attr.'_array'}){
-							if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
-								push @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
-							}
-							else {
-								unshift @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
-							}
-						}
-						elsif ($existing->{attributes}->{$attr} && $attribs->{$attr} ne $existing->{attributes}->{$attr}){
-							for (my $i = 0; $i < @{$existing->{attributes}->{'_start_array'}}; $i++){
-								push @{$existing->{attributes}->{$attr.'_array'}},$existing->{attributes}->{$attr};
-							}
-							if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
-								push @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
-							}
-							else {
-								unshift @{$existing->{attributes}->{$attr.'_array'}},$attribs->{$attr};
+						foreach my $attr (keys %$attribs){
+							unless ($existing->{attributes}->{'_attributes'}->{$attr}){
+								for (my $i = 1; $i < @{$existing->{attributes}->{'_start_array'}}; $i++){
+									unshift @{$existing->{attributes}->{$attr.'_array'}},undef;
+								}
+								unshift @{$existing->{attributes}->{$attr.'_array'}},$attribs -> {$attr};
 							}
 						}
 					}
