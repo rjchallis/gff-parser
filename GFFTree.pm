@@ -296,6 +296,8 @@ sub new {
 								$existing->{attributes}->{'_attributes'}->{$attr} = 1;
 							}
 						}
+						$existing->{attributes}->{'_end'} = $attributes{'_end'};
+								
 					}
 					else {
 						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
