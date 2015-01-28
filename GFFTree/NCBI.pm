@@ -38,6 +38,7 @@ sub new {
     $gff->add_expectation('gene','hasParent','region','force');
 	$gff->add_expectation('mrna','hasParent','gene','find');
 	$gff->add_expectation('trna','hasParent','gene','find');
+	$gff->add_expectation('transcript','hasParent','gene','find');
 	$gff->add_expectation('exon','hasParent','mrna','find');
 	$gff->add_expectation('cds','hasParent','mrna','find');
 	$gff->multiline('CDS');
