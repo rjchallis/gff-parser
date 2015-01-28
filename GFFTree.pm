@@ -1128,7 +1128,7 @@ sub by_attribute {
   Function : returns a scalar or array of features with each of a given set of attributes 
              or where each of a set of attributes match specific values
   Example  : @nodes = $gff->by_attributes(['anything','anything_else]);
-  			 $node = $gff->by_attribute(['anything','something'],['anythingelse','somethingelse']);
+  			 $node = $gff->by_attributes(['anything','something'],['anythingelse','somethingelse']);
 =cut
 
 sub by_attributes {
