@@ -265,7 +265,12 @@ sub new {
 					$id = $p == 0 ? $base_id : $base_id.'._'.$p;
 					$attributes{'ID'} = $id;
 					warn $parents[$p],"\n";
-					$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
+					if ($ids{$parents[$p]}){
+						$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
+					}
+					else {
+						$ids{$id} = $node->new_daughter({%attributes,%$attribs});
+					}
 					$ids{$id}->name($id);
 					push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$id;
 				}
