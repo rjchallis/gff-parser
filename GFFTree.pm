@@ -172,6 +172,7 @@ sub new {
 
 	sub parse_file {
 		my $node = shift;
+		$ids{'root'} = $node;
 		my $fasta;
 		my $region;
 		my $seq = '';
@@ -220,6 +221,7 @@ sub new {
 			else {
 				# use the root node as an orphanage
 				$parent = $node;
+				$attribs->{'Parent'} = 'root';
 			}
 			
 			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
