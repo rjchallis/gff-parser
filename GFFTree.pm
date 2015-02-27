@@ -690,6 +690,8 @@ sub undefined_parent  {
 				else {
 					my @relation = split /[\[\]]/,$hashref->{'relation'};
 					my @attrib = split /,/,$relation[1];
+					use Data::Dumper;
+					print Dumper $self->{attributes}->{'Parent'};
 					my $message = $type.' '.$self->name.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].') ('.$self->mother->name.' -  '.$self->{attributes}->{'Parent'}.')';
 					my $first = $self->{attributes}->{$attrib[0]};
 					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
