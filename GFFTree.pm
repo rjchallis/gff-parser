@@ -264,7 +264,6 @@ sub new {
 					}
 					$id = $p == 0 ? $base_id : $base_id.'._'.$p;
 					$attributes{'ID'} = $id;
-					warn $parents[$p],"\n";
 					if ($ids{$parents[$p]}){
 						$ids{$id} = $ids{$parents[$p]}->new_daughter({%attributes,%$attribs});
 					}
@@ -354,11 +353,6 @@ sub new {
 		while (scalar @orphans != $orphans){
 			$orphans = scalar @orphans;
 			for (my $o = 0; $o < @orphans; $o++){
-				#if ($orphans[$o]->{attributes}->{'Parent'} && ref $orphans[$o]->{attributes}->{'Parent'} eq 'ARRAY'){){
-				#	my @parents = @{$attribs->{'Parent'}};
-				#	#delete $attribs->{'Parent'};
-				#	for (my $p = 0; $p < @parents; $p++){
-				#}
 				if ($orphans[$o]->{attributes}->{'Parent'} && $ids{$orphans[$o]->{attributes}->{'Parent'}}){
 					# move the orphan node to a new parent
 					$orphans[$o]->unlink_from_mother();
