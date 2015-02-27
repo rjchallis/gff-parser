@@ -250,9 +250,9 @@ sub new {
 				my $base_id = $attribs->{'ID'};
 				delete $attribs->{'ID'};
 				my @parents = @{$attribs->{'Parent'}};
-				#delete $attribs->{'Parent'};
+				delete $attribs->{'Parent'};
 				for (my $p = 0; $p < @parents; $p++){
-					#$attributes{'Parent'} = $parents[$p];
+					$attributes{'Parent'} = $parents[$p];
 					my $id;
 					if ($p == 0){
 						$attributes{'_duplicate'} = 0;
@@ -354,6 +354,11 @@ sub new {
 		while (scalar @orphans != $orphans){
 			$orphans = scalar @orphans;
 			for (my $o = 0; $o < @orphans; $o++){
+				#if ($orphans[$o]->{attributes}->{'Parent'} && ref $orphans[$o]->{attributes}->{'Parent'} eq 'ARRAY'){){
+				#	my @parents = @{$attribs->{'Parent'}};
+				#	#delete $attribs->{'Parent'};
+				#	for (my $p = 0; $p < @parents; $p++){
+				#}
 				if ($orphans[$o]->{attributes}->{'Parent'} && $ids{$orphans[$o]->{attributes}->{'Parent'}}){
 					# move the orphan node to a new parent
 					$orphans[$o]->unlink_from_mother();
@@ -690,13 +695,10 @@ sub undefined_parent  {
 				else {
 					my @relation = split /[\[\]]/,$hashref->{'relation'};
 					my @attrib = split /,/,$relation[1];
-					use Data::Dumper;
-					my $message = $type.' '.$self->name.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].') ('.$self->mother->name.' -  '.$self->{attributes}->{'Parent'}.')';
+					my $message = $type.' '.$self->name.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].') ('.$self->mother->name.')';
 					my $first = $self->{attributes}->{$attrib[0]};
 					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
 					$actions{$hashref->{'flag'}}->($message) unless compare($first,$second,$relation[0]);
-					print Dumper $self->{attributes}->{'Parent'} unless compare($first,$second,$relation[0]);
-					
 				}
 			}
 		}
