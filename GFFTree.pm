@@ -1005,6 +1005,20 @@ sub parse_gff_line {
 }
 
 
+=head2 id
+  Function : get/set the id for a feature
+  Example  : $name = $node->id();
+             $node->id('new_ID');
+=cut
+
+sub id {
+    my $node = shift;
+    my $val = shift;
+    $node->attributes->{ID} = $val if $val;
+    return $node->attributes->{ID};
+}
+
+
 =head2 _seq_name
   Function : get/set the sequence name for a feature
   Example  : $name = $node->_seq_name();
@@ -1063,6 +1077,8 @@ sub _phase {
 	
 }
 
+
+
 =head2 by_name
   Function : walk through the tree to find a feature by name, works in scalar or array 
              context
@@ -1082,6 +1098,7 @@ sub by_name {
         1}});
     return wantarray? @found : @found ? $found[0] : undef;
 }
+
 
 =head2 by_type
   Function : calls by_attribute to find an array of features of a given type
