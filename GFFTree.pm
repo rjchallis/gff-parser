@@ -270,7 +270,13 @@ sub new {
 					else {
 						$ids{$id} = $node->new_daughter({%attributes,%$attribs});
 					}
-					$ids{$id}->name($id);
+					$ids{$id}->id($id);
+					if ($attribs->{'Name'}){
+						$ids{$id}->name($attribs->{'Name'});
+					}
+					else {
+						$ids{$id}->name($id);
+					}
 					push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$id;
 				}
 			}
@@ -333,7 +339,7 @@ sub new {
 				}
 				else {
 					# ID clash
-					#print $parent->name(),"\n";
+					#print $parent->id(),"\n";
 					#print $attributes{'_type'},"\n";
 					#print is_multiline($attributes{'_type'}),"\n";
 					die "ERROR: feature ID $attribs->{'ID'} has already been used (line $.)\nERROR: should you call multiline('".$attributes{'_type'}."') before parse_file()?\n";
@@ -342,7 +348,13 @@ sub new {
 			else {
 				#print "$attribs->{'ID'}\n";
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
-				$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
+				$ids{$attribs->{'ID'}}->id($attribs->{'ID'});
+				if ($attribs->{'Name'}){
+					$ids{$attribs->{'ID'}}->name($attribs->{'Name'});
+				}
+				else {
+					$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
+				}
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
 		}
@@ -365,7 +377,7 @@ sub new {
 			if ($orphans[$o]->{attributes}->{'Parent'}){
 				my $behaviour = $node->undefined_parent();
 				if ($behaviour eq 'die'){
-					die "ERROR: no parent feature exists for ",$orphans[$o]->{attributes}->{_type}," ",$orphans[$o]->name()," with the ID $orphans[$o]->{attributes}->{'Parent'}, cannot continue\n";
+					die "ERROR: no parent feature exists for ",$orphans[$o]->{attributes}->{_type}," ",$orphans[$o]->id()," with the ID $orphans[$o]->{attributes}->{'Parent'}, cannot continue\n";
 				}
 				else {
 					# wait for validation to take care of things - needs improving
@@ -400,7 +412,7 @@ sub new {
 			$suffix++;
 		}
 		my $id = $prefix.$suffix;
-		$node->name($id);
+		$node->id($id);
 		$node->{attributes}->{'ID'} = $id;
 		$ids{$id} = $node;
 		push @{$by_start{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
@@ -507,7 +519,7 @@ sub undefined_parent  {
 
 	sub next_feature {
 		my ($self, $type) = @_;
-		unless ($features{$type} && @{$features{$type}} && $parents{$type} && $parents{$type} eq $self->name){
+		unless ($features{$type} && @{$features{$type}} && $parents{$type} && $parents{$type} eq $self->id()){
 			$self->order_features($type);
 		}
 		return shift @{$features{$type}};
@@ -523,7 +535,7 @@ sub undefined_parent  {
 		my @unsorted = by_type($self,$type);
 		@{$features{$type}} = ($strand && $strand eq '-') ? sort { $b->{attributes}->{_start} <=> $a->{attributes}->{_start} } @unsorted : sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
-		$parents{$type} = $self->name;
+		$parents{$type} = $self->id;
 		return (scalar(@{$features{$type}})-1);
 	}
 	
@@ -546,7 +558,7 @@ sub undefined_parent  {
 		$attributes{'_score'} = '.';
 		$attributes{'_strand'} = $self->{attributes}->{_strand};
 		$attributes{'_phase'} = '.';
-		$attributes{'Parent'} = $self->name;
+		$attributes{'Parent'} = $self->id;
 		if ($location eq 'internal'){
 			if (@{$features{$type}} > 2){
 				for (my $i = 1; $i < @{$features{$type}} - 1; $i++){
@@ -680,7 +692,7 @@ sub undefined_parent  {
 			for (my $i = 0; $i < @{$expectations{$type}}; $i++){
 				my $hashref = $expectations{$type}[$i];
 				if ($hashref->{'relation'} eq 'hasParent'){
-					my $message = $type." ".$self->name.' does not have a parent of type '.$hashref->{'alt_type'};
+					my $message = $type." ".$self->id.' does not have a parent of type '.$hashref->{'alt_type'};
 					$actions{$hashref->{'flag'}}->($self,$message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} && $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 				}
 				elsif ($hashref->{'relation'} eq 'hasChild'){
@@ -689,7 +701,7 @@ sub undefined_parent  {
 				else {
 					my @relation = split /[\[\]]/,$hashref->{'relation'};
 					my @attrib = split /,/,$relation[1];
-					my $message = $type.' '.$self->name.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].') ('.$self->mother->name.')';
+					my $message = $type.' '.$self->id.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].') ('.$self->mother->id.')';
 					my $first = $self->{attributes}->{$attrib[0]};
 					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
 					$actions{$hashref->{'flag'}}->($message) unless compare($first,$second,$relation[0]);
@@ -773,7 +785,7 @@ sub undefined_parent  {
 				my $parent = $relative->[0];
 				$attributes{'_start'} = $parent->{attributes}->{_start};
 				$attributes{'_end'} = $parent->{attributes}->{_end};
-				$self->{attributes}->{Parent} = $parent->name();
+				$self->{attributes}->{Parent} = $parent->id();
 				$self->unlink_from_mother();
 				$parent->add_daughter($self);
 			}
@@ -817,7 +829,7 @@ sub undefined_parent  {
 		$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
 		my $node = $self->mother->new_daughter(\%attributes);
 		$node->make_id($expectation->{'alt_type'});
-		$self->{attributes}->{Parent} = $node->name();
+		$self->{attributes}->{Parent} = $node->id();
 		$self->unlink_from_mother();
 		$node->add_daughter($self);
 		return $node;
