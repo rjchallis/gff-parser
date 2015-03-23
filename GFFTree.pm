@@ -297,19 +297,41 @@ sub new {
 					}
 					# change _start and _end, storing individual component values in an array
 					if ($attributes{'_start'} > $existing->{attributes}->{'_start'}){
-						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
-							push @{$existing->{attributes}->{$attr.'_array'}},defined $attributes{$attr} ? $attributes{$attr} : defined $attribs->{$attr} ? $attribs->{$attr} : undef;
-						}
-						foreach my $attr (keys %$attribs){
-							unless ($existing->{attributes}->{'_attributes'}->{$attr}){
-								for (my $i = 0; $i - 1 < @{$existing->{attributes}->{'_start_array'}}; $i++){
-									push @{$existing->{attributes}->{$attr.'_array'}},undef;
+						# don't use unshift but choose between push and splice according to the existing values
+						if ($attributes{'_end'} > $existing->{attributes}->{'_end'}){
+							foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
+								push @{$existing->{attributes}->{$attr.'_array'}},defined $attributes{$attr} ? $attributes{$attr} : defined $attribs->{$attr} ? $attribs->{$attr} : undef;
+							}
+							foreach my $attr (keys %$attribs){
+								unless ($existing->{attributes}->{'_attributes'}->{$attr}){
+									for (my $i = 0; $i - 1 < @{$existing->{attributes}->{'_start_array'}}; $i++){
+										push @{$existing->{attributes}->{$attr.'_array'}},undef;
+									}
+									push @{$existing->{attributes}->{$attr.'_array'}},$attribs -> {$attr};
+									$existing->{attributes}->{'_attributes'}->{$attr} = 1;
 								}
-								push @{$existing->{attributes}->{$attr.'_array'}},$attribs -> {$attr};
-								$existing->{attributes}->{'_attributes'}->{$attr} = 1;
+							}
+							$existing->{attributes}->{'_end'} = $attributes{'_end'};
+						}
+						else {
+							# find the position in the array to insert the current values
+							my $index = 0;
+							while ($attributes{'_start'} > $existing->{attributes}->{'_start_array'}[$index]){
+								$index++;
+							}
+							foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
+								splice @{$existing->{attributes}->{$attr.'_array'}},$index,0,defined $attributes{$attr} ? $attributes{$attr} : defined $attribs->{$attr} ? $attribs->{$attr} : undef;
+							}
+							foreach my $attr (keys %$attribs){
+								unless ($existing->{attributes}->{'_attributes'}->{$attr}){
+									for (my $i = 0; $i - 1 < @{$existing->{attributes}->{'_start_array'}}; $i++){
+										push @{$existing->{attributes}->{$attr.'_array'}},undef;
+									}
+									splice @{$existing->{attributes}->{$attr.'_array'}},$index,0,$attribs -> {$attr};
+									$existing->{attributes}->{'_attributes'}->{$attr} = 1;
+								}
 							}
 						}
-						$existing->{attributes}->{'_end'} = $attributes{'_end'};
 								
 					}
 					else {
@@ -335,6 +357,7 @@ sub new {
 								$existing->{attributes}->{'_attributes'}->{$attr} = 1;
 							}
 						}
+						$existing->{attributes}->{'_start'} = $attributes{'_start'};
 					}
 				}
 				else {
@@ -414,6 +437,12 @@ sub new {
 		my $id = $prefix.$suffix;
 		$node->id($id);
 		$node->{attributes}->{'ID'} = $id;
+		if ($node->{attributes}->{'Name'}){
+			$node->name($node->{attributes}->{'Name'});
+		}
+		else {
+			$node->name($id);
+		}
 		$ids{$id} = $node;
 		push @{$by_start{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
 		return $id;
@@ -1103,7 +1132,7 @@ sub by_name {
     my @found =();
     my $retvalue = wantarray ? 1 : 0;
     $self->walk_down({callback=>sub{
-        if ($_[0]->name eq $name) {
+    	if ($_[0]->name() && $_[0]->name eq $name) {
             push @found, $_[0];
             return $retvalue;
         }
