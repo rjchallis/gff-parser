@@ -540,7 +540,18 @@ sub undefined_parent  {
 {
 	my %features;
 	my %parents;
-	
+
+=head2 by_type
+  Function : returns an ordered array of features of a given type
+  Example  : @nodes = $gff->by_type('exon');
+=cut
+
+	sub by_type {
+    	my ($self, $type) = @_;
+    	$self->order_features($type);
+    	return @{$features{$type}};
+	}
+
 =head2 next_feature
   Function : Sequentially fetch daughter features of a node by type
   Example  : $gene->next_feature('exon');
@@ -555,13 +566,13 @@ sub undefined_parent  {
 	}
 	
 =head2 order_features
-  Function : order daughter features of a given  type sequentially
+  Function : order daughter features of a given type sequentially
   Example  : $gene->order_feature('exon');
 =cut
 
 	sub order_features {
 		my ($self, $type, $strand) = @_;
-		my @unsorted = by_type($self,$type);
+		my @unsorted = by_attribute($self,'_type',$type);
 		@{$features{$type}} = ($strand && $strand eq '-') ? sort { $b->{attributes}->{_start} <=> $a->{attributes}->{_start} } @unsorted : sort { $a->{attributes}->{_start} <=> $b->{attributes}->{_start} } @unsorted;
 		push @{$features{$type}},0;
 		$parents{$type} = $self->id;
@@ -1140,17 +1151,6 @@ sub by_name {
     return wantarray? @found : @found ? $found[0] : undef;
 }
 
-
-=head2 by_type
-  Function : calls by_attribute to find an array of features of a given type
-  Example  : @nodes = $gff->by_type('exon');
-=cut
-
-
-sub by_type {
-    my ($self, $type) = @_;
-    return by_attribute($self,'_type',$type);
-}
 
 =head2 by_attribute
   Function : returns a scalar or array of features with a given attribute or where an 
