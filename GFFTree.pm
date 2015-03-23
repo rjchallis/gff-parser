@@ -549,7 +549,7 @@ sub undefined_parent  {
 	sub by_type {
     	my ($self, $type) = @_;
     	$self->order_features($type);
-    	return @{$features{$type}};
+    	return @{$features{$type}}[ -@{$features{$type}} .. -2 ];;
 	}
 
 =head2 next_feature
