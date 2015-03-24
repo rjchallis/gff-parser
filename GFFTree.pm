@@ -722,8 +722,8 @@ sub undefined_parent  {
 =head2 find_sister
   Function : find sister features accounting for multiline, nested matching and encompassing 
              features
-  Example  : $cds->find_sister('exon','big');
-           : $exon->find_sister('cds','little');
+  Example  : $sister = $cds->find_sister('exon');
+           : $sister = $exon->find_sister('cds');
 =cut
 	
 	sub find_sister {
@@ -811,6 +811,99 @@ sub undefined_parent  {
 					last if $sister; # match found for this part of the multiline feature, don't check any more features
 				}
 				last unless $sister; # all parts of the multiline feature must have a match
+			}
+		}
+		return $sister;
+	}
+
+
+=head2 make_sister
+  Function : make sister features accounting for multiline and single line interactions
+  Example  : $sister = $cds->make_sister('exon');
+           : $sister = $exon->make_sister('cds');
+=cut
+	
+	sub make_sister {
+		my $self = shift;
+		my $alt_type = shift;
+		my $parent = $self->mother();
+		my $sister;
+		my @attributes = ('_seq_name','_source','_start','_end','_score','_strand','_phase','Parent');
+		if (is_multiline($self->{attributes}->{_type}) && is_multiline($alt_type) or
+			!is_multiline($self->{attributes}->{_type}) && !is_multiline($alt_type)){
+			$sister = $self->copy({no_attribute_copy => 1});
+			foreach my $attribute (@attributes){
+				$sister->{attributes}->{$attribute} = $self->{attributes}->{$attribute};
+				if ($self->{attributes}->{$attribute.'_array'}){
+					$sister->{attributes}->{$attribute.'_array'} = $self->{attributes}->{$attribute.'_array'};
+				}
+			}
+			$parent->add_daughter($sister);
+			$sister->{attributes}->{_type} = $alt_type;
+			$sister->make_id($alt_type);
+			$sister->{attributes}->{Name} = $sister->name();
+		}
+		elsif (is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type)){
+			my @starts = $self->{attributes}->{_start_array} ? @{$self->{attributes}->{_start_array}} : ($self->{attributes}->{_start});
+			my @ends = $self->{attributes}->{_end_array} ? @{$self->{attributes}->{_end_array}} : ($self->{attributes}->{_end});
+			for (my $i = 0; $i < @starts; $i++){
+				my @features = $parent->by_type($alt_type);
+				while (my $feature = shift @features){	
+					$sister = undef;
+					if ($starts[$i] == $feature->{attributes}->{_start} and $ends[$i] == $feature->{attributes}->{_end}){
+						# twinSister
+						$sister = $feature;
+					}
+					elsif ($starts[$i] <= $feature->{attributes}->{_start} and $ends[$i] >= $feature->{attributes}->{_end}){
+						# littleSister
+						$sister = $feature;
+					}
+					
+					elsif ($starts[$i] >= $feature->{attributes}->{_start} and $ends[$i] <= $feature->{attributes}->{_end}){
+						# bigSister
+						$sister = $feature;
+					}
+					last if $sister; # # match found for this part of the multiline feature, don't check any more features
+				}
+				if (!$sister){ # make a new sister as all parts of the multiline feature must have a match
+					$sister = $self->copy({no_attribute_copy => 1});
+					foreach my $attribute (@attributes){
+						$sister->{attributes}->{$attribute} = $self->{attributes}->{$attribute.'_array'} ? $self->{attributes}->{$attribute.'_array'}[$i] : $self->{attributes}->{$attribute};
+					}
+					$parent->add_daughter($sister);
+					$sister->{attributes}->{_type} = $alt_type;
+					$sister->make_id($alt_type);
+					$sister->{attributes}->{Name} = $sister->name();
+				}
+			}
+		}
+		else { # !is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)
+			my @features = $parent->by_type($alt_type);
+			while (my $feature = shift @features){	
+				my @starts = $feature->{attributes}->{_start_array} ? @{$feature->{attributes}->{_start_array}} : ($feature->{attributes}->{_start});
+				my @ends = $feature->{attributes}->{_end_array} ? @{$feature->{attributes}->{_end_array}} : ($feature->{attributes}->{_end});
+				for (my $i = 0; $i < @starts; $i++){
+					$sister = undef;
+					if ($starts[$i] == $self->{attributes}->{_start} and $ends[$i] == $self->{attributes}->{_end}){
+						# twinSister
+						$sister = $feature;
+					}
+					elsif ($starts[$i] <= $self->{attributes}->{_start} and $ends[$i] >= $self->{attributes}->{_end}){
+						# littleSister
+						$sister = $feature;
+					}
+					
+					elsif ($starts[$i] >= $self->{attributes}->{_start} and $ends[$i] <= $self->{attributes}->{_end}){
+						# bigSister
+						$sister = $feature;
+					}
+					last if $sister; # match found for this part of the multiline feature, don't check any more features
+				}
+				if (!$sister){ # make a new sister as all parts of the multiline feature must have a match
+					#############
+					# TODO !!!! #
+					#############
+				}
 			}
 		}
 		return $sister;
@@ -971,19 +1064,19 @@ sub undefined_parent  {
 				$attributes{'_start'} = $self->{attributes}->{_start};
 				$attributes{'_end'} = $self->{attributes}->{_end};
 			}
+			$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
+			my $node = $self->mother->new_daughter(\%attributes);
+			$node->make_id($expectation->{'alt_type'});
+			$self->{attributes}->{Parent} = $node->id();
+			$self->unlink_from_mother();
+			$node->add_daughter($self);
+			return $node;
 		}
 		elsif ($expectation->{'relation'} eq 'hasSister'){
-			##########################################
-			# TODO: make sister to satisfy expectation
-			##########################################
+			my $sister = $self->make_sister($expectation->{'alt_type'});
+			return $sister;
 		}
-		$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
-		my $node = $self->mother->new_daughter(\%attributes);
-		$node->make_id($expectation->{'alt_type'});
-		$self->{attributes}->{Parent} = $node->id();
-		$self->unlink_from_mother();
-		$node->add_daughter($self);
-		return $node;
+		
 	}
 	
 =head2 validation_force
