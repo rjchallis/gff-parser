@@ -702,12 +702,12 @@ sub undefined_parent  {
 		# define expectations for gff validation
 		# feature_type,relation,alt_type,flag
 		# flags: ignore, warn, die, find, make, force
-		# relations: hasParent, hasChild, >, gt, <, lt, ==, eq, >=, <=, !=, ne 
+		# relations: hasParent, hasChild, hasSister, >, gt, <, lt, ==, eq, >=, <=, !=, ne 
 		# mrna hasParent gene 
 		# mrna|exon <[start,end] SELF
 		# mrna <=[end] PARENT warn
 		# exon hasParent mrna|transcript|gene
-		# cds hasParent exon
+		# cds hasSister exon
 		
 		my ($self,$type,$relation,$alt_type,$flag) = @_;
 		$type =~ tr/[A-Z]/[a-z]/;
@@ -717,6 +717,105 @@ sub undefined_parent  {
 		}
 		return scalar keys %expectations;
 	}
+
+
+=head2 find_sister
+  Function : find sister features accounting for multiline, nested matching and encompassing 
+             features
+  Example  : $cds->find_sister('exon','big');
+           : $exon->find_sister('cds','little');
+=cut
+	
+	sub find_sister {
+		my $self = shift;
+		my $alt_type = shift;
+		my $scale = shift;
+		my $parent = $self->mother();
+		my ($sister,$size);
+		if (!is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type) or
+			is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)){
+			
+			while (my $feature = $parent->next_feature($alt_type)){	
+				if ($self->{attributes}->{_start} == $feature->{attributes}->{_start} and $self->{attributes}->{_end} == $feature->{attributes}->{_end}){
+					# twinSister
+					$sister = $feature;
+					$size = 'twin';
+					last; # match found, don't check any more features
+				}
+				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} and $self->{attributes}->{_end} >= $feature->{attributes}->{_end}){
+					# littleSister
+					$sister = $feature;
+					$size = 'little';
+					# continue the loop to find a better match (i.e. twin sister)
+				}
+				
+				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} and $self->{attributes}->{_end} <= $feature->{attributes}->{_end}){
+					# bigSister
+					$sister = $feature;
+					$size = 'big';
+					# continue the loop to find a better match (i.e. twin sister)
+				}
+			}
+		}
+		elsif (is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type)){
+			my @starts = $self->{attributes}->{_start_array} ? @{$self->{attributes}->{_start_array}} : ($self->{attributes}->{_start});
+			my @ends = $self->{attributes}->{_end_array} ? @{$self->{attributes}->{_end_array}} : ($self->{attributes}->{_end});
+			for (my $i = 0; $i < @starts; $i++){
+				my @features = $parent->by_type($alt_type);
+				while (my $feature = shift @features){	
+					$sister = undef;
+					if ($starts[$i] == $feature->{attributes}->{_start} and $ends[$i] == $feature->{attributes}->{_end}){
+						# twinSister
+						$sister = $feature;
+						$size = 'twin';
+					}
+					elsif ($starts[$i] <= $feature->{attributes}->{_start} and $ends[$i] >= $feature->{attributes}->{_end}){
+						# littleSister
+						$sister = $feature;
+						$size = 'little';
+					}
+					
+					elsif ($starts[$i] >= $feature->{attributes}->{_start} and $ends[$i] <= $feature->{attributes}->{_end}){
+						# bigSister
+						$sister = $feature;
+						$size = 'big';
+					}
+					last if $sister; # # match found for this part of the multiline feature, don't check any more features
+				}
+				last unless $sister; # all parts of the multiline feature must have a match
+			}
+		}
+		else { # !is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)
+			my @features = $parent->by_type($alt_type);
+			while (my $feature = shift @features){	
+				my @starts = $feature->{attributes}->{_start_array} ? @{$feature->{attributes}->{_start_array}} : ($feature->{attributes}->{_start});
+				my @ends = $feature->{attributes}->{_end_array} ? @{$feature->{attributes}->{_end_array}} : ($feature->{attributes}->{_end});
+				for (my $i = 0; $i < @starts; $i++){
+					$sister = undef;
+					if ($starts[$i] == $self->{attributes}->{_start} and $ends[$i] == $self->{attributes}->{_end}){
+						# twinSister
+						$sister = $feature;
+						$size = 'twin';
+					}
+					elsif ($starts[$i] <= $self->{attributes}->{_start} and $ends[$i] >= $self->{attributes}->{_end}){
+						# littleSister
+						$sister = $feature;
+						$size = 'big';
+					}
+					
+					elsif ($starts[$i] >= $self->{attributes}->{_start} and $ends[$i] <= $self->{attributes}->{_end}){
+						# bigSister
+						$sister = $feature;
+						$size = 'little';
+					}
+					last if $sister; # match found for this part of the multiline feature, don't check any more features
+				}
+				last unless $sister; # all parts of the multiline feature must have a match
+			}
+		}
+		return $sister;
+	}
+
 
 =head2 validate
   Function : Test whether a feature meets the conditions defined in any relevant added 
@@ -733,10 +832,14 @@ sub undefined_parent  {
 				my $hashref = $expectations{$type}[$i];
 				if ($hashref->{'relation'} eq 'hasParent'){
 					my $message = $type." ".$self->id.' does not have a parent of type '.$hashref->{'alt_type'};
-					$actions{$hashref->{'flag'}}->($self,$message,$expectations{$type}[$i]) unless $self->mother->{attributes}->{_type} && $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
+					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless $self->mother->{attributes}->{_type} && $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 				}
 				elsif ($hashref->{'relation'} eq 'hasChild'){
 					#;
+				}
+				elsif ($hashref->{'relation'} eq 'hasSister'){
+					my $message = $type." ".$self->id.' does not have a sister of type '.$hashref->{'alt_type'};
+					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless $self->find_sister($hashref->{'alt_type'});
 				}
 				else {
 					my @relation = split /[\[\]]/,$hashref->{'relation'};
@@ -744,7 +847,7 @@ sub undefined_parent  {
 					my $message = $type.' '.$self->id.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].') ('.$self->mother->id.')';
 					my $first = $self->{attributes}->{$attrib[0]};
 					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
-					$actions{$hashref->{'flag'}}->($message) unless compare($first,$second,$relation[0]);
+					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
 				}
 			}
 		}
@@ -779,12 +882,14 @@ sub undefined_parent  {
 	}
 	
 	sub validation_warning {
-		my $message = pop;
+		my $self = shift;
+		my $message = shift;
 		warn "WARNING: $message\n";
 	}
 	
 	sub validation_die {
-		my $message = pop;
+		my $self = shift;
+		my $message = shift;
 		die "ERROR: $message\n";
 	}
 
@@ -796,7 +901,8 @@ sub undefined_parent  {
 	sub validation_find {
 		# TODO 	- handle relationships other than parent
 		my $self = shift;
-		my $expectation = pop;
+		my $message = shift;
+		my $expectation = shift;
 		my %attributes;
 		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
 		$attributes{'_source'} = 'GFFTree';
@@ -866,6 +972,11 @@ sub undefined_parent  {
 				$attributes{'_end'} = $self->{attributes}->{_end};
 			}
 		}
+		elsif ($expectation->{'relation'} eq 'hasSister'){
+			##########################################
+			# TODO: make sister to satisfy expectation
+			##########################################
+		}
 		$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
 		my $node = $self->mother->new_daughter(\%attributes);
 		$node->make_id($expectation->{'alt_type'});
@@ -883,9 +994,9 @@ sub undefined_parent  {
 	sub validation_force {
 		my $self = shift;
 		my $expectation = pop;
-		my $relative = $self->validation_find($expectation);
+		my $relative = $self->validation_find('',$expectation);
 		return $relative if $relative;
-		$relative = $self->validation_make($expectation);
+		$relative = $self->validation_make('',$expectation);
 		return $relative;
 	}
 
