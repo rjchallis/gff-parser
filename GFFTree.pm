@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 =head1 NAME
 
@@ -37,10 +37,11 @@ new feature) can be defined independently for each assumption through the use of
 =cut
 
 use strict;
+use warnings;
 package GFFTree;
 use Tree::DAG_Node;
-our @ISA=qw(Tree::DAG_Node);
 use Encode::Escape::ASCII;
+our @ISA=qw(Tree::DAG_Node);
 
 =head2 new
   Function : Creates a new GFFTree
@@ -90,9 +91,9 @@ sub new {
 =cut
 
 	sub has_comments {
-		my $node = shift;
-		$has_comments = \@_;
-	    return scalar @_;
+		my ($node,@arr) = @_;
+		$has_comments = \@arr;
+	    return scalar @arr;
 	}
 
 
@@ -161,6 +162,7 @@ sub new {
 		my $type = pop;
 		$type =~ tr/[A-Z]/[a-z]/;
 		return 1 if $multiline{$type};
+		return;
 	}
 
 
@@ -673,6 +675,7 @@ sub undefined_parent  {
 				}
 			}
 		}
+		return;
 	}
 
 =head2 find_daughter
@@ -690,6 +693,7 @@ sub undefined_parent  {
 				return $feature->[0];
 			}
 		}
+		return;
 	}
 
 }
@@ -963,6 +967,7 @@ sub undefined_parent  {
 				}
 			}
 		}
+		return;
 	}
 
 =head2 validate_all
@@ -985,18 +990,20 @@ sub undefined_parent  {
 		while (my $feature = shift @features){
 			$feature->validate();
 		}
-		1;
+		return 1;
 	}
 
 		
 	sub validation_ignore {
 		# nothing happens
+		return;
 	}
 	
 	sub validation_warning {
 		my $self = shift;
 		my $message = shift;
 		warn "WARNING: $message\n";
+		return;
 	}
 	
 	sub validation_die {
@@ -1131,6 +1138,7 @@ sub compare {
 	return $first <= $second if $operator eq '<=';
 	return $first != $second if $operator eq '!=';
 	return $first ne $second if $operator eq 'ne';
+	return;
 }
 
 
@@ -1241,6 +1249,7 @@ sub is_comment {
 	return -1 if $_ =~ m/^$/;
 	return -9 if $_ =~ m/^>/;
 	return length($1) if $_ =~ m/^(#+)/;
+	return;
 }
 
 =head2 parse_gff_line
@@ -1256,7 +1265,8 @@ sub is_comment {
 =cut
 
 sub parse_gff_line {
-	my @data = split /$_[1]/,$_[0];
+	my ($line,$sep) = @_;
+	my @data = split /$sep/,$line;
 	chomp $data[8];
 	my %attribs = split /[=;]/,$data[8];
 	pop @data;
@@ -1442,7 +1452,7 @@ sub by_attributes {
     	else {
     		@matches = @nodes;
     	}
-    	return undef unless @matches;
+    	return unless @matches;
     }
     return wantarray? @matches : $matches[0];
 }
