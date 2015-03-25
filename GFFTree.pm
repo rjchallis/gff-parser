@@ -519,20 +519,20 @@ sub new {
 
 =head2 lacks_id
   Function : get/set behaviour for features that lack an id
-  Example  : $gff->lacks_id('region','ignore');
+  Example  : $gff->lacks_id('region','ignore'); # default
   Example  : $gff->lacks_id('exon','warn');
   Example  : $gff->lacks_id('gene','die');
-  Example  : $gff->lacks_id('all','make'); # default
+  Example  : $gff->lacks_id('all','make');
   Example  : $behaviour = $gff->lacks_id('gene');
 =cut
 
 	sub lacks_id  {
 		my $node = shift;
-		my $type = shift;
+		my $type = shift || 'all';
 		my $behaviour = shift;
 		$type =~ tr/[a-z]/[A-Z]/;
 		$lacks{$node}{$type} = $behaviour if $behaviour;
-		return $lacks{$node}{$type} ? $lacks{$node}{$type} : $lacks{$node}{'all'} ? $lacks{$node}{'all'} : 'make';
+		return $lacks{$node}{$type} ? $lacks{$node}{$type} : $lacks{$node}{'all'} ? $lacks{$node}{'all'} : 'ignore';
 	}
 }
 
