@@ -74,7 +74,7 @@ sub new {
 
 	sub separator {
 		my $sep = pop;
-		unless (ref $sep eq 'HASH'){
+		if (ref $sep ne 'HASH'){
 	    	$separator = $sep;
 	    }
 	    return $separator;
@@ -180,7 +180,7 @@ sub new {
 		my $seq = '';
 		my $ctr = 0;
 	    while (<>){
-			chomp $_;
+			chomp;
 			if (my $ret = is_comment($_)){
 				if ($ret == -9){
 					$fasta = substr $_,1;
@@ -752,24 +752,24 @@ sub undefined_parent  {
 		my $scale = shift;
 		my $parent = $self->mother();
 		my ($sister,$size);
-		if (!is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type) or
-			is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)){
+		if (!is_multiline($self->{attributes}->{_type}) && !is_multiline($alt_type) ||
+			is_multiline($self->{attributes}->{_type}) && is_multiline($alt_type)){
 
 			while (my $feature = $parent->next_feature($alt_type)){
-				if ($self->{attributes}->{_start} == $feature->{attributes}->{_start} and $self->{attributes}->{_end} == $feature->{attributes}->{_end}){
+				if ($self->{attributes}->{_start} == $feature->{attributes}->{_start} && $self->{attributes}->{_end} == $feature->{attributes}->{_end}){
 					# twinSister
 					$sister = $feature;
 					$size = 'twin';
 					last; # match found, don't check any more features
 				}
-				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} and $self->{attributes}->{_end} >= $feature->{attributes}->{_end}){
+				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} && $self->{attributes}->{_end} >= $feature->{attributes}->{_end}){
 					# littleSister
 					$sister = $feature;
 					$size = 'little';
 					# continue the loop to find a better match (i.e. twin sister)
 				}
 
-				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} and $self->{attributes}->{_end} <= $feature->{attributes}->{_end}){
+				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} && $self->{attributes}->{_end} <= $feature->{attributes}->{_end}){
 					# bigSister
 					$sister = $feature;
 					$size = 'big';
@@ -777,25 +777,25 @@ sub undefined_parent  {
 				}
 			}
 		}
-		elsif (is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type)){
+		elsif (is_multiline($self->{attributes}->{_type}) && !is_multiline($alt_type)){
 			my @starts = $self->{attributes}->{_start_array} ? @{$self->{attributes}->{_start_array}} : ($self->{attributes}->{_start});
 			my @ends = $self->{attributes}->{_end_array} ? @{$self->{attributes}->{_end_array}} : ($self->{attributes}->{_end});
 			for (my $i = 0; $i < @starts; $i++){
 				my @features = $parent->by_type($alt_type);
 				while (my $feature = shift @features){
 					$sister = undef;
-					if ($starts[$i] == $feature->{attributes}->{_start} and $ends[$i] == $feature->{attributes}->{_end}){
+					if ($starts[$i] == $feature->{attributes}->{_start} && $ends[$i] == $feature->{attributes}->{_end}){
 						# twinSister
 						$sister = $feature;
 						$size = 'twin';
 					}
-					elsif ($starts[$i] <= $feature->{attributes}->{_start} and $ends[$i] >= $feature->{attributes}->{_end}){
+					elsif ($starts[$i] <= $feature->{attributes}->{_start} && $ends[$i] >= $feature->{attributes}->{_end}){
 						# littleSister
 						$sister = $feature;
 						$size = 'little';
 					}
 
-					elsif ($starts[$i] >= $feature->{attributes}->{_start} and $ends[$i] <= $feature->{attributes}->{_end}){
+					elsif ($starts[$i] >= $feature->{attributes}->{_start} && $ends[$i] <= $feature->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
 						$size = 'big';
@@ -812,18 +812,18 @@ sub undefined_parent  {
 				my @ends = $feature->{attributes}->{_end_array} ? @{$feature->{attributes}->{_end_array}} : ($feature->{attributes}->{_end});
 				for (my $i = 0; $i < @starts; $i++){
 					$sister = undef;
-					if ($starts[$i] == $self->{attributes}->{_start} and $ends[$i] == $self->{attributes}->{_end}){
+					if ($starts[$i] == $self->{attributes}->{_start} && $ends[$i] == $self->{attributes}->{_end}){
 						# twinSister
 						$sister = $feature;
 						$size = 'twin';
 					}
-					elsif ($starts[$i] <= $self->{attributes}->{_start} and $ends[$i] >= $self->{attributes}->{_end}){
+					elsif ($starts[$i] <= $self->{attributes}->{_start} && $ends[$i] >= $self->{attributes}->{_end}){
 						# littleSister
 						$sister = $feature;
 						$size = 'big';
 					}
 
-					elsif ($starts[$i] >= $self->{attributes}->{_start} and $ends[$i] <= $self->{attributes}->{_end}){
+					elsif ($starts[$i] >= $self->{attributes}->{_start} && $ends[$i] <= $self->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
 						$size = 'little';
@@ -849,7 +849,7 @@ sub undefined_parent  {
 		my $parent = $self->mother();
 		my $sister;
 		my @attributes = ('_seq_name','_source','_start','_end','_score','_strand','_phase','Parent');
-		if (is_multiline($self->{attributes}->{_type}) && is_multiline($alt_type) or
+		if (is_multiline($self->{attributes}->{_type}) && is_multiline($alt_type) ||
 			!is_multiline($self->{attributes}->{_type}) && !is_multiline($alt_type)){
 			$sister = $self->copy({no_attribute_copy => 1});
 			foreach my $attribute (@attributes){
@@ -863,23 +863,23 @@ sub undefined_parent  {
 			$sister->make_id($alt_type);
 			$sister->{attributes}->{Name} = $sister->name();
 		}
-		elsif (is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type)){
+		elsif (is_multiline($self->{attributes}->{_type}) && !is_multiline($alt_type)){
 			my @starts = $self->{attributes}->{_start_array} ? @{$self->{attributes}->{_start_array}} : ($self->{attributes}->{_start});
 			my @ends = $self->{attributes}->{_end_array} ? @{$self->{attributes}->{_end_array}} : ($self->{attributes}->{_end});
 			for (my $i = 0; $i < @starts; $i++){
 				my @features = $parent->by_type($alt_type);
 				while (my $feature = shift @features){
 					$sister = undef;
-					if ($starts[$i] == $feature->{attributes}->{_start} and $ends[$i] == $feature->{attributes}->{_end}){
+					if ($starts[$i] == $feature->{attributes}->{_start} && $ends[$i] == $feature->{attributes}->{_end}){
 						# twinSister
 						$sister = $feature;
 					}
-					elsif ($starts[$i] <= $feature->{attributes}->{_start} and $ends[$i] >= $feature->{attributes}->{_end}){
+					elsif ($starts[$i] <= $feature->{attributes}->{_start} && $ends[$i] >= $feature->{attributes}->{_end}){
 						# littleSister
 						$sister = $feature;
 					}
 
-					elsif ($starts[$i] >= $feature->{attributes}->{_start} and $ends[$i] <= $feature->{attributes}->{_end}){
+					elsif ($starts[$i] >= $feature->{attributes}->{_start} && $ends[$i] <= $feature->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
 					}
@@ -904,16 +904,16 @@ sub undefined_parent  {
 				my @ends = $feature->{attributes}->{_end_array} ? @{$feature->{attributes}->{_end_array}} : ($feature->{attributes}->{_end});
 				for (my $i = 0; $i < @starts; $i++){
 					$sister = undef;
-					if ($starts[$i] == $self->{attributes}->{_start} and $ends[$i] == $self->{attributes}->{_end}){
+					if ($starts[$i] == $self->{attributes}->{_start} && $ends[$i] == $self->{attributes}->{_end}){
 						# twinSister
 						$sister = $feature;
 					}
-					elsif ($starts[$i] <= $self->{attributes}->{_start} and $ends[$i] >= $self->{attributes}->{_end}){
+					elsif ($starts[$i] <= $self->{attributes}->{_start} && $ends[$i] >= $self->{attributes}->{_end}){
 						# littleSister
 						$sister = $feature;
 					}
 
-					elsif ($starts[$i] >= $self->{attributes}->{_start} and $ends[$i] <= $self->{attributes}->{_end}){
+					elsif ($starts[$i] >= $self->{attributes}->{_start} && $ends[$i] <= $self->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
 					}
