@@ -225,7 +225,7 @@ sub new {
 			}
 			
 			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
-				my $behaviour = $node->lacks_id();
+				my $behaviour = $node->lacks_id($attributes{'_type'});
 				next if $behaviour eq 'ignore';
 				if ($behaviour eq 'warn'){
 					warn "WARNING: the feature on line $. does not have an ID, skipping feature\n";
@@ -234,7 +234,15 @@ sub new {
 				elsif ($behaviour eq 'die'){
 					die "ERROR: the feature on line $. does not have an ID, cannot continue\n";
 				}
-				else {
+				elsif ($behaviour ne 'make'){
+					if ($attribs->{$behaviour}){
+						$attribs->{'ID'} = $attribs->{$behaviour};
+					}
+					else {
+						$behaviour = 'make';
+					}
+				}
+				if ($behaviour eq 'make'){
 					my $prefix = $attributes{'_type'}.'___';
 					my $suffix = 0;
 					while (by_id($prefix.$suffix)){
@@ -504,20 +512,28 @@ sub new {
 
 }
 
+# use nesting to allow sub to retain access to private variables
+
+{
+	my %lacks;
+
 =head2 lacks_id
   Function : get/set behaviour for features that lack an id
-  Example  : $gff->lacks_id('ignore');
-  Example  : $gff->lacks_id('warn');
-  Example  : $gff->lacks_id('die');
-  Example  : $gff->lacks_id('make'); # default
-  Example  : $behaviour = $gff->lacks_id();
+  Example  : $gff->lacks_id('region','ignore');
+  Example  : $gff->lacks_id('exon','warn');
+  Example  : $gff->lacks_id('gene','die');
+  Example  : $gff->lacks_id('all','make'); # default
+  Example  : $behaviour = $gff->lacks_id('gene');
 =cut
 
-sub lacks_id  {
-	my $node = shift;
-	my $behaviour = shift;
-	$node->{_attributes}->{'_lacks_id'} = $behaviour if $behaviour;
-	return $node->{_attributes}->{'_lacks_id'} ? $node->{_attributes}->{'_lacks_id'} : 'make';
+	sub lacks_id  {
+		my $node = shift;
+		my $type = shift;
+		my $behaviour = shift;
+		$type =~ tr/[a-z]/[A-Z]/;
+		$lacks{$node}{$type} = $behaviour if $behaviour;
+		return $lacks{$node}{$type} ? $lacks{$node}{$type} : $lacks{$node}{'all'} ? $lacks{$node}{'all'} : 'make';
+	}
 }
 
 =head2 undefined_parent
