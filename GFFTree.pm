@@ -941,7 +941,6 @@ sub undefined_parent  {
 					my @attrib = split /,/,$relation[1];
 					my $message = $type.' '.$self->id.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].')';
 					$message .=  '('.$self->mother->id.')' if $self->mother->id;
-					print "DEBUG: ",$message,"\n";
 					my $first = $self->{attributes}->{$attrib[0]};
 					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
 					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
