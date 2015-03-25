@@ -900,9 +900,11 @@ sub undefined_parent  {
 					last if $sister; # match found for this part of the multiline feature, don't check any more features
 				}
 				if (!$sister){ # make a new sister as all parts of the multiline feature must have a match
-					#############
-					# TODO !!!! #
-					#############
+					####################################################################################
+					# TODO: make a new/append to an existing multiline feature.                        #
+					#       make new is relatively straightforward but appending gets more complicated #
+					####################################################################################
+					die "ERROR: Making a new multiline sister feature from a non-multiline feature is not yet supported\n       Cannot run \$".$self->{attributes}->{_type}."->make_sister with multiline('$alt_type') and not multiline('".$self->{attributes}->{_type}."')\n       Consider removing add_expectation('$alt_type','hasSister','".$self->{attributes}->{_type}."','make')\n";
 				}
 			}
 		}
