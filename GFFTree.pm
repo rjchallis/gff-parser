@@ -21,17 +21,17 @@ GFFTree
 
 =head1 DESCRIPTION
 
-This module is intended to be as close as possible to a universal gff3 file parser. 
+This module is intended to be as close as possible to a universal gff3 file parser.
 
-Calling parse_file causes the gff3 file to be read into a graph structure, allowing 
-relationships to be queried and modified during an optional validation step, which can be 
+Calling parse_file causes the gff3 file to be read into a graph structure, allowing
+relationships to be queried and modified during an optional validation step, which can be
 applied to individual features independently.
 
-The parser makes no assumptions about the feature types expected in column 3 nor the 
-content of column 9 (other than that it is a set of key-value pairs).  Expected properties 
-of, and relationships among and between, features may be defined as a set of expectations, 
-which can be tested during an optional validation step. The behaviour of the parser on 
-finding an unmet assumption (to ignore, warn, die, link to an existing feature or create a 
+The parser makes no assumptions about the feature types expected in column 3 nor the
+content of column 9 (other than that it is a set of key-value pairs).  Expected properties
+of, and relationships among and between, features may be defined as a set of expectations,
+which can be tested during an optional validation step. The behaviour of the parser on
+finding an unmet assumption (to ignore, warn, die, link to an existing feature or create a
 new feature) can be defined independently for each assumption through the use of flags.
 
 =cut
@@ -99,7 +99,7 @@ sub new {
 
 =head2 delete_comments
   Function : delete comments from lines (as specified by has_comments)
-  Example  : delete_comments($line); 
+  Example  : delete_comments($line);
 =cut
 
 	sub delete_comments {
@@ -121,7 +121,7 @@ sub new {
 
 
 =head2 map_types
-  Function : Loads a mapping of types to allow treating of features with different types 
+  Function : Loads a mapping of types to allow treating of features with different types
              as one
   Example  : $gff->map_types({'internal' => 'exon'});
 =cut
@@ -136,8 +136,8 @@ sub new {
 
 
 =head2 multiline
-  Function : Specify feature types that can be split over multiple lines use 'all' to 
-  allow any feature be multiline 
+  Function : Specify feature types that can be split over multiple lines use 'all' to
+  allow any feature be multiline
   Example  : $gff->multiline('cds');
 =cut
 
@@ -167,7 +167,7 @@ sub new {
 
 
 =head2 parse_file
-  Function : Reads a gff3 file into a tree structure, handling multiline features and 
+  Function : Reads a gff3 file into a tree structure, handling multiline features and
              ordering features on the same region
   Example  : $gff->parse_file();
 =cut
@@ -203,7 +203,7 @@ sub new {
 				next;
 			}
 			my $parent = $node;
-			if ($has_comments){ 
+			if ($has_comments){
 				$_ = delete_comments($_);
 			}
 			my ($data,$attribs) = parse_gff_line($_,$separator);
@@ -225,7 +225,7 @@ sub new {
 				$parent = $node;
 				#$attribs->{'Parent'} = 'root';
 			}
-			
+
 			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
 				my $behaviour = $node->lacks_id($attributes{'_type'});
 				next if $behaviour eq 'ignore';
@@ -253,9 +253,9 @@ sub new {
 					$attribs->{'ID'} = $prefix.$suffix;
 				}
 			}
-			
+
 			$attribs->{'ID'} =~ s/'//g;
-				
+
 			if (ref $attribs->{'Parent'} eq 'ARRAY'){ # multiparent feature
 				my $base_id = $attribs->{'ID'};
 				delete $attribs->{'ID'};
@@ -342,7 +342,7 @@ sub new {
 								}
 							}
 						}
-								
+
 					}
 					else {
 						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
@@ -391,7 +391,7 @@ sub new {
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
 		}
-		
+
 		# loop through orphanage to see if anything can be done with unparented features
 		my $orphans = 0;
 		my @orphans = $node->daughters();
@@ -417,7 +417,7 @@ sub new {
 				}
 			}
 		}
-			
+
 		return 1;
 	}
 
@@ -458,13 +458,13 @@ sub new {
 		return $id;
 	}
 
-	
+
 =head2 by_start
-  Function : Fetch an arrayref of nodes start position. If multiple types are given, and 
-             more than one type has a match, the first specified type will be returned 
+  Function : Fetch an arrayref of nodes start position. If multiple types are given, and
+             more than one type has a match, the first specified type will be returned
              preferentially.
   Example  : $node_arrayref = by_start('scaf1','exon',432);
-             $node_arrayref = by_start('scaf1','mrna|exon',432); 
+             $node_arrayref = by_start('scaf1','mrna|exon',432);
 =cut
 
 	sub by_start  {
@@ -476,14 +476,14 @@ sub new {
 			while ($type = shift @types){
 				return $by_start{$seq_name}{$type}{$start} if $by_start{$seq_name}{$type};
 			}
-		} 
+		}
 		return $by_start{$seq_name}{$type}{$start};
 	}
 
 
 =head2 nearest_start
-  Function : Fetch an arrayref of nodes as close as possible to the start position. If 
-             multiple types are given, and more than one type has a closest match, the 
+  Function : Fetch an arrayref of nodes as close as possible to the start position. If
+             multiple types are given, and more than one type has a closest match, the
              first specified type will be returned preferentially.
   Example  : $node_arrayref = nearest_start('scaf1','exon',432);
 =cut
@@ -507,8 +507,8 @@ sub new {
 				last if $begin > $start;
 				$prev_begin = $begin;
 				$type = $mtype;
-			}	
-		} 
+			}
+		}
 		return $by_start{$seq_name}{$type}{$prev_begin};
 	}
 
@@ -582,7 +582,7 @@ sub undefined_parent  {
 		}
 		return shift @{$features{$type}};
 	}
-	
+
 =head2 order_features
   Function : order daughter features of a given type sequentially
   Example  : $gene->order_feature('exon');
@@ -596,9 +596,9 @@ sub undefined_parent  {
 		$parents{$type} = $self->id;
 		return (scalar(@{$features{$type}})-1);
 	}
-	
+
 =head2 fill_gaps
-  Function : fill in gaps between features, eg make introns based on exons, should check 
+  Function : fill in gaps between features, eg make introns based on exons, should check
   whether such features exist before running this (maybe need a fill_gaps_unless sub)
   Example  : $gene->fill_gaps('exon','intron','internal');
              $gene->fill_gaps('exon','utr','external');
@@ -679,7 +679,7 @@ sub undefined_parent  {
 	}
 
 =head2 find_daughter
-  Function : Find out whether an element already has a daughter with a given set of 
+  Function : Find out whether an element already has a daughter with a given set of
              attributes
   Example  : $gene->find_daughter(\%attributes);
 =cut
@@ -710,10 +710,10 @@ sub undefined_parent  {
 					'make' => \&validation_make,
 					'force' => \&validation_force,
               );
-	
+
 =head2 add_expectation
-  Function : Specify conditions that feature-types should meet in order to pass validation 
-             expectations can be applied to multiple feature types using the pipe symbol in 
+  Function : Specify conditions that feature-types should meet in order to pass validation
+             expectations can be applied to multiple feature types using the pipe symbol in
              $Arg[0]. More documentation to be written...
   Example  : $gff->add_expectation('mrna','hasParent','gene','find');
 =cut
@@ -722,13 +722,13 @@ sub undefined_parent  {
 		# define expectations for gff validation
 		# feature_type,relation,alt_type,flag
 		# flags: ignore, warn, die, find, make, force
-		# relations: hasParent, hasChild, hasSister, >, gt, <, lt, ==, eq, >=, <=, !=, ne 
-		# mrna hasParent gene 
+		# relations: hasParent, hasChild, hasSister, >, gt, <, lt, ==, eq, >=, <=, !=, ne
+		# mrna hasParent gene
 		# mrna|exon <[start,end] SELF
 		# mrna <=[end] PARENT warn
 		# exon hasParent mrna|transcript|gene
 		# cds hasSister exon
-		
+
 		my ($self,$type,$relation,$alt_type,$flag) = @_;
 		$type =~ tr/[A-Z]/[a-z]/;
 		my @type = split /\|/,$type;
@@ -740,12 +740,12 @@ sub undefined_parent  {
 
 
 =head2 find_sister
-  Function : find sister features accounting for multiline, nested matching and encompassing 
+  Function : find sister features accounting for multiline, nested matching and encompassing
              features
   Example  : $sister = $cds->find_sister('exon');
            : $sister = $exon->find_sister('cds');
 =cut
-	
+
 	sub find_sister {
 		my $self = shift;
 		my $alt_type = shift;
@@ -754,8 +754,8 @@ sub undefined_parent  {
 		my ($sister,$size);
 		if (!is_multiline($self->{attributes}->{_type}) and !is_multiline($alt_type) or
 			is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)){
-			
-			while (my $feature = $parent->next_feature($alt_type)){	
+
+			while (my $feature = $parent->next_feature($alt_type)){
 				if ($self->{attributes}->{_start} == $feature->{attributes}->{_start} and $self->{attributes}->{_end} == $feature->{attributes}->{_end}){
 					# twinSister
 					$sister = $feature;
@@ -768,7 +768,7 @@ sub undefined_parent  {
 					$size = 'little';
 					# continue the loop to find a better match (i.e. twin sister)
 				}
-				
+
 				elsif ($self->{attributes}->{_start} >= $feature->{attributes}->{_start} and $self->{attributes}->{_end} <= $feature->{attributes}->{_end}){
 					# bigSister
 					$sister = $feature;
@@ -782,7 +782,7 @@ sub undefined_parent  {
 			my @ends = $self->{attributes}->{_end_array} ? @{$self->{attributes}->{_end_array}} : ($self->{attributes}->{_end});
 			for (my $i = 0; $i < @starts; $i++){
 				my @features = $parent->by_type($alt_type);
-				while (my $feature = shift @features){	
+				while (my $feature = shift @features){
 					$sister = undef;
 					if ($starts[$i] == $feature->{attributes}->{_start} and $ends[$i] == $feature->{attributes}->{_end}){
 						# twinSister
@@ -794,7 +794,7 @@ sub undefined_parent  {
 						$sister = $feature;
 						$size = 'little';
 					}
-					
+
 					elsif ($starts[$i] >= $feature->{attributes}->{_start} and $ends[$i] <= $feature->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
@@ -807,7 +807,7 @@ sub undefined_parent  {
 		}
 		else { # !is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)
 			my @features = $parent->by_type($alt_type);
-			while (my $feature = shift @features){	
+			while (my $feature = shift @features){
 				my @starts = $feature->{attributes}->{_start_array} ? @{$feature->{attributes}->{_start_array}} : ($feature->{attributes}->{_start});
 				my @ends = $feature->{attributes}->{_end_array} ? @{$feature->{attributes}->{_end_array}} : ($feature->{attributes}->{_end});
 				for (my $i = 0; $i < @starts; $i++){
@@ -822,7 +822,7 @@ sub undefined_parent  {
 						$sister = $feature;
 						$size = 'big';
 					}
-					
+
 					elsif ($starts[$i] >= $self->{attributes}->{_start} and $ends[$i] <= $self->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
@@ -842,7 +842,7 @@ sub undefined_parent  {
   Example  : $sister = $cds->make_sister('exon');
            : $sister = $exon->make_sister('cds');
 =cut
-	
+
 	sub make_sister {
 		my $self = shift;
 		my $alt_type = shift;
@@ -868,7 +868,7 @@ sub undefined_parent  {
 			my @ends = $self->{attributes}->{_end_array} ? @{$self->{attributes}->{_end_array}} : ($self->{attributes}->{_end});
 			for (my $i = 0; $i < @starts; $i++){
 				my @features = $parent->by_type($alt_type);
-				while (my $feature = shift @features){	
+				while (my $feature = shift @features){
 					$sister = undef;
 					if ($starts[$i] == $feature->{attributes}->{_start} and $ends[$i] == $feature->{attributes}->{_end}){
 						# twinSister
@@ -878,7 +878,7 @@ sub undefined_parent  {
 						# littleSister
 						$sister = $feature;
 					}
-					
+
 					elsif ($starts[$i] >= $feature->{attributes}->{_start} and $ends[$i] <= $feature->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
@@ -899,7 +899,7 @@ sub undefined_parent  {
 		}
 		else { # !is_multiline($self->{attributes}->{_type}) and is_multiline($alt_type)
 			my @features = $parent->by_type($alt_type);
-			while (my $feature = shift @features){	
+			while (my $feature = shift @features){
 				my @starts = $feature->{attributes}->{_start_array} ? @{$feature->{attributes}->{_start_array}} : ($feature->{attributes}->{_start});
 				my @ends = $feature->{attributes}->{_end_array} ? @{$feature->{attributes}->{_end_array}} : ($feature->{attributes}->{_end});
 				for (my $i = 0; $i < @starts; $i++){
@@ -912,7 +912,7 @@ sub undefined_parent  {
 						# littleSister
 						$sister = $feature;
 					}
-					
+
 					elsif ($starts[$i] >= $self->{attributes}->{_start} and $ends[$i] <= $self->{attributes}->{_end}){
 						# bigSister
 						$sister = $feature;
@@ -933,11 +933,11 @@ sub undefined_parent  {
 
 
 =head2 validate
-  Function : Test whether a feature meets the conditions defined in any relevant added 
+  Function : Test whether a feature meets the conditions defined in any relevant added
              expectations and respond according to the specified flag
   Example  : $mrna->validate();
 =cut
-	
+
 	sub validate {
 		my $self = shift;
 		my $type = $self->{attributes}->{_type};
@@ -976,7 +976,7 @@ sub undefined_parent  {
   Example  : $gff->validate_all('gene');
   Example  : $gff->validate_all('exon');
 =cut
-	
+
 	sub validate_all {
 		my $self = shift;
 		my $type = shift;
@@ -993,19 +993,19 @@ sub undefined_parent  {
 		return 1;
 	}
 
-		
+
 	sub validation_ignore {
 		# nothing happens
 		return;
 	}
-	
+
 	sub validation_warning {
 		my $self = shift;
 		my $message = shift;
 		warn "WARNING: $message\n";
 		return;
 	}
-	
+
 	sub validation_die {
 		my $self = shift;
 		my $message = shift;
@@ -1016,7 +1016,7 @@ sub undefined_parent  {
   Function : find a feature to satisfy an expectation - limited functionality at present
   Example  : validation_find($expectation_hashref);
 =cut
-	
+
 	sub validation_find {
 		# TODO 	- handle relationships other than parent
 		my $self = shift;
@@ -1029,8 +1029,8 @@ sub undefined_parent  {
 		$attributes{'_score'} = '.';
 		$attributes{'_strand'} = $self->{attributes}->{_strand};
 		$attributes{'_phase'} = '.';
-		
-		my $relative;	
+
+		my $relative;
 		if ($expectation->{'relation'} eq 'hasParent'){
 			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
 			while ($relative = shift @possibles){
@@ -1054,7 +1054,7 @@ sub undefined_parent  {
 				$self->unlink_from_mother();
 				$parent->add_daughter($self);
 			}
-			
+
 		}
 		return $relative->[0];
 	}
@@ -1063,7 +1063,7 @@ sub undefined_parent  {
   Function : make a feature to satisfy an expectation - limited to parents at the moment
   Example  : validation_make($expectation_hashref);
 =cut
-	
+
 	sub validation_make {
 		my $self = shift;
 		my $expectation = pop;
@@ -1102,9 +1102,9 @@ sub undefined_parent  {
 			my $sister = $self->make_sister($expectation->{'alt_type'});
 			return $sister;
 		}
-		
+
 	}
-	
+
 =head2 validation_force
   Function : find a feature to satisfy an expectation if possible, otherwise make one
   Example  : validation_force($expectation_hashref);
@@ -1125,7 +1125,7 @@ sub undefined_parent  {
   Function : compare two values based on a specified operator
   Example  : compare(10,20,'<'); # returns true
 =cut
-	
+
 sub compare {
 	my ($first,$second,$operator) = @_;
 	return $first > $second if $operator eq '>';
@@ -1146,7 +1146,7 @@ sub compare {
   Function : make a feature required during parsing, maybe combine with validation_make?
   Example  : parse_make($expectation_hashref);
 =cut
-	
+
 sub make_region {
 	my $self = shift;
 	my $name = shift;
@@ -1186,12 +1186,12 @@ sub as_string {
 					$attr = $self->{attributes}->{$key.'_array'}[$s];
 				}
 				if (ref $attr eq 'ARRAY') {
-  					$col_nine[$s] .= $key.'='.join(',',@{$attr}).';'; 
+  					$col_nine[$s] .= $key.'='.join(',',@{$attr}).';';
 				}
 				else {
 					my $value = $attr;
 					$value =~ s/\._\d+$//;
-					$col_nine[$s] .= $key.'='.$value.';'; 
+					$col_nine[$s] .= $key.'='.$value.';';
 				}
 			}
 			chop $col_nine[$s];
@@ -1201,12 +1201,12 @@ sub as_string {
 		foreach my $key (sort keys %{$self->{attributes}}){
 			next if $key =~ m/^_/;
 			if (ref $self->{attributes}->{$key} eq 'ARRAY') {
-	  			$col_nine[0] .= $key.'='.join(',',@{$self->{attributes}->{$key}}).';'; 
+	  			$col_nine[0] .= $key.'='.join(',',@{$self->{attributes}->{$key}}).';';
 			}
 			else {
 				my $value = $self->{attributes}->{$key};
 				$value =~ s/\._\d+$//;
-				$col_nine[0] .= $key.'='.$value.';'; 
+				$col_nine[0] .= $key.'='.$value.';';
 			}
 		}
 		chop $col_nine[0];
@@ -1253,13 +1253,13 @@ sub is_comment {
 }
 
 =head2 parse_gff_line
-  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded 
+  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded
              characters
   Example  : parse_gff_line($line);
 =cut
 
 =head2 parse_gff_line
-  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded 
+  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded
              characters and building arrays of comma-separated values
   Example  : parse_gff_line($line);
 =cut
@@ -1327,7 +1327,7 @@ sub _length {
     my $length = $node->attributes->{_end} - $node->attributes->{_start} + 1;
     return $length;
 }
-	
+
 =head2 _phase
   Function : get/set the phase name for a feature
   Example  : $phase = $node->_phase();
@@ -1359,13 +1359,13 @@ sub _phase {
 		}
 		return $pf_conv{$node->attributes->{_phase}};
 	}
-	
+
 }
 
 
 
 =head2 by_name
-  Function : walk through the tree to find a feature by name, works in scalar or array 
+  Function : walk through the tree to find a feature by name, works in scalar or array
              context
   Example  : $node = $gff->by_name('id2');
 =cut
@@ -1386,7 +1386,7 @@ sub by_name {
 
 
 =head2 by_attribute
-  Function : returns a scalar or array of features with a given attribute or where an 
+  Function : returns a scalar or array of features with a given attribute or where an
              attribute matches a specific value
   Example  : @nodes = $gff->by_attribute('anything');
   			 $node = $gff->by_attribute('anything','something');
@@ -1423,7 +1423,7 @@ sub by_attribute {
 
 
 =head2 by_attributes
-  Function : returns a scalar or array of features with each of a given set of attributes 
+  Function : returns a scalar or array of features with each of a given set of attributes
              or where each of a set of attributes match specific values
   Example  : @nodes = $gff->by_attributes(['anything','anything_else]);
   			 $node = $gff->by_attributes(['anything','something'],['anythingelse','somethingelse']);
@@ -1459,7 +1459,7 @@ sub by_attributes {
 
 
 =head2 by_not_attribute
-  Function : returns a scalar or array of features without a given attribute or where an 
+  Function : returns a scalar or array of features without a given attribute or where an
              attribute does not match a specific value
   Example  : @nodes = $gff->by_attribute('anything');
   			 @nodes = $gff->by_attribute('anything','something');
@@ -1491,7 +1491,7 @@ sub by_not_attribute {
         if ($match == 0){
             push @found, $_[0];
        	    return $retvalue;
-        }   
+        }
         1}});
     return wantarray? @found : @found ? $found[0] : undef;
 }
