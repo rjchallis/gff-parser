@@ -65,6 +65,7 @@ sub new {
 	my %multiline;
 	my $separator = '\t';
 	my $has_comments = undef;
+	my $lastline;
 
 
 =head2 separator
@@ -167,20 +168,50 @@ sub new {
 
 
 =head2 parse_file
-  Function : Reads a gff3 file into a tree structure, handling multiline features and
-             ordering features on the same region
+  Function : Convenience method, calls parse_chunk with no separator to read an entire
+             gff3 file into a tree structure.
   Example  : $gff->parse_file();
 =cut
 
 	sub parse_file {
 		my $node = shift;
+		$node->parse_chunk();
+		return 1;
+	}
+
+
+=head2 parse_chunk
+  Function : Reads a chunk of a gff3 file into a tree structure, handling multiline 
+             features and ordering features on the same region.  if called with no 
+             parameters the whole file will be parsed.
+  Example  : $gff->parse_chunk('separator','###');
+  Example  : $gff->parse_chunk('change','region');
+  Example  : $gff->parse_chunk('separator','###');
+=cut
+
+	sub parse_chunk {
+		my ($node,$split_by,$break_on) = @_;
+		foreach my $it ($node->clear_daughters) { $it->delete_tree }
+		return if $lastline;
 		#$ids{'root'} = $node;
+		if ($split_by){
+			return unless $break_on;
+			if ($split_by eq 'change'){
+				return unless $break_on eq 'region';
+				# TODO: consider adding support for other changes
+			}
+		}
 		my $fasta;
 		my $region;
+		my $prev_region;
 		my $seq = '';
 		my $ctr = 0;
-	    while (<>){
-			chomp;
+		while (<>){
+		    $lastline = $_ if eof();
+	    	chomp;
+			if ($split_by && $split_by eq 'separator'){
+				return 1 if $_ =~ m/^$break_on/;
+			}
 			if (my $ret = is_comment($_)){
 				if ($ret == -9){
 					$fasta = substr $_,1;
@@ -207,6 +238,10 @@ sub new {
 				$_ = delete_comments($_);
 			}
 			my ($data,$attribs) = parse_gff_line($_,$separator);
+			if ($split_by && $split_by eq 'change'){
+				return 1 if $prev_region && $prev_region ne $data->[0];
+				$prev_region = $data->[0];
+			}
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
 			$attributes{'_source'} = $data->[1];
@@ -417,7 +452,6 @@ sub new {
 				}
 			}
 		}
-
 		return 1;
 	}
 
