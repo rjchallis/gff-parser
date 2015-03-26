@@ -92,7 +92,7 @@ NW_004581292.1	RefSeq	region	1	3111	.	+	.	ID=id27;Dbxref=taxon:7091;chromosome=U
 ##sequence-region NW_004581293.1 1 4593
 ##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7091
 NW_004581293.1	RefSeq	region	1	4593	.	+	.	ID=id28;Dbxref=taxon:7091;chromosome=Unknown;gbkey=Src;genome=genomic;mol_type=genomic DNA;sex=male;strain=p50T %28%3D Dazao%29
-NW_004581293.1	Gnomon	gene	2227	3188	.	-	.	ID=gene2;Name=LOC101735631;Dbxref=GeneID:101735631;gbkey=Gene;gene=LOC101735631;partial=true
+NW_004581293.1	Gnomon	gene	2227	3188	.	-	.	ID=gene2;Name=LOC101735631;[comment]Dbxref=GeneID:101735631;gbkey=Gene;gene=LOC101735631;partial=true
 NW_004581293.1	Gnomon	mRNA	2227	3188	.	-	.	ID=rna2;Name=XM_004921463.1;Parent=gene2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
 NW_004581293.1	Gnomon	exon	3045	3188	.	-	.	ID=id29;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
 NW_004581293.1	Gnomon	exon	2607	2893	.	-	.	ID=id30;Parent=rna2;Dbxref=GeneID:101735631,Genbank:XM_004921463.1;gbkey=mRNA;gene=LOC101735631;product=putative nuclease HARBI1-like;transcript_id=XM_004921463.1
@@ -525,6 +525,12 @@ ctg123	.	CDS	7000	7600	.	+	1	ID=cds00003;Parent=mRNA00003
 ctg123	.	CDS	3391	3902	.	+	0	ID=cds00004;Parent=mRNA00003
 ctg123	.	CDS	5000	5500	.	+	1	ID=cds00004;Parent=mRNA00003
 ctg123	.	CDS	7000	7600	.	+	1	ID=cds00004;Parent=mRNA00003
+NW_004581687.1	tRNAscan-SE	gene	2735448	2735565	.	+	.	ID=gene1317;Name=TRNAL-CAA;Dbxref=GeneID:101696222;gbkey=Gene;gene=TRNAL-CAA
+NW_004581687.1	tRNAscan-SE	tRNA	2735448	2735485	.	+	.	ID=rna1459;Note=transfer RNA leucine %28anticodon CAA%29;Dbxref=GeneID:101696222;anticodon=%28pos:2735482..2735484%29;gbkey=tRNA;product=tRNA-Leu
+NW_004581687.1	tRNAscan-SE	tRNA	2735521	2735565	.	+	.	ID=rna1459;Note=transfer RNA leucine %28anticodon CAA%29;Dbxref=GeneID:101696222;anticodon=%28pos:2735482..2735484%29;gbkey=tRNA;product=tRNA-Leu
+NW_004581687.1	tRNAscan-SE	exon	2735448	2735485	.	+	.	ID=id10362;Parent=rna1459;Note=transfer RNA leucine %28anticodon CAA%29;Dbxref=GeneID:101696222;anticodon=%28pos:2735482..2735484%29;gbkey=tRNA;product=tRNA-Leu
+NW_004581687.1	tRNAscan-SE	exon	2735521	2735565	.	+	.	ID=id10363;Parent=rna1459;Note=transfer RNA leucine %28anticodon CAA%29;Dbxref=GeneID:101696222;anticodon=%28pos:2735482..2735484%29;gbkey=tRNA;product=tRNA-Leu
+
 ##FASTA
 >NW_004581398.1
 AAATAAATAAATAAATAAATACATTTTTAAATAGTAATGCTGTGTCACTTCGTTAATTTCCGAAATTTTC
