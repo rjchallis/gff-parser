@@ -36,10 +36,21 @@ sub new {
     my $options = shift;
     my $gff = GFFTree->new($options);
     $gff->add_expectation('gene','hasParent','region','force');
+	$gff->add_expectation('match','hasParent','region','force');
+	$gff->add_expectation('cDNA_match','hasParent','region','force');
+	$gff->add_expectation('Genomic','hasParent','region','force');
 	$gff->add_expectation('mrna','hasParent','gene','find');
+	$gff->add_expectation('trna','hasParent','gene','find');
+	$gff->add_expectation('transcript','hasParent','gene','find');
 	$gff->add_expectation('exon','hasParent','mrna','find');
 	$gff->add_expectation('cds','hasParent','mrna','find');
-	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<[_start,_end]','SELF','warn');
+	$gff->multiline('CDS');
+	$gff->multiline('tRNA');
+	$gff->multiline('cDNA_match');
+	$gff->multiline('five_prime_UTR');
+	$gff->multiline('three_prime_UTR');
+	$gff->multiline('match');
+	$gff->add_expectation('cds|exon|mrna|trna|transcript|gene|region','<=[_start,_end]','SELF','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','>=[_start]','PARENT','warn');
 	$gff->add_expectation('cds|exon|mrna|trna|transcript','<=[_end]','PARENT','warn');
 
