@@ -41,6 +41,7 @@ use warnings;
 package GFFTree;
 use Tree::DAG_Node;
 use Encode::Escape::ASCII;
+use IO::Unread;
 our @ISA=qw(Tree::DAG_Node);
 
 =head2 new
@@ -203,14 +204,13 @@ sub new {
 		}
 		my $fasta;
 		my $region;
-		my $prev_region;
 		my $seq = '';
 		my $ctr = 0;
 		while (<>){
 		    $lastline = $_ if eof();
 	    	chomp;
 			if ($split_by && $split_by eq 'separator'){
-				return 1 if $_ =~ m/^$break_on/;
+				last if $_ =~ m/^$break_on/;
 			}
 			if (my $ret = is_comment($_)){
 				if ($ret == -9){
@@ -238,10 +238,6 @@ sub new {
 				$_ = delete_comments($_);
 			}
 			my ($data,$attribs) = parse_gff_line($_,$separator);
-			if ($split_by && $split_by eq 'change'){
-				return 1 if $prev_region && $prev_region ne $data->[0];
-				$prev_region = $data->[0];
-			}
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
 			$attributes{'_source'} = $data->[1];
@@ -425,6 +421,24 @@ sub new {
 				}
 				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
+			if ($split_by && $split_by eq 'change'){
+				my $nextline = <>;
+				if (defined($nextline)){	
+					IO::Unread::unread ARGV, $nextline;
+					next if is_comment($nextline);
+					next if $fasta;
+					if ($has_comments){
+						$nextline = delete_comments($nextline);
+					}
+					my ($nextdata,undef) = parse_gff_line($nextline,$separator);
+					last if $nextdata && $nextdata->[0] ne $data->[0];
+				}
+				else {
+					last;
+				}
+			}
+			
+			
 		}
 
 		# loop through orphanage to see if anything can be done with unparented features
