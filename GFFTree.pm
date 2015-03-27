@@ -238,6 +238,7 @@ sub new {
 				$_ = delete_comments($_);
 			}
 			my ($data,$attribs) = parse_gff_line($_,$separator);
+			next unless $data;
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
 			$attributes{'_source'} = $data->[1];
@@ -1306,37 +1307,66 @@ sub is_comment {
   Example  : parse_gff_line($line);
 =cut
 
+{
+	my $col_count;
+	my $col_count_flag = 'ignore';
+
+=head2 expect_columns
+  Function : expected number of columns in the input file with flag to ignore warn, die 
+             or skip if the number of columns found does not match the expected number.  
+  Example  : expect_columns(9,'skip');
+=cut
+
+	sub expect_columns {
+		my $node = shift;
+		$col_count = shift;
+		my $flag = shift;
+		$col_count_flag = $flag if $flag;
+		return $col_count;
+	}
+
 =head2 parse_gff_line
   Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded
              characters and building arrays of comma-separated values
   Example  : parse_gff_line($line);
 =cut
 
-sub parse_gff_line {
-	my ($line,$sep) = @_;
-	my @data = split /$sep/,$line;
-	chomp $data[8];
-	my %attribs = split /[=;]/,$data[8];
-	pop @data;
-	foreach my $key (keys %attribs){
-		# treat differently if commas are present
-		my @parts = split /,/,$attribs{$key};
-		if ($parts[1]){
-			$attribs{$key} = [];
-			while (my $part = shift @parts){
-				$part =~ s/\%/\\x/g;
-				$part = decode 'ascii-escape', $part;
-				push @{$attribs{$key}},$part;
+	sub parse_gff_line {
+		my ($line,$sep) = @_;
+		my @data = split /$sep/,$line;
+		if ($col_count){
+			if ($col_count != @data){
+				die "ERROR: Expected $col_count columns but found ".scalar(@data) if $col_count_flag eq 'die';
+				warn "WARNING: Expected $col_count columns but found ".scalar(@data) if $col_count_flag eq 'warn';
+				if ($col_count_flag eq 'skip'){
+					warn "WARNING: Expected $col_count columns but found ".scalar(@data).", skipping line";
+					return;
+				}
 			}
 		}
-		else {
-			$attribs{$key} =~ s/\%/\\x/g;
-			$attribs{$key} = decode 'ascii-escape', $attribs{$key};
+		chomp $data[8];
+		my %attribs = split /[=;]/,$data[8];
+		pop @data;
+		foreach my $key (keys %attribs){
+			# treat differently if commas are present
+			my @parts = split /,/,$attribs{$key};
+			if ($parts[1]){
+				$attribs{$key} = [];
+				while (my $part = shift @parts){
+					$part =~ s/\%/\\x/g;
+					$part = decode 'ascii-escape', $part;
+					push @{$attribs{$key}},$part;
+				}
+			}
+			else {
+				$attribs{$key} =~ s/\%/\\x/g;
+				$attribs{$key} = decode 'ascii-escape', $attribs{$key};
+			}
 		}
+		return \@data,\%attribs;
 	}
-	return \@data,\%attribs;
-}
 
+}
 
 =head2 id
   Function : get/set the id for a feature
