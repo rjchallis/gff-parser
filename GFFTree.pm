@@ -357,7 +357,7 @@ sub new {
 						else {
 							# find the position in the array to insert the current values
 							my $index = 0;
-							while ($attributes{'_start'} > $existing->{attributes}->{'_start_array'}[$index]){
+							while ($index < @{$existing->{attributes}->{'_start_array'}} && $attributes{'_start'} > $existing->{attributes}->{'_start_array'}[$index]){
 								$index++;
 							}
 							foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
