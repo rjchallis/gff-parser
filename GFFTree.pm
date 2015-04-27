@@ -1287,6 +1287,22 @@ sub as_string {
 	return $line;
 }
 
+=head2 structured_output
+  Function : returns a gff representation of a feature and all descendants
+  Example  : $gene->structured_output();
+=cut
+
+sub structured_output {
+	my $self = shift;
+	my $output;
+	$output .= $self->as_string(1);
+	my @daughters = $self->daughters();
+	while (my $daughter = shift @daughters){
+		$output .= $daughter->structured_output();
+	}
+	return $output;
+}
+
 
 
 =head2 is_comment
