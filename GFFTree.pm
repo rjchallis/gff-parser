@@ -1498,12 +1498,12 @@ sub by_attribute {
             }
             elsif (ref $_[0]->attributes->{$attrib} eq 'ARRAY'){
             	for (my $i = 0; $i < @{$_[0]->attributes->{$attrib}}; $i++){
-            		if ($_[0]->attributes->{$attrib}->[$i] =~ m/^$value$/i){
+            		if ($_[0]->attributes->{$attrib}->[$i] =~ m/^(?:$value)$/i){
         				$match++;
             		}
             	}
             }
-            elsif ($_[0]->attributes->{$attrib} =~ m/^$value$/i){
+            elsif ($_[0]->attributes->{$attrib} =~ m/^(?:$value)$/i){
             	$match++;
             }
             if ($match > 0){
@@ -1569,12 +1569,12 @@ sub by_not_attribute {
     		if (defined $value){
     			if (ref $_[0]->attributes->{$attrib} eq 'ARRAY'){
     				for (my $i = 0; $i < @{$_[0]->attributes->{$attrib}}; $i++){
-            			if ($_[0]->attributes->{$attrib}->[$i] =~ m/^$value$/i){
+            			if ($_[0]->attributes->{$attrib}->[$i] =~ m/^(?:$value)$/i){
         					$match++;
             			}
             		}
     			}
-    			elsif ($_[0]->attributes->{$attrib} =~ m/^$value$/i) {
+    			elsif ($_[0]->attributes->{$attrib} =~ m/^(?:$value)$/i) {
     				$match++;
        	 		}
        	 	}
