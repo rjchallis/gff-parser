@@ -425,8 +425,8 @@ sub new {
 			if ($split_by && $split_by eq 'change'){
 				my $nextline = <>;
 				if (defined($nextline)){	
-					IO::Unread::unread ARGV, $nextline;
 					next if is_comment($nextline);
+					IO::Unread::unread ARGV, $nextline;
 					next if $fasta;
 					if ($has_comments){
 						$nextline = delete_comments($nextline);
