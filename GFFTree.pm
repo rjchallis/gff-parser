@@ -1365,6 +1365,10 @@ sub is_comment {
 		pop @data;
 		foreach my $key (keys %attribs){
 			# treat differently if commas are present
+			if (!$attribs{$key}){
+				delete $attribs{$key};
+				next;
+			}
 			my @parts = split /,/,$attribs{$key};
 			if ($parts[1]){
 				$attribs{$key} = [];
