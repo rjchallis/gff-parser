@@ -1235,11 +1235,16 @@ sub as_string {
 					$attr = $self->{attributes}->{$key.'_array'}[$s];
 				}
 				if (ref $attr eq 'ARRAY') {
-  					$col_nine[$s] .= $key.'='.join(',',@{$attr}).';';
+					my $value = join(',',@{$attr});
+					$value =~ s/=/\%3D/g;
+  					$value =~ s/;/\%60/g;
+  					$col_nine[$s] .= $key.'='.$value.';';
 				}
 				else {
 					my $value = $attr;
 					$value =~ s/\._\d+$//;
+					$value =~ s/=/\%3D/g;
+  					$value =~ s/;/\%60/g;
 					$col_nine[$s] .= $key.'='.$value.';';
 				}
 			}
