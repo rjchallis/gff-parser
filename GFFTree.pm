@@ -1255,11 +1255,16 @@ sub as_string {
 		foreach my $key (sort keys %{$self->{attributes}}){
 			next if $key =~ m/^_/;
 			if (ref $self->{attributes}->{$key} eq 'ARRAY') {
-	  			$col_nine[0] .= $key.'='.join(',',@{$self->{attributes}->{$key}}).';';
+				my $value = join(',',@{$self->{attributes}->{$key}});
+				$value =~ s/=/\%3D/g;
+  				$value =~ s/;/\%60/g;
+	  			$col_nine[0] .= $key.'='.$value.';';
 			}
 			else {
 				my $value = $self->{attributes}->{$key};
 				$value =~ s/\._\d+$//;
+				$value =~ s/=/\%3D/g;
+  				$value =~ s/;/\%60/g;
 				$col_nine[0] .= $key.'='.$value.';';
 			}
 		}
