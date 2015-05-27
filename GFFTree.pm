@@ -1365,7 +1365,7 @@ sub is_comment {
 				die "ERROR: Expected $col_count columns but found ".scalar(@data) if $col_count_flag eq 'die';
 				warn "WARNING: Expected $col_count columns but found ".scalar(@data) if $col_count_flag eq 'warn';
 				if ($col_count_flag eq 'skip'){
-					warn "WARNING: Expected $col_count columns but found ".scalar(@data).", skipping line";
+					#warn "WARNING: Expected $col_count columns but found ".scalar(@data).", skipping line";
 					return;
 				}
 			}
