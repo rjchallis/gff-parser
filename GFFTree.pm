@@ -1351,7 +1351,8 @@ sub structured_output {
 	$output .= $self->as_string(1);
 	my @daughters = $self->daughters();
 	while (my $daughter = shift @daughters){
-		$output .= $daughter->structured_output();
+		$out = $daughter->structured_output();
+		$output .= $out if $out;
 		return if $daughter->{attributes}->{_skip};
 	}
 	return $output;
