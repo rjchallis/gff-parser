@@ -561,6 +561,7 @@ sub new {
 		return $by_start{$seq_name}{$type}{$prev_begin};
 	}
 
+
 }
 
 # use nesting to allow sub to retain access to private variables
@@ -982,6 +983,31 @@ sub undefined_parent  {
 	}
 
 
+=head2 make_child
+  Function : make child features
+  Example  : $child = $mrna->make_child('exon');
+=cut
+
+	sub make_child {
+		my $self = shift;
+		my $alt_type = shift;
+		my $child;
+		my @attributes = ('_seq_name','_source','_start','_end','_score','_strand','_phase','Parent');
+		$child = $self->copy({no_attribute_copy => 1});
+		foreach my $attribute (@attributes){
+			$child->{attributes}->{$attribute} = $self->{attributes}->{$attribute};
+			if ($self->{attributes}->{$attribute.'_array'}){
+				$child->{attributes}->{$attribute.'_array'} = $self->{attributes}->{$attribute.'_array'};
+			}
+		}
+		$self->add_daughter($child);
+		$child->{attributes}->{_type} = $alt_type;
+		$child->make_id($alt_type);
+		$child->{attributes}->{Name} = $child->name();
+		return $child;
+	}
+
+
 =head2 validate
   Function : Test whether a feature meets the conditions defined in any relevant added
              expectations and respond according to the specified flag
@@ -1000,7 +1026,8 @@ sub undefined_parent  {
 					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless $self->mother->{attributes}->{_type} && $self->mother->{attributes}->{_type} =~ m/$hashref->{'alt_type'}/i;
 				}
 				elsif ($hashref->{'relation'} eq 'hasChild'){
-					#;
+					my $message = $type." ".$self->id.' does not have a child of type '.$hashref->{'alt_type'};
+					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless $self->by_type($hashref->{'alt_type'});
 				}
 				elsif ($hashref->{'relation'} eq 'hasSister'){
 					my $message = $type." ".$self->id.' does not have a sister of type '.$hashref->{'alt_type'};
@@ -1111,10 +1138,11 @@ sub undefined_parent  {
 				$self->{attributes}->{Parent} = $parent->id();
 				$self->unlink_from_mother();
 				$parent->add_daughter($self);
+				return $relative->[0];
 			}
 
 		}
-		return $relative->[0];
+		return;
 	}
 
 =head2 validation_make
@@ -1160,7 +1188,11 @@ sub undefined_parent  {
 			my $sister = $self->make_sister($expectation->{'alt_type'});
 			return $sister;
 		}
-
+		elsif ($expectation->{'relation'} eq 'hasChild'){
+			my $child = $self->make_child($expectation->{'alt_type'});
+			return $child;
+		}
+		return;
 	}
 
 =head2 validation_force
