@@ -757,6 +757,7 @@ sub undefined_parent  {
 					'die' => \&validation_die,
 					'find' => \&validation_find,
 					'make' => \&validation_make,
+					'skip' => \&validation_skip,
 					'force' => \&validation_force,
               );
 
@@ -1061,6 +1062,14 @@ sub undefined_parent  {
 		die "ERROR: $message\n";
 	}
 
+	sub validation_skip {
+		my $self = shift;
+		my $level = shift;
+		warn "WARNING: $message\n";
+		$self->{attributes}->{_skip} = 'true';
+	}
+
+
 =head2 validation_find
   Function : find a feature to satisfy an expectation - limited functionality at present
   Example  : validation_find($expectation_hashref);
@@ -1304,11 +1313,13 @@ sub as_string {
 
 sub structured_output {
 	my $self = shift;
+	return if $self->{attributes}->{_skip};
 	my $output;
 	$output .= $self->as_string(1);
 	my @daughters = $self->daughters();
 	while (my $daughter = shift @daughters){
 		$output .= $daughter->structured_output();
+		return if $daughter->{attributes}->{_skip};
 	}
 	return $output;
 }
