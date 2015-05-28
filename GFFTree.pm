@@ -992,7 +992,7 @@ sub undefined_parent  {
 		my $self = shift;
 		my $alt_type = shift;
 		my $child;
-		my @attributes = ('_seq_name','_source','_start','_end','_score','_strand','_phase','Parent');
+		my @attributes = ('_seq_name','_source','_start','_end','_score','_strand','_phase');
 		$child = $self->copy({no_attribute_copy => 1});
 		foreach my $attribute (@attributes){
 			$child->{attributes}->{$attribute} = $self->{attributes}->{$attribute};
@@ -1002,6 +1002,7 @@ sub undefined_parent  {
 		}
 		$self->add_daughter($child);
 		$child->{attributes}->{_type} = $alt_type;
+		$child->{attributes}->{Parent} = $self->id();
 		$child->make_id($alt_type);
 		$child->{attributes}->{Name} = $child->name();
 		return $child;
