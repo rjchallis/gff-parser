@@ -1064,7 +1064,7 @@ sub undefined_parent  {
 
 	sub validation_skip {
 		my $self = shift;
-		my $level = shift;
+		my $message = shift;
 		warn "WARNING: $message\n";
 		$self->{attributes}->{_skip} = 'true';
 	}
