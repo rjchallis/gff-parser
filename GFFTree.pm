@@ -280,10 +280,12 @@ sub new {
 					if (is_multiline($attributes{'_type'})){
 						# test whether parent has a child of this type with an ID already
 						if (my $child = $parent->by_type($attributes{'_type'})){
-							$attribs->{'ID'} = $child->id();
-							print $attribs->{'ID'},"\n";
-							print $attribs->{'Parent'},"\n";
-							print $parent->name(),"\n";
+							if ($attribs->{'Parent'} && $attribs->{'Parent'} eq $child->{attributes}->{Parent}){
+								$attribs->{'ID'} = $child->id();
+								print $attribs->{'ID'},"\n";
+								print $attribs->{'Parent'},"\n";
+								print $parent->name(),"\n";
+							}
 						}
 					}
 					if (!$attribs->{'ID'}){
