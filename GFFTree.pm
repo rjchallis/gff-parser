@@ -277,12 +277,20 @@ sub new {
 					}
 				}
 				if ($behaviour eq 'make'){
-					my $prefix = $attributes{'_type'}.'___';
-					my $suffix = 0;
-					while (by_id($prefix.$suffix)){
-						$suffix++;
+					if (is_multiline($attributes{'_type'}){
+						# test whether parent has a child of this type with an ID already
+						if ($child = $parent->by_type($attributes{'_type'})){
+							$attribs->{'ID'} = $child->id();
+						}
 					}
-					$attribs->{'ID'} = $prefix.$suffix;
+					if (!$attribs->{'ID'}){
+						my $prefix = $attributes{'_type'}.'___';
+						my $suffix = 0;
+						while (by_id($prefix.$suffix)){
+							$suffix++;
+						}
+						$attribs->{'ID'} = $prefix.$suffix;
+					}
 				}
 			}
 
