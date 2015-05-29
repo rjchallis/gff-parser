@@ -283,6 +283,7 @@ sub new {
 							$attribs->{'ID'} = $child->id();
 							print $attribs->{'ID'},"\n";
 							print $attribs->{'Parent'},"\n";
+							print $parent->name(),"\n";
 						}
 					}
 					if (!$attribs->{'ID'}){
