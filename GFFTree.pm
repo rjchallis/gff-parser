@@ -1279,14 +1279,14 @@ sub as_string {
 				if (ref $attr eq 'ARRAY') {
 					my $value = join(',',@{$attr});
 					$value =~ s/=/\%3D/g;
-  					$value =~ s/;/\%60/g;
+  					$value =~ s/;/\%3B/g;
   					$col_nine[$s] .= $key.'='.$value.';';
 				}
 				else {
 					my $value = $attr;
 					$value =~ s/\._\d+$//;
 					$value =~ s/=/\%3D/g;
-  					$value =~ s/;/\%60/g;
+  					$value =~ s/;/\%3B/g;
 					$col_nine[$s] .= $key.'='.$value.';';
 				}
 			}
@@ -1299,14 +1299,14 @@ sub as_string {
 			if (ref $self->{attributes}->{$key} eq 'ARRAY') {
 				my $value = join(',',@{$self->{attributes}->{$key}});
 				$value =~ s/=/\%3D/g;
-  				$value =~ s/;/\%60/g;
+  				$value =~ s/;/\%3B/g;
 	  			$col_nine[0] .= $key.'='.$value.';';
 			}
 			else {
 				my $value = $self->{attributes}->{$key};
 				$value =~ s/\._\d+$//;
 				$value =~ s/=/\%3D/g;
-  				$value =~ s/;/\%60/g;
+  				$value =~ s/;/\%3B/g;
 				$col_nine[0] .= $key.'='.$value.';';
 			}
 		}
