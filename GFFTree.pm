@@ -425,6 +425,7 @@ sub new {
 				#print "$attribs->{'ID'}\n";
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 				$ids{$attribs->{'ID'}}->id($attribs->{'ID'});
+				print "adding $attribs->{'ID'}\n";
 				if ($attribs->{'Name'}){
 					$ids{$attribs->{'ID'}}->name($attribs->{'Name'});
 				}
