@@ -282,9 +282,6 @@ sub new {
 						if (my $child = $parent->by_type($attributes{'_type'})){
 							if ($attribs->{'Parent'} && $attribs->{'Parent'} eq $child->{attributes}->{Parent}){
 								$attribs->{'ID'} = $child->id();
-								print $attribs->{'ID'},"\n";
-								print $attribs->{'Parent'},"\n";
-								print $parent->name(),"\n";
 							}
 						}
 					}
@@ -427,7 +424,6 @@ sub new {
 				#print "$attribs->{'ID'}\n";
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 				$ids{$attribs->{'ID'}}->id($attribs->{'ID'});
-				print "adding $attribs->{'ID'}\n";
 				if ($attribs->{'Name'}){
 					$ids{$attribs->{'ID'}}->name($attribs->{'Name'});
 				}
@@ -464,6 +460,8 @@ sub new {
 			for (my $o = 0; $o < @orphans; $o++){
 				if ($orphans[$o]->{attributes}->{'Parent'} && $ids{$orphans[$o]->{attributes}->{'Parent'}}){
 					# move the orphan node to a new parent
+					print $orphans[$o]->{attributes}->{'Parent'},"\n";
+					print $orphans[$o]->{attributes}->{'ID'},"\n";
 					$orphans[$o]->unlink_from_mother();
 					$ids{$orphans[$o]->{attributes}->{'Parent'}}->add_daughter($orphans[$o]);
 				}
