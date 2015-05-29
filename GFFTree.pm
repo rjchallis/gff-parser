@@ -282,6 +282,7 @@ sub new {
 						if (my $child = $parent->by_type($attributes{'_type'})){
 							$attribs->{'ID'} = $child->id();
 							print $attribs->{'ID'},"\n";
+							print $attribs->{'Parent'},"\n";
 						}
 					}
 					if (!$attribs->{'ID'}){
