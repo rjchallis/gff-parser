@@ -64,6 +64,7 @@ sub new {
 	my %by_start;
 	my %type_map;
 	my %multiline;
+	my %parents;
 	my $separator = '\t';
 	my $has_comments = undef;
 	my $lastline;
@@ -279,10 +280,8 @@ sub new {
 				if ($behaviour eq 'make'){
 					if (is_multiline($attributes{'_type'})){
 						# test whether parent has a child of this type with an ID already
-						if (my $child = $parent->by_type($attributes{'_type'})){
-							if ($attribs->{'Parent'} && $attribs->{'Parent'} eq $child->{attributes}->{Parent}){
-								$attribs->{'ID'} = $child->id();
-							}
+						if ($attribs->{'Parent'} && $parents{$attribs->{'Parent'}}{$attributes{'_type'}}){
+							$attribs->{'ID'} = $parents{$attribs->{'Parent'}}{$attributes{'_type'}};
 						}
 					}
 					if (!$attribs->{'ID'}){
@@ -292,6 +291,9 @@ sub new {
 							$suffix++;
 						}
 						$attribs->{'ID'} = $prefix.$suffix;
+						if (is_multiline($attributes{'_type'}) && $attribs->{'Parent'}){
+							$parents{$attribs->{'Parent'}}{$attributes{'_type'}} = $attribs->{'ID'};
+						}
 					}
 				}
 			}
@@ -424,6 +426,7 @@ sub new {
 				#print "$attribs->{'ID'}\n";
 				$ids{$attribs->{'ID'}} = $parent->new_daughter({%attributes,%$attribs});
 				$ids{$attribs->{'ID'}}->id($attribs->{'ID'});
+				print "adding $attribs->{'ID'}\n";
 				if ($attribs->{'Name'}){
 					$ids{$attribs->{'ID'}}->name($attribs->{'Name'});
 				}
@@ -460,8 +463,6 @@ sub new {
 			for (my $o = 0; $o < @orphans; $o++){
 				if ($orphans[$o]->{attributes}->{'Parent'} && $ids{$orphans[$o]->{attributes}->{'Parent'}}){
 					# move the orphan node to a new parent
-					print $orphans[$o]->{attributes}->{'Parent'},"\n";
-					print $orphans[$o]->{attributes}->{'ID'},"\n";
 					$orphans[$o]->unlink_from_mother();
 					$ids{$orphans[$o]->{attributes}->{'Parent'}}->add_daughter($orphans[$o]);
 				}
