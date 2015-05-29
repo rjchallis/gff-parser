@@ -277,9 +277,9 @@ sub new {
 					}
 				}
 				if ($behaviour eq 'make'){
-					if (is_multiline($attributes{'_type'}){
+					if (is_multiline($attributes{'_type'})){
 						# test whether parent has a child of this type with an ID already
-						if ($child = $parent->by_type($attributes{'_type'})){
+						if (my $child = $parent->by_type($attributes{'_type'})){
 							$attribs->{'ID'} = $child->id();
 						}
 					}
