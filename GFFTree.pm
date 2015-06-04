@@ -61,6 +61,7 @@ sub new {
 # use nesting to allow subs to share and retain access to private variables
 {
 	my %ids;
+	my %suffices;
 	my %by_start;
 	my %type_map;
 	my %multiline;
@@ -287,8 +288,13 @@ sub new {
 					if (!$attribs->{'ID'}){
 						my $prefix = $attributes{'_type'}.'___';
 						my $suffix = 0;
+						if ($suffices{$prefix}){
+							$suffix = $suffices{$prefix};
+							$suffices{$prefix}++;
+						}
 						while (by_id($prefix.$suffix)){
 							$suffix++;
+							$suffices{$prefix}++;
 						}
 						$attribs->{'ID'} = $prefix.$suffix;
 						if (is_multiline($attributes{'_type'}) && $attribs->{'Parent'}){
@@ -500,10 +506,15 @@ sub new {
 	sub make_id  {
 		my $node = shift;
 		my $prefix = shift;
-		my $suffix = shift;
+		my $suffix = 0;
 		$suffix = 0 unless $suffix;
+		if ($suffices{$prefix}){
+			$suffix = $suffices{$prefix};
+			$suffices{$prefix}++;
+		}
 		while (by_id($prefix.$suffix)){
 			$suffix++;
+			$suffices{$prefix}++;
 		}
 		my $id = $prefix.$suffix;
 		$node->id($id);
