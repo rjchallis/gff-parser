@@ -195,7 +195,10 @@ sub new {
 	sub parse_chunk {
 		my ($node,$split_by,$break_on) = @_;
 		foreach my $it ($node->clear_daughters) { $it->delete_tree }
-		return if $lastline;
+		if ($lastline){
+			$lastline = undef;
+			return;
+		}
 		#$ids{'root'} = $node;
 		if ($split_by){
 			return unless $break_on;
@@ -294,7 +297,7 @@ sub new {
 						}
 						while (by_id($prefix.$suffix)){
 							$suffix++;
-							$suffices{$prefix}++;
+							$suffices{$prefix} = $suffix + 1;
 						}
 						$attribs->{'ID'} = $prefix.$suffix;
 						if (is_multiline($attributes{'_type'}) && $attribs->{'Parent'}){
@@ -514,7 +517,7 @@ sub new {
 		}
 		while (by_id($prefix.$suffix)){
 			$suffix++;
-			$suffices{$prefix}++;
+			$suffices{$prefix} = $suffix + 1;
 		}
 		my $id = $prefix.$suffix;
 		$node->id($id);
