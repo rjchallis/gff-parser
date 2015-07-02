@@ -197,6 +197,7 @@ sub new {
 		foreach my $it ($node->clear_daughters) { $it->delete_tree }
 		if ($lastline){
 			$lastline = undef;
+			undef %ids;
 			return;
 		}
 		#$ids{'root'} = $node;
