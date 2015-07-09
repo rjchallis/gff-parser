@@ -1452,7 +1452,7 @@ sub is_comment {
 				next;
 			}
 			my @parts = split /,/,$attribs{$key};
-			if ($parts[1]){
+			if ($parts[1] && ($key ne 'Note')){
 				$attribs{$key} = [];
 				while (my $part = shift @parts){
 					$part =~ s/\%/\\x/g;
