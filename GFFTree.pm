@@ -1369,16 +1369,18 @@ sub as_string {
 =head2 structured_output
   Function : returns a gff representation of a feature and all descendants
   Example  : $gene->structured_output();
+  Example  : $gene->structured_output(1); # skip features labeled as duplicates
 =cut
 
 sub structured_output {
 	my $self = shift;
+	my $skip_dups = shift;
 	return if $self->{attributes}->{_skip};
 	my $output;
-	$output .= $self->as_string(1);
+	$output .= $self->as_string($skip_dups);
 	my @daughters = $self->daughters();
 	while (my $daughter = shift @daughters){
-		my $out = $daughter->structured_output();
+		my $out = $daughter->structured_output($skip_dups);
 		$output .= $out if $out;
 		return if $daughter->{attributes}->{_skip};
 	}
