@@ -1288,6 +1288,7 @@ sub make_region {
 	my $col_count;
 	my $col_count_flag = 'ignore';
 	my %is_array = ( 	'Parent' => 1,
+						'Alias' => 1,
 						'Dbxref' => 1,
 						'Ontology_term' => 1,
 						);
