@@ -1283,88 +1283,115 @@ sub make_region {
 }
 
 
+
+{
+	my $col_count;
+	my $col_count_flag = 'ignore';
+	my %is_array = ( 	'Parent' => 1,
+						'Dbxref' => 1,
+						'Ontology_term' => 1,
+						);
+
+=head2 is_array
+  Function : returns true if an attribute type should be treated as an array
+  Example  : is_array('Parent',1);
+  Example  : is_array('Parent',0);
+  Example  : is_array('Parent'); 
+=cut
+
+	sub is_array {
+		my ($type,$bool) = @_;
+		if (defined($bool)){
+			$is_array{$type} = $bool;
+		}
+		return $is_array{$type};
+	}
+
+
 =head2 as_string
   Function : returns a gff representation of a single feature
   Example  : $gene->as_string();
   Example  : $gene->as_string(1); # skip features labeled as duplicates
 =cut
 
-sub as_string {
-	my $self = shift;
-	my $skip_dups = shift;
-	my $line = '';
-	my @col_nine;
-	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
-		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+	sub as_string {
+		my $self = shift;
+		my $skip_dups = shift;
+		my $line = '';
+		my @col_nine;
+		if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
+			for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+				foreach my $key (sort keys %{$self->{attributes}}){
+					next if $key =~ m/^_/;
+					next if $key =~ m/_array$/;
+					my $attr = $self->{attributes}->{$key};
+					if ($self->{attributes}->{$key.'_array'}){
+						$attr = $self->{attributes}->{$key.'_array'}[$s];
+					}
+					if (ref $attr eq 'ARRAY') {
+						my $value = join(',',@{$attr});
+						$value =~ s/,/\%2C/g if $is_array{$key};
+	  					$value =~ s/=/\%3D/g;
+	  					$value =~ s/;/\%3B/g;
+	  					$col_nine[$s] .= $key.'='.$value.';';
+					}
+					else {
+						my $value = $attr;
+						#$value =~ s/\._\d+$//;
+						$value =~ s/=/\%3D/g;
+	  					$value =~ s/;/\%3B/g;
+						$col_nine[$s] .= $key.'='.$value.';';
+					}
+				}
+				chop $col_nine[$s];
+			}
+		}
+		else {
 			foreach my $key (sort keys %{$self->{attributes}}){
 				next if $key =~ m/^_/;
-				next if $key =~ m/_array$/;
-				my $attr = $self->{attributes}->{$key};
-				if ($self->{attributes}->{$key.'_array'}){
-					$attr = $self->{attributes}->{$key.'_array'}[$s];
-				}
-				if (ref $attr eq 'ARRAY') {
-					my $value = join(',',@{$attr});
-					$value =~ s/=/\%3D/g;
-  					$value =~ s/;/\%3B/g;
-  					$col_nine[$s] .= $key.'='.$value.';';
+				if (ref $self->{attributes}->{$key} eq 'ARRAY') {
+					my $value = join(',',@{$self->{attributes}->{$key}});
+					$value =~ s/,/\%2C/g if $is_array{$key};
+	  				$value =~ s/=/\%3D/g;
+	  				$value =~ s/;/\%3B/g;
+		  			$col_nine[0] .= $key.'='.$value.';';
 				}
 				else {
-					my $value = $attr;
+					my $value = $self->{attributes}->{$key};
 					#$value =~ s/\._\d+$//;
 					$value =~ s/=/\%3D/g;
-  					$value =~ s/;/\%3B/g;
-					$col_nine[$s] .= $key.'='.$value.';';
+	  				$value =~ s/;/\%3B/g;
+					$col_nine[0] .= $key.'='.$value.';';
 				}
 			}
-			chop $col_nine[$s];
+			chop $col_nine[0];
 		}
-	}
-	else {
-		foreach my $key (sort keys %{$self->{attributes}}){
-			next if $key =~ m/^_/;
-			if (ref $self->{attributes}->{$key} eq 'ARRAY') {
-				my $value = join(',',@{$self->{attributes}->{$key}});
-				$value =~ s/=/\%3D/g;
-  				$value =~ s/;/\%3B/g;
-	  			$col_nine[0] .= $key.'='.$value.';';
-			}
-			else {
-				my $value = $self->{attributes}->{$key};
-				#$value =~ s/\._\d+$//;
-				$value =~ s/=/\%3D/g;
-  				$value =~ s/;/\%3B/g;
-				$col_nine[0] .= $key.'='.$value.';';
+		my @start_array = ($self->{attributes}->{_start});
+		my @end_array = ($self->{attributes}->{_end});
+		my @phase_array = ($self->{attributes}->{_phase});
+		my @score_array = ($self->{attributes}->{_score});
+		if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
+			for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+				$start_array[$s] = $self->{attributes}->{_start_array}[$s];
+				$end_array[$s] = $self->{attributes}->{_end_array}[$s];
+				$phase_array[$s] = $self->{attributes}->{_phase_array}[$s];
+				$score_array[$s] = $self->{attributes}->{_score_array}[$s];
 			}
 		}
-		chop $col_nine[0];
-	}
-	my @start_array = ($self->{attributes}->{_start});
-	my @end_array = ($self->{attributes}->{_end});
-	my @phase_array = ($self->{attributes}->{_phase});
-	my @score_array = ($self->{attributes}->{_score});
-	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
-		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
-			$start_array[$s] = $self->{attributes}->{_start_array}[$s];
-			$end_array[$s] = $self->{attributes}->{_end_array}[$s];
-			$phase_array[$s] = $self->{attributes}->{_phase_array}[$s];
-			$score_array[$s] = $self->{attributes}->{_score_array}[$s];
+		for (my $s = 0; $s < @start_array; $s++){
+			next if $skip_dups && $self->{attributes}->{_duplicate};
+			$line .= $self->{attributes}->{_seq_name}."\t";
+			$line .= $self->{attributes}->{_source}."\t";
+			$line .= $self->{attributes}->{_type}."\t";
+			$line .= $start_array[$s]."\t";
+			$line .= $end_array[$s]."\t";
+			$line .= $score_array[$s]."\t";
+			$line .= $self->{attributes}->{_strand}."\t";
+			$line .= $phase_array[$s]."\t";
+			$line .= $col_nine[$s]."\n";
 		}
+		return $line;
 	}
-	for (my $s = 0; $s < @start_array; $s++){
-		next if $skip_dups && $self->{attributes}->{_duplicate};
-		$line .= $self->{attributes}->{_seq_name}."\t";
-		$line .= $self->{attributes}->{_source}."\t";
-		$line .= $self->{attributes}->{_type}."\t";
-		$line .= $start_array[$s]."\t";
-		$line .= $end_array[$s]."\t";
-		$line .= $score_array[$s]."\t";
-		$line .= $self->{attributes}->{_strand}."\t";
-		$line .= $phase_array[$s]."\t";
-		$line .= $col_nine[$s]."\n";
-	}
-	return $line;
-}
 
 =head2 structured_output
   Function : returns a gff representation of a feature and all descendants
@@ -1372,20 +1399,20 @@ sub as_string {
   Example  : $gene->structured_output(1); # skip features labeled as duplicates
 =cut
 
-sub structured_output {
-	my $self = shift;
-	my $skip_dups = shift;
-	return if $self->{attributes}->{_skip};
-	my $output;
-	$output .= $self->as_string($skip_dups);
-	my @daughters = $self->daughters();
-	while (my $daughter = shift @daughters){
-		my $out = $daughter->structured_output($skip_dups);
-		$output .= $out if $out;
-		return if $daughter->{attributes}->{_skip};
+	sub structured_output {
+		my $self = shift;
+		my $skip_dups = shift;
+		return if $self->{attributes}->{_skip};
+		my $output;
+		$output .= $self->as_string($skip_dups);
+		my @daughters = $self->daughters();
+		while (my $daughter = shift @daughters){
+			my $out = $daughter->structured_output($skip_dups);
+			$output .= $out if $out;
+			return if $daughter->{attributes}->{_skip};
+		}
+		return $output;
 	}
-	return $output;
-}
 
 
 
@@ -1394,22 +1421,13 @@ sub structured_output {
   Example  : is_comment($line);
 =cut
 
-sub is_comment {
-	return -1 if $_ =~ m/^$/;
-	return -9 if $_ =~ m/^>/;
-	return length($1) if $_ =~ m/^(#+)/;
-	return;
-}
+	sub is_comment {
+		return -1 if $_ =~ m/^$/;
+		return -9 if $_ =~ m/^>/;
+		return length($1) if $_ =~ m/^(#+)/;
+		return;
+	}
 
-=head2 parse_gff_line
-  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded
-             characters
-  Example  : parse_gff_line($line);
-=cut
-
-{
-	my $col_count;
-	my $col_count_flag = 'ignore';
 
 =head2 expect_columns
   Function : expected number of columns in the input file with flag to ignore warn, die 
@@ -1454,7 +1472,7 @@ sub is_comment {
 				next;
 			}
 			my @parts = split /,/,$attribs{$key};
-			if ($parts[1] && ($key ne 'Note')){
+			if ($parts[1] && $is_array{$key}){
 				$attribs{$key} = [];
 				while (my $part = shift @parts){
 					$part =~ s/\%/\\x/g;
