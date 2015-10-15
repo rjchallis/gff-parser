@@ -510,6 +510,7 @@ sub new {
 	sub make_id  {
 		my $node = shift;
 		my $prefix = shift;
+		$prefix = 'GFFTree_'.$prefix;
 		my $suffix = 0;
 		$suffix = 0 unless $suffix;
 		if ($suffices{$prefix}){
