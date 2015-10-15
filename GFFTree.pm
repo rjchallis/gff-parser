@@ -1182,6 +1182,9 @@ sub undefined_parent  {
 	sub validation_make {
 		my $self = shift;
 		my $expectation = pop;
+		if ($expectation->{'alt_type'} =~ m/^(.+)\|/){
+			$expectation->{'alt_type'} = $1;
+		}
 		my %attributes;
 		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
 		$attributes{'_source'} = 'GFFTree';
@@ -1328,7 +1331,7 @@ sub make_region {
 					next if $key =~ m/_array$/;
 					my $attr = $self->{attributes}->{$key};
 					if ($self->{attributes}->{$key.'_array'}){
-						$attr = $self->{attributes}->{$key.'_array'}[$s];
+						$attr = $self->{attributes}->{$key.'_array'}[$s] || $self->{attributes}->{$key};
 					}
 					if (ref $attr eq 'ARRAY') {
 						my $value = join(',',@{$attr});
@@ -1340,7 +1343,8 @@ sub make_region {
 					else {
 						my $value = $attr;
 						#$value =~ s/\._\d+$//;
-						$value =~ s/=/\%3D/g;
+						$value =~ s/,/\%2C/g;
+	  					$value =~ s/=/\%3D/g;
 	  					$value =~ s/;/\%3B/g;
 						$col_nine[$s] .= $key.'='.$value.';';
 					}
@@ -1361,7 +1365,8 @@ sub make_region {
 				else {
 					my $value = $self->{attributes}->{$key};
 					#$value =~ s/\._\d+$//;
-					$value =~ s/=/\%3D/g;
+					$value =~ s/,/\%2C/g;
+	  				$value =~ s/=/\%3D/g;
 	  				$value =~ s/;/\%3B/g;
 					$col_nine[0] .= $key.'='.$value.';';
 				}
