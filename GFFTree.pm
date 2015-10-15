@@ -1330,7 +1330,7 @@ sub make_region {
 					}
 					if (ref $attr eq 'ARRAY') {
 						my $value = join(',',@{$attr});
-						$value =~ s/,/\%2C/g if $is_array{$key};
+						$value =~ s/,/\%2C/g unless $is_array{$key};
 	  					$value =~ s/=/\%3D/g;
 	  					$value =~ s/;/\%3B/g;
 	  					$col_nine[$s] .= $key.'='.$value.';';
@@ -1351,7 +1351,7 @@ sub make_region {
 				next if $key =~ m/^_/;
 				if (ref $self->{attributes}->{$key} eq 'ARRAY') {
 					my $value = join(',',@{$self->{attributes}->{$key}});
-					$value =~ s/,/\%2C/g if $is_array{$key};
+					$value =~ s/,/\%2C/g unless $is_array{$key};
 	  				$value =~ s/=/\%3D/g;
 	  				$value =~ s/;/\%3B/g;
 		  			$col_nine[0] .= $key.'='.$value.';';
@@ -1463,6 +1463,11 @@ sub make_region {
 			}
 		}
 		chomp $data[8];
+		$data[8] =~ s/;+$/;/;
+		if (scalar(split /=/) != scalar(split /;/) + 1){
+			warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
+			return;
+		}
 		my %attribs = split /[=;]/,$data[8];
 		pop @data;
 		foreach my $key (keys %attribs){
