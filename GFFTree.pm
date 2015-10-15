@@ -701,11 +701,12 @@ sub undefined_parent  {
 					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
 					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
 					next if $attributes{'_end'} <= $attributes{'_start'};
-					if (my $feature = $self->find_daughter(\%attributes)){
+					my %attr = %attributes;
+					if (my $feature = $self->find_daughter(\%attr)){
 						$self->add_daughter($feature);
 					}
 					else {
-						my $node = $self->new_daughter(\%attributes);
+						my $node = $self->new_daughter(\%attr);
 						$node->make_id($new_type);
 					}
 				}
@@ -723,11 +724,12 @@ sub undefined_parent  {
 						$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
 					}
 					return if $attributes{'_end'} <= $attributes{'_start'};
-					if (my $feature = $self->find_daughter(\%attributes)){
+					my %attr = %attributes;
+					if (my $feature = $self->find_daughter(\%attr)){
 						$self->add_daughter($feature);
 					}
 					else {
-						my $node = $self->new_daughter(\%attributes);
+						my $node = $self->new_daughter(\%attr);
 						$node->make_id($new_type);
 					}
 				}
@@ -743,11 +745,12 @@ sub undefined_parent  {
 						$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
 					}
 					return if $attributes{'_end'} <= $attributes{'_start'};
-					if (my $feature = $self->find_daughter(\%attributes)){
+					my %attr = %attributes;
+					if (my $feature = $self->find_daughter(\%attr)){
 						$self->add_daughter($feature);
 					}
 					else {
-						my $node = $self->new_daughter(\%attributes);
+						my $node = $self->new_daughter(\%attr);
 						$node->make_id($new_type);
 					}
 				}
