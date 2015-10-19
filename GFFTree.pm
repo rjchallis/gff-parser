@@ -554,7 +554,8 @@ sub new {
 				return $by_start{$seq_name}{$type}{$start} if $by_start{$seq_name}{$type};
 			}
 		}
-		return $by_start{$seq_name}{$type}{$start};
+		return $by_start{$seq_name}{$type}{$start} if $type;
+		return;
 	}
 
 
@@ -1185,7 +1186,7 @@ sub undefined_parent  {
 	sub validation_make {
 		my $self = shift;
 		my $expectation = pop;
-		if ($expectation->{'alt_type'} =~ m/^(.+)\|/){
+		if ($expectation->{'alt_type'} =~ m/^(.+?)\|/){
 			$expectation->{'alt_type'} = $1;
 		}
 		my %attributes;
