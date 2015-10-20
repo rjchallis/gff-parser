@@ -1186,18 +1186,19 @@ sub undefined_parent  {
 	sub validation_make {
 		my $self = shift;
 		my $expectation = pop;
-		if ($expectation->{'alt_type'} =~ m/^(.+?)\|/){
-			$expectation->{'alt_type'} = $1;
+		my $alt_type = $expectation->{'alt_type'};
+		if ($alt_type =~ m/^(.+?)\|/){
+			$alt_type = $1;
 		}
 		my %attributes;
 		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
 		$attributes{'_source'} = 'GFFTree';
-		$attributes{'_type'} = $expectation->{'alt_type'};
+		$attributes{'_type'} = $alt_type;
 		$attributes{'_score'} = '.';
 		$attributes{'_strand'} = $self->{attributes}->{_strand};
 		$attributes{'_phase'} = '.';
 		if ($expectation->{'relation'} eq 'hasParent'){
-			if ($expectation->{'alt_type'} eq 'region'){
+			if ($alt_type eq 'region'){
 				# find limits of the region
 				my @features = by_attribute($self,'_seq_name',$self->{attributes}->{_seq_name});
 				# assuming regions always start at 1, comment out the code below if not true
@@ -1214,18 +1215,18 @@ sub undefined_parent  {
 			}
 			$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
 			my $node = $self->mother->new_daughter(\%attributes);
-			$node->make_id($expectation->{'alt_type'});
+			$node->make_id($alt_type);
 			$self->{attributes}->{Parent} = $node->id();
 			$self->unlink_from_mother();
 			$node->add_daughter($self);
 			return $node;
 		}
 		elsif ($expectation->{'relation'} eq 'hasSister'){
-			my $sister = $self->make_sister($expectation->{'alt_type'});
+			my $sister = $self->make_sister($alt_type);
 			return $sister;
 		}
 		elsif ($expectation->{'relation'} eq 'hasChild'){
-			my $child = $self->make_child($expectation->{'alt_type'});
+			my $child = $self->make_child($alt_type);
 			return $child;
 		}
 		return;
