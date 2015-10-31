@@ -1072,8 +1072,24 @@ sub undefined_parent  {
 					my $message = $type.' '.$self->id.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].')';
 					$message .=  '('.$self->mother->id.')' if $self->mother->id;
 					my $first = $self->{attributes}->{$attrib[0]};
-					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
-					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
+					my $second;
+					if ($hashref->{'alt_type'} =~ m/self/i){
+						$second = $self->{attributes}->{$attrib[-1]};
+						next if compare($first,$second,$relation[0]);
+						if ($hashref->{'flag'} eq 'force' && compare($second,$first,$relation[0])){
+							$self->{attributes}->{$attrib[0]} = $second;
+							$self->{attributes}->{$attrib[-1]} = $first;
+							$actions{'warn'}->($self,$message,$hashref);
+						}
+						else {
+							$actions{$hashref->{'flag'}}->($self,$message,$hashref);
+						}
+					}
+					else {
+						$second = $self->mother->{attributes}->{$attrib[-1]};
+						$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
+					}
+					
 				}
 			}
 		}
