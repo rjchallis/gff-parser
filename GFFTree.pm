@@ -314,6 +314,7 @@ sub new {
 				my $base_id = $attribs->{'ID'};
 				delete $attribs->{'ID'};
 				my @parents = @{$attribs->{'Parent'}};
+				$attribs->{'_parents'} = \@parents;
 				delete $attribs->{'Parent'};
 				for (my $p = 0; $p < @parents; $p++){
 					$attributes{'Parent'} = $parents[$p];
@@ -1345,6 +1346,10 @@ sub make_region {
 		my $skip_dups = shift;
 		my $line = '';
 		my @col_nine;
+		if ($skip_dups && $self->{attributes}->{_parents}){
+			my @parents = @{$self->{attributes}->{_parents}};
+			$self->{attributes}->{Parent} = \@parents;
+		}
 		if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
 			for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
 				foreach my $key (sort keys %{$self->{attributes}}){
