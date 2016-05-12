@@ -69,6 +69,7 @@ sub new {
 	my $separator = '\t';
 	my $has_comments = undef;
 	my $lastline;
+  my %override;
 
 
 =head2 separator
@@ -138,6 +139,20 @@ sub new {
 	    return scalar keys %type_map;
 	}
 
+=head2 override
+  Function : remove existing attribute to be repaired during validation
+  Example  : $gff->override({'cds' => ('ID' => 1))});
+=cut
+
+	sub override {
+		my $override = pop;
+	    foreach my $type (keys %{$override}){
+        my $uctype = $type;
+        $uctype =~ tr/[a-z]/[A-Z]/;
+        $override{$uctype} = $override->{$type};
+	    }
+	    return scalar keys %override;
+	}
 
 =head2 multiline
   Function : Specify feature types that can be split over multiple lines use 'all' to
@@ -184,8 +199,8 @@ sub new {
 
 
 =head2 parse_chunk
-  Function : Reads a chunk of a gff3 file into a tree structure, handling multiline 
-             features and ordering features on the same region.  if called with no 
+  Function : Reads a chunk of a gff3 file into a tree structure, handling multiline
+             features and ordering features on the same region.  if called with no
              parameters the whole file will be parsed.
   Example  : $gff->parse_chunk('separator','###');
   Example  : $gff->parse_chunk('change','region');
@@ -254,6 +269,12 @@ sub new {
 			$attributes{'_score'} = $data->[5];
 			$attributes{'_strand'} = $data->[6];
 			$attributes{'_phase'} = $data->[7];
+      my $uctype = $attributes{'_type'};
+        if ($override{$uctype}){
+        foreach my $attr (keys %{$override{$uctype}}){
+          delete $attribs->{$attr};
+        }
+      }
 			if ($attribs->{'Parent'} && $ids{$attribs->{'Parent'}}){
 				$parent = $ids{$attribs->{'Parent'}};
 				$ctr++;
@@ -447,7 +468,7 @@ sub new {
 			}
 			if ($split_by && $split_by eq 'change'){
 				my $nextline = <>;
-				if (defined($nextline)){	
+				if (defined($nextline)){
 					next if is_comment($nextline);
 					IO::Unread::unread ARGV, $nextline;
 					next if $fasta;
@@ -461,8 +482,8 @@ sub new {
 					last;
 				}
 			}
-			
-			
+
+
 		}
 
 		# loop through orphanage to see if anything can be done with unparented features
@@ -1090,7 +1111,7 @@ sub undefined_parent  {
 						$second = $self->mother->{attributes}->{$attrib[-1]};
 						$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
 					}
-					
+
 				}
 			}
 		}
@@ -1323,7 +1344,7 @@ sub make_region {
   Function : returns true if an attribute type should be treated as an array
   Example  : is_array('Parent',1);
   Example  : is_array('Parent',0);
-  Example  : is_array('Parent'); 
+  Example  : is_array('Parent');
 =cut
 
 	sub is_array {
@@ -1463,8 +1484,8 @@ sub make_region {
 
 
 =head2 expect_columns
-  Function : expected number of columns in the input file with flag to ignore warn, die 
-             or skip if the number of columns found does not match the expected number.  
+  Function : expected number of columns in the input file with flag to ignore warn, die
+             or skip if the number of columns found does not match the expected number.
   Example  : expect_columns(9,'skip');
 =cut
 
