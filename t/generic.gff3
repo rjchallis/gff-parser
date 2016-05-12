@@ -510,7 +510,7 @@ ctg123	.	mRNA	1300	9000	.	+	.	ID=mRNA00003;Parent=gene00001
 ctg123	.	exon	1300	1500	.	+	.	Parent=mRNA00003;ID='exon0'
 ctg123	.	exon	1050	1500	.	+	.	Parent=mRNA00001,mRNA00002;ID='exon1'
 ctg123	.	exon	3000	3902	.	+	.	Parent=mRNA00001,mRNA00003
-ctg123	.	exon	5000	5500	.	+	.	Parent=mRNA00001,mRNA00002,mRNA00003;ID='exon3'
+ctg123	.	exon	5000	5500	.	+	.	Parent=mRNA00002,mRNA00001,mRNA00003;ID='exon3'
 ctg123	.	exon	7000	9000	.	+	.	Parent=mRNA00001,mRNA00002,mRNA00003;ID='exon4'
 ctg123	.	CDS	1201	1500	.	+	0	ID=cds00001;Parent=mRNA00001
 ctg123	.	CDS	3000	3902	.	+	0	ID=cds00001;Parent=mRNA00001

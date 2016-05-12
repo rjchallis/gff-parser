@@ -69,6 +69,7 @@ sub new {
 	my $separator = '\t';
 	my $has_comments = undef;
 	my $lastline;
+  my %override;
 
 
 =head2 separator
@@ -138,6 +139,20 @@ sub new {
 	    return scalar keys %type_map;
 	}
 
+=head2 override
+  Function : remove existing attribute to be repaired during validation
+  Example  : $gff->override({'cds'=>{'ID'=>1}});
+=cut
+
+	sub override {
+		my $override = pop;
+	    foreach my $type (keys %{$override}){
+        my $uctype = $type;
+        $uctype =~ tr/[a-z]/[A-Z]/;
+        $override{$uctype} = $override->{$type};
+	    }
+	    return scalar keys %override;
+	}
 
 =head2 multiline
   Function : Specify feature types that can be split over multiple lines use 'all' to
@@ -184,8 +199,8 @@ sub new {
 
 
 =head2 parse_chunk
-  Function : Reads a chunk of a gff3 file into a tree structure, handling multiline 
-             features and ordering features on the same region.  if called with no 
+  Function : Reads a chunk of a gff3 file into a tree structure, handling multiline
+             features and ordering features on the same region.  if called with no
              parameters the whole file will be parsed.
   Example  : $gff->parse_chunk('separator','###');
   Example  : $gff->parse_chunk('change','region');
@@ -254,6 +269,12 @@ sub new {
 			$attributes{'_score'} = $data->[5];
 			$attributes{'_strand'} = $data->[6];
 			$attributes{'_phase'} = $data->[7];
+      my $uctype = $attributes{'_type'};
+        if ($override{$uctype}){
+        foreach my $attr (keys %{$override{$uctype}}){
+          delete $attribs->{$attr};
+        }
+      }
 			if ($attribs->{'Parent'} && $ids{$attribs->{'Parent'}}){
 				$parent = $ids{$attribs->{'Parent'}};
 				$ctr++;
@@ -314,6 +335,7 @@ sub new {
 				my $base_id = $attribs->{'ID'};
 				delete $attribs->{'ID'};
 				my @parents = @{$attribs->{'Parent'}};
+				$attribs->{'_parents'} = \@parents;
 				delete $attribs->{'Parent'};
 				for (my $p = 0; $p < @parents; $p++){
 					$attributes{'Parent'} = $parents[$p];
@@ -446,7 +468,7 @@ sub new {
 			}
 			if ($split_by && $split_by eq 'change'){
 				my $nextline = <>;
-				if (defined($nextline)){	
+				if (defined($nextline)){
 					next if is_comment($nextline);
 					IO::Unread::unread ARGV, $nextline;
 					next if $fasta;
@@ -460,8 +482,8 @@ sub new {
 					last;
 				}
 			}
-			
-			
+
+
 		}
 
 		# loop through orphanage to see if anything can be done with unparented features
@@ -510,6 +532,7 @@ sub new {
 	sub make_id  {
 		my $node = shift;
 		my $prefix = shift;
+		$prefix = 'GFFTree_'.$prefix;
 		my $suffix = 0;
 		$suffix = 0 unless $suffix;
 		if ($suffices{$prefix}){
@@ -553,7 +576,8 @@ sub new {
 				return $by_start{$seq_name}{$type}{$start} if $by_start{$seq_name}{$type};
 			}
 		}
-		return $by_start{$seq_name}{$type}{$start};
+		return $by_start{$seq_name}{$type}{$start} if $type;
+		return;
 	}
 
 
@@ -700,11 +724,12 @@ sub undefined_parent  {
 					$attributes{'_start'} = $features{$type}[($i-1)]->{attributes}->{_end} + 1;
 					$attributes{'_end'} = $features{$type}[$i]->{attributes}->{_start} - 1;
 					next if $attributes{'_end'} <= $attributes{'_start'};
-					if (my $feature = $self->find_daughter(\%attributes)){
+					my %attr = %attributes;
+					if (my $feature = $self->find_daughter(\%attr)){
 						$self->add_daughter($feature);
 					}
 					else {
-						my $node = $self->new_daughter(\%attributes);
+						my $node = $self->new_daughter(\%attr);
 						$node->make_id($new_type);
 					}
 				}
@@ -722,11 +747,12 @@ sub undefined_parent  {
 						$attributes{'_end'} = $features{$type}[0]->{attributes}->{_start} - 1;
 					}
 					return if $attributes{'_end'} <= $attributes{'_start'};
-					if (my $feature = $self->find_daughter(\%attributes)){
+					my %attr = %attributes;
+					if (my $feature = $self->find_daughter(\%attr)){
 						$self->add_daughter($feature);
 					}
 					else {
-						my $node = $self->new_daughter(\%attributes);
+						my $node = $self->new_daughter(\%attr);
 						$node->make_id($new_type);
 					}
 				}
@@ -742,11 +768,12 @@ sub undefined_parent  {
 						$attributes{'_start'} = $features{$type}[-2]->{attributes}->{_end} + 1;
 					}
 					return if $attributes{'_end'} <= $attributes{'_start'};
-					if (my $feature = $self->find_daughter(\%attributes)){
+					my %attr = %attributes;
+					if (my $feature = $self->find_daughter(\%attr)){
 						$self->add_daughter($feature);
 					}
 					else {
-						my $node = $self->new_daughter(\%attributes);
+						my $node = $self->new_daughter(\%attr);
 						$node->make_id($new_type);
 					}
 				}
@@ -1067,8 +1094,24 @@ sub undefined_parent  {
 					my $message = $type.' '.$self->id.'->('.$attrib[0].') is not '.$relation[0].' '.$hashref->{'alt_type'}.'->('.$attrib[-1].')';
 					$message .=  '('.$self->mother->id.')' if $self->mother->id;
 					my $first = $self->{attributes}->{$attrib[0]};
-					my $second = $hashref->{'alt_type'} =~ m/self/i ? $self->{attributes}->{$attrib[-1]} : $self->mother->{attributes}->{$attrib[-1]};
-					$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
+					my $second;
+					if ($hashref->{'alt_type'} =~ m/self/i){
+						$second = $self->{attributes}->{$attrib[-1]};
+						next if compare($first,$second,$relation[0]);
+						if ($hashref->{'flag'} eq 'force' && compare($second,$first,$relation[0])){
+							$self->{attributes}->{$attrib[0]} = $second;
+							$self->{attributes}->{$attrib[-1]} = $first;
+							$actions{'warn'}->($self,$message,$hashref);
+						}
+						else {
+							$actions{$hashref->{'flag'}}->($self,$message,$hashref);
+						}
+					}
+					else {
+						$second = $self->mother->{attributes}->{$attrib[-1]};
+						$actions{$hashref->{'flag'}}->($self,$message,$hashref) unless compare($first,$second,$relation[0]);
+					}
+
 				}
 			}
 		}
@@ -1181,15 +1224,19 @@ sub undefined_parent  {
 	sub validation_make {
 		my $self = shift;
 		my $expectation = pop;
+		my $alt_type = $expectation->{'alt_type'};
+		if ($alt_type =~ m/^(.+?)\|/){
+			$alt_type = $1;
+		}
 		my %attributes;
 		$attributes{'_seq_name'} = $self->{attributes}->{_seq_name};
 		$attributes{'_source'} = 'GFFTree';
-		$attributes{'_type'} = $expectation->{'alt_type'};
+		$attributes{'_type'} = $alt_type;
 		$attributes{'_score'} = '.';
 		$attributes{'_strand'} = $self->{attributes}->{_strand};
 		$attributes{'_phase'} = '.';
 		if ($expectation->{'relation'} eq 'hasParent'){
-			if ($expectation->{'alt_type'} eq 'region'){
+			if ($alt_type eq 'region'){
 				# find limits of the region
 				my @features = by_attribute($self,'_seq_name',$self->{attributes}->{_seq_name});
 				# assuming regions always start at 1, comment out the code below if not true
@@ -1206,18 +1253,18 @@ sub undefined_parent  {
 			}
 			$attributes{'Parent'} = $self->{attributes}->{Parent} if $self->{attributes}->{Parent};
 			my $node = $self->mother->new_daughter(\%attributes);
-			$node->make_id($expectation->{'alt_type'});
+			$node->make_id($alt_type);
 			$self->{attributes}->{Parent} = $node->id();
 			$self->unlink_from_mother();
 			$node->add_daughter($self);
 			return $node;
 		}
 		elsif ($expectation->{'relation'} eq 'hasSister'){
-			my $sister = $self->make_sister($expectation->{'alt_type'});
+			my $sister = $self->make_sister($alt_type);
 			return $sister;
 		}
 		elsif ($expectation->{'relation'} eq 'hasChild'){
-			my $child = $self->make_child($expectation->{'alt_type'});
+			my $child = $self->make_child($alt_type);
 			return $child;
 		}
 		return;
@@ -1283,107 +1330,143 @@ sub make_region {
 }
 
 
+
+{
+	my $col_count;
+	my $col_count_flag = 'ignore';
+	my %is_array = ( 	'Parent' => 1,
+						'Alias' => 1,
+						'Dbxref' => 1,
+						'Ontology_term' => 1,
+						);
+
+=head2 is_array
+  Function : returns true if an attribute type should be treated as an array
+  Example  : is_array('Parent',1);
+  Example  : is_array('Parent',0);
+  Example  : is_array('Parent');
+=cut
+
+	sub is_array {
+		my ($type,$bool) = @_;
+		if (defined($bool)){
+			$is_array{$type} = $bool;
+		}
+		return $is_array{$type};
+	}
+
+
 =head2 as_string
   Function : returns a gff representation of a single feature
   Example  : $gene->as_string();
   Example  : $gene->as_string(1); # skip features labeled as duplicates
 =cut
 
-sub as_string {
-	my $self = shift;
-	my $skip_dups = shift;
-	my $line = '';
-	my @col_nine;
-	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
-		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+	sub as_string {
+		my $self = shift;
+		my $skip_dups = shift;
+		my $line = '';
+		my @col_nine;
+		if ($skip_dups && $self->{attributes}->{_parents}){
+			my @parents = @{$self->{attributes}->{_parents}};
+			$self->{attributes}->{Parent} = \@parents;
+		}
+		if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
+			for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+				foreach my $key (sort keys %{$self->{attributes}}){
+					next if $key =~ m/^_/;
+					next if $key =~ m/_array$/;
+					my $attr = $self->{attributes}->{$key};
+					if ($self->{attributes}->{$key.'_array'}){
+						$attr = $self->{attributes}->{$key.'_array'}[$s] || $self->{attributes}->{$key};
+					}
+					if (ref $attr eq 'ARRAY') {
+						my $value = join(',',@{$attr});
+						$value =~ s/,/\%2C/g unless $is_array{$key};
+	  					$value =~ s/=/\%3D/g;
+	  					$value =~ s/;/\%3B/g;
+	  					$col_nine[$s] .= $key.'='.$value.';';
+					}
+					else {
+						my $value = $attr;
+						#$value =~ s/\._\d+$//;
+						$value =~ s/,/\%2C/g;
+	  					$value =~ s/=/\%3D/g;
+	  					$value =~ s/;/\%3B/g;
+						$col_nine[$s] .= $key.'='.$value.';';
+					}
+				}
+				chop $col_nine[$s];
+			}
+		}
+		else {
 			foreach my $key (sort keys %{$self->{attributes}}){
 				next if $key =~ m/^_/;
-				next if $key =~ m/_array$/;
-				my $attr = $self->{attributes}->{$key};
-				if ($self->{attributes}->{$key.'_array'}){
-					$attr = $self->{attributes}->{$key.'_array'}[$s];
-				}
-				if (ref $attr eq 'ARRAY') {
-					my $value = join(',',@{$attr});
-					$value =~ s/=/\%3D/g;
-  					$value =~ s/;/\%3B/g;
-  					$col_nine[$s] .= $key.'='.$value.';';
+				if (ref $self->{attributes}->{$key} eq 'ARRAY') {
+					my $value = join(',',@{$self->{attributes}->{$key}});
+					$value =~ s/,/\%2C/g unless $is_array{$key};
+	  				$value =~ s/=/\%3D/g;
+	  				$value =~ s/;/\%3B/g;
+		  			$col_nine[0] .= $key.'='.$value.';';
 				}
 				else {
-					my $value = $attr;
-					$value =~ s/\._\d+$//;
-					$value =~ s/=/\%3D/g;
-  					$value =~ s/;/\%3B/g;
-					$col_nine[$s] .= $key.'='.$value.';';
+					my $value = $self->{attributes}->{$key};
+					#$value =~ s/\._\d+$//;
+					$value =~ s/,/\%2C/g;
+	  				$value =~ s/=/\%3D/g;
+	  				$value =~ s/;/\%3B/g;
+					$col_nine[0] .= $key.'='.$value.';';
 				}
 			}
-			chop $col_nine[$s];
+			chop $col_nine[0];
 		}
-	}
-	else {
-		foreach my $key (sort keys %{$self->{attributes}}){
-			next if $key =~ m/^_/;
-			if (ref $self->{attributes}->{$key} eq 'ARRAY') {
-				my $value = join(',',@{$self->{attributes}->{$key}});
-				$value =~ s/=/\%3D/g;
-  				$value =~ s/;/\%3B/g;
-	  			$col_nine[0] .= $key.'='.$value.';';
-			}
-			else {
-				my $value = $self->{attributes}->{$key};
-				$value =~ s/\._\d+$//;
-				$value =~ s/=/\%3D/g;
-  				$value =~ s/;/\%3B/g;
-				$col_nine[0] .= $key.'='.$value.';';
+		my @start_array = ($self->{attributes}->{_start});
+		my @end_array = ($self->{attributes}->{_end});
+		my @phase_array = ($self->{attributes}->{_phase});
+		my @score_array = ($self->{attributes}->{_score});
+		if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
+			for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
+				$start_array[$s] = $self->{attributes}->{_start_array}[$s];
+				$end_array[$s] = $self->{attributes}->{_end_array}[$s];
+				$phase_array[$s] = $self->{attributes}->{_phase_array}[$s];
+				$score_array[$s] = $self->{attributes}->{_score_array}[$s];
 			}
 		}
-		chop $col_nine[0];
-	}
-	my @start_array = ($self->{attributes}->{_start});
-	my @end_array = ($self->{attributes}->{_end});
-	my @phase_array = ($self->{attributes}->{_phase});
-	my @score_array = ($self->{attributes}->{_score});
-	if (is_multiline($self->{attributes}->{_type}) && $self->{attributes}->{_start_array}){
-		for (my $s = 0; $s < @{$self->{attributes}->{_start_array}}; $s++){
-			$start_array[$s] = $self->{attributes}->{_start_array}[$s];
-			$end_array[$s] = $self->{attributes}->{_end_array}[$s];
-			$phase_array[$s] = $self->{attributes}->{_phase_array}[$s];
-			$score_array[$s] = $self->{attributes}->{_score_array}[$s];
+		for (my $s = 0; $s < @start_array; $s++){
+			next if $skip_dups && $self->{attributes}->{_duplicate};
+			$line .= $self->{attributes}->{_seq_name}."\t";
+			$line .= $self->{attributes}->{_source}."\t";
+			$line .= $self->{attributes}->{_type}."\t";
+			$line .= $start_array[$s]."\t";
+			$line .= $end_array[$s]."\t";
+			$line .= $score_array[$s]."\t";
+			$line .= $self->{attributes}->{_strand}."\t";
+			$line .= $phase_array[$s]."\t";
+			$line .= $col_nine[$s]."\n";
 		}
+		return $line;
 	}
-	for (my $s = 0; $s < @start_array; $s++){
-		next if $skip_dups && $self->{attributes}->{_duplicate};
-		$line .= $self->{attributes}->{_seq_name}."\t";
-		$line .= $self->{attributes}->{_source}."\t";
-		$line .= $self->{attributes}->{_type}."\t";
-		$line .= $start_array[$s]."\t";
-		$line .= $end_array[$s]."\t";
-		$line .= $score_array[$s]."\t";
-		$line .= $self->{attributes}->{_strand}."\t";
-		$line .= $phase_array[$s]."\t";
-		$line .= $col_nine[$s]."\n";
-	}
-	return $line;
-}
 
 =head2 structured_output
   Function : returns a gff representation of a feature and all descendants
   Example  : $gene->structured_output();
+  Example  : $gene->structured_output(1); # skip features labeled as duplicates
 =cut
 
-sub structured_output {
-	my $self = shift;
-	return if $self->{attributes}->{_skip};
-	my $output;
-	$output .= $self->as_string(1);
-	my @daughters = $self->daughters();
-	while (my $daughter = shift @daughters){
-		my $out = $daughter->structured_output();
-		$output .= $out if $out;
-		return if $daughter->{attributes}->{_skip};
+	sub structured_output {
+		my $self = shift;
+		my $skip_dups = shift;
+		return if $self->{attributes}->{_skip};
+		my $output;
+		$output .= $self->as_string($skip_dups);
+		my @daughters = $self->daughters();
+		while (my $daughter = shift @daughters){
+			my $out = $daughter->structured_output($skip_dups);
+			$output .= $out if $out;
+			return if $daughter->{attributes}->{_skip};
+		}
+		return $output;
 	}
-	return $output;
-}
 
 
 
@@ -1392,26 +1475,17 @@ sub structured_output {
   Example  : is_comment($line);
 =cut
 
-sub is_comment {
-	return -1 if $_ =~ m/^$/;
-	return -9 if $_ =~ m/^>/;
-	return length($1) if $_ =~ m/^(#+)/;
-	return;
-}
+	sub is_comment {
+		return -1 if $_ =~ m/^$/;
+		return -9 if $_ =~ m/^>/;
+		return length($1) if $_ =~ m/^(#+)/;
+		return;
+	}
 
-=head2 parse_gff_line
-  Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded
-             characters
-  Example  : parse_gff_line($line);
-=cut
-
-{
-	my $col_count;
-	my $col_count_flag = 'ignore';
 
 =head2 expect_columns
-  Function : expected number of columns in the input file with flag to ignore warn, die 
-             or skip if the number of columns found does not match the expected number.  
+  Function : expected number of columns in the input file with flag to ignore warn, die
+             or skip if the number of columns found does not match the expected number.
   Example  : expect_columns(9,'skip');
 =cut
 
@@ -1443,6 +1517,11 @@ sub is_comment {
 			}
 		}
 		chomp $data[8];
+		$data[8] =~ s/;+$/;/;
+		if (scalar(split /=/) != scalar(split /;/) + 1){
+			warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
+			return;
+		}
 		my %attribs = split /[=;]/,$data[8];
 		pop @data;
 		foreach my $key (keys %attribs){
@@ -1452,7 +1531,7 @@ sub is_comment {
 				next;
 			}
 			my @parts = split /,/,$attribs{$key};
-			if ($parts[1]){
+			if ($parts[1] && $is_array{$key}){
 				$attribs{$key} = [];
 				while (my $part = shift @parts){
 					$part =~ s/\%/\\x/g;
