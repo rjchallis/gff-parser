@@ -141,7 +141,7 @@ sub new {
 
 =head2 override
   Function : remove existing attribute to be repaired during validation
-  Example  : $gff->override({'cds' => ('ID' => 1))});
+  Example  : $gff->override({'cds'=>{'ID'=>1}});
 =cut
 
 	sub override {
