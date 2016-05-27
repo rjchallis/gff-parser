@@ -1537,8 +1537,9 @@ sub make_region {
 		$data[8] =~ s/;+$/;/;
 		if (scalar(split /=/) != scalar(split /;/) + 1){
       if ($col_nine && $data[8]){
+        my $attrs = $data[8];
         pop @data;
-        return \@data,{$col_nine=>$data[8]};
+        return \@data,{$col_nine=>$attrs};
       }
       else {
 			  warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
