@@ -148,7 +148,7 @@ sub new {
 		my $override = pop;
 	    foreach my $type (keys %{$override}){
         my $uctype = $type;
-        $uctype =~ tr/[a-z]/[A-Z]/;
+        $uctype =~ tr/[A-Z]/[a-z]/;
         $override{$uctype} = $override->{$type};
 	    }
 	    return scalar keys %override;
@@ -633,7 +633,7 @@ sub new {
 		my $node = shift;
 		my $type = shift || 'all';
 		my $behaviour = shift;
-		$type =~ tr/[a-z]/[A-Z]/;
+		$type =~ tr/[A-Z]/[a-z]/;
 		$lacks{$node}{$type} = $behaviour if $behaviour;
 		return $lacks{$node}{$type} ? $lacks{$node}{$type} : $lacks{$node}{'all'} ? $lacks{$node}{'all'} : 'ignore';
 	}
