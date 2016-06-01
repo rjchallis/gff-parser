@@ -1333,7 +1333,6 @@ sub make_region {
 
 {
 	my $col_count;
-  my $col_nine;
 	my $col_count_flag = 'ignore';
 	my %is_array = ( 	'Parent' => 1,
 						'Alias' => 1,
@@ -1354,22 +1353,6 @@ sub make_region {
 			$is_array{$type} = $bool;
 		}
 		return $is_array{$type};
-	}
-
-=head2 col_nine
-  Function : sets an attribute name to assign the contents of column nine to if not proper key=value; pairs
-  Example  : col_nine('value');
-=cut
-
-	sub col_nine {
-		my ($attr) = shift;
-		if (defined($attr)){
-			$col_nine = $attr;
-		}
-    else {
-      $col_nine = undef;
-    }
-		return $col_nine if $col_nine;
 	}
 
 
@@ -1536,14 +1519,8 @@ sub make_region {
 		chomp $data[8];
 		$data[8] =~ s/;+$/;/;
 		if (scalar(split /=/) != scalar(split /;/) + 1){
-      if ($col_nine && $data[8]){
-        pop @data;
-        return \@data,{$col_nine=>$data[8]};
-      }
-      else {
-			  warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
-			  return;
-      ]
+			warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
+			return;
 		}
 		my %attribs = split /[=;]/,$data[8];
 		pop @data;
