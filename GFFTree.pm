@@ -1543,7 +1543,7 @@ sub make_region {
       else {
 			  warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
 			  return;
-      }
+      ]
 		}
 		my %attribs = split /[=;]/,$data[8];
 		pop @data;
