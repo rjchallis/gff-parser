@@ -147,9 +147,9 @@ sub new {
 	sub override {
 		my $override = pop;
 	    foreach my $type (keys %{$override}){
-        my $uctype = $type;
-        $uctype =~ tr/[A-Z]/[a-z]/;
-        $override{$uctype} = $override->{$type};
+        my $lctype = $type;
+        $lctype =~ tr/[A-Z]/[a-z]/;
+        $override{$lctype} = $override->{$type};
 	    }
 	    return scalar keys %override;
 	}
@@ -269,9 +269,9 @@ sub new {
 			$attributes{'_score'} = $data->[5];
 			$attributes{'_strand'} = $data->[6];
 			$attributes{'_phase'} = $data->[7];
-      my $uctype = $attributes{'_type'};
-        if ($override{$uctype}){
-        foreach my $attr (keys %{$override{$uctype}}){
+      my $lctype = lc $attributes{'_type'};
+        if ($override{$lctype}){
+        foreach my $attr (keys %{$override{$lctype}}){
           delete $attribs->{$attr};
         }
       }
