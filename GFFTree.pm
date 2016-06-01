@@ -148,7 +148,7 @@ sub new {
 		my $override = pop;
 	    foreach my $type (keys %{$override}){
         my $uctype = $type;
-        $uctype =~ tr/[A-Z]/[a-z]/;
+        $uctype =~ tr/[a-z]/[A-Z]/;
         $override{$uctype} = $override->{$type};
 	    }
 	    return scalar keys %override;
@@ -287,7 +287,6 @@ sub new {
 
 			if (!$attribs->{'ID'}){ # need to do something about features that lack IDs
 				my $behaviour = $node->lacks_id($attributes{'_type'});
-        my $wait = 0;
 				next if $behaviour eq 'ignore';
 				if ($behaviour eq 'warn'){
 					warn "WARNING: the feature on line $. does not have an ID, skipping feature\n";
@@ -307,16 +306,11 @@ sub new {
 				if ($behaviour eq 'make'){
 					if (is_multiline($attributes{'_type'})){
 						# test whether parent has a child of this type with an ID already
-						if ($attribs->{'Parent'}){
-              if ($parents{$attribs->{'Parent'}}{$attributes{'_type'}}){
-						  	$attribs->{'ID'} = $parents{$attribs->{'Parent'}}{$attributes{'_type'}};
-              }
+						if ($attribs->{'Parent'} && $parents{$attribs->{'Parent'}}{$attributes{'_type'}}){
+							$attribs->{'ID'} = $parents{$attribs->{'Parent'}}{$attributes{'_type'}};
 						}
-            else {
-              $wait = 1;
-            }
 					}
-					if (!$attribs->{'ID'} && ! $wait){
+					if (!$attribs->{'ID'}){
 						my $prefix = $attributes{'_type'}.'___';
 						my $suffix = 0;
 						if ($suffices{$prefix}){
@@ -335,7 +329,7 @@ sub new {
 				}
 			}
 
-			$attribs->{'ID'} =~ s/'//g if $attribs->{'ID'};
+			$attribs->{'ID'} =~ s/'//g;
 
 			if (ref $attribs->{'Parent'} eq 'ARRAY'){ # multiparent feature
 				my $base_id = $attribs->{'ID'};
@@ -506,41 +500,16 @@ sub new {
 			}
 			@orphans = $node->daughters();
 		}
-
-#    $node->validate_all();
-
 		for (my $o = 0; $o < @orphans; $o++){
-			if (!$orphans[$o]->{attributes}->{'Parent'}){
+			if ($orphans[$o]->{attributes}->{'Parent'}){
 				my $behaviour = $node->undefined_parent();
 				if ($behaviour eq 'die'){
 					die "ERROR: no parent feature exists for ",$orphans[$o]->{attributes}->{_type}," ",$orphans[$o]->id()," with the ID $orphans[$o]->{attributes}->{'Parent'}, cannot continue\n";
 				}
-      }
-#      elsif (!$orphans[$o]->{attributes}->{'ID'}) {
-#			  if (is_multiline($orphans[$o]->{attributes}->{'_type'})){
-#            # test whether parent has a child of this type with an ID already
-#            if ($parents{$orphans[$o]->mother->id}{$orphans[$o]->{attributes}->{'_type'}}){
-#                $orphans[$o]->{attributes}->{'ID'} = $parents{$orphans[$o]->mother->id}{$orphans[$o]->{attributes}->{'_type'}};
-#              }
-#          if (!$orphans[$o]->{attributes}->{'ID'}){
-#            my $prefix = $orphans[$o]->{attributes}->{'_type'}.'___';
-#            my $suffix = 0;
-#            if ($suffices{$prefix}){
-#              $suffix = $suffices{$prefix};
-#              $suffices{$prefix}++;
-#            }
-#            while (by_id($prefix.$suffix)){
-#              $suffix++;
-#              $suffices{$prefix} = $suffix + 1;
-#            }
-#            $orphans[$o]->{attributes}->{'ID'} = $prefix.$suffix;
-#            $ids{$prefix.$suffix} = $orphans[$o]->{attributes}->{'ID'};
-#            if (is_multiline($orphans[$o]->{attributes}->{'_type'})){
-#              $parents{$orphans[$o]->mother->id}{$orphans[$o]->{attributes}->{'_type'}} = $orphans[$o]->{attributes}->{'ID'};
-#            }
-#          }
-#        }
-#      }
+				else {
+					# wait for validation to take care of things - needs improving
+				}
+			}
 		}
 		return 1;
 	}
@@ -662,16 +631,11 @@ sub new {
 
 	sub lacks_id  {
 		my $node = shift;
-		my $type = shift;
-    my $behaviour = shift;
-    $type =~ tr/[A-Z]/[a-z]/;
-		if ($behaviour){
-      $lacks{$node}{$type} = $behaviour;
-    }
-    else {
-      $type = 'all' unless $lacks{$node}{$type};
-    }
-		return $lacks{$node}{$type} ? $lacks{$node}{$type} : 'ignore';
+		my $type = shift || 'all';
+		my $behaviour = shift;
+		$type =~ tr/[a-z]/[A-Z]/;
+		$lacks{$node}{$type} = $behaviour if $behaviour;
+		return $lacks{$node}{$type} ? $lacks{$node}{$type} : $lacks{$node}{'all'} ? $lacks{$node}{'all'} : 'ignore';
 	}
 }
 
@@ -1398,7 +1362,7 @@ sub make_region {
 =cut
 
 	sub col_nine {
-		my ($attr) = pop;
+		my ($attr) = shift;
 		if (defined($attr)){
 			$col_nine = $attr;
 		}
