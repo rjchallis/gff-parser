@@ -363,7 +363,7 @@ sub new {
 					else {
 						$ids{$id}->name($id);
 					}
-					push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$id;
+					push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_strand'}}{$attributes{'_type'}}{$attributes{'_start'}}},$id;
 				}
 			}
 			elsif (my $existing = $ids{$attribs->{'ID'}}){ # test if ID already exists, then treat as clash or multline
@@ -424,13 +424,13 @@ sub new {
 						foreach my $attr (keys %{$existing->{attributes}->{'_attributes'}}){
 							unshift @{$existing->{attributes}->{$attr.'_array'}},defined $attributes{$attr} ? $attributes{$attr} : defined $attribs->{$attr} ? $attribs->{$attr} : undef;
 						}
-						for (my $s = 0; $s < @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
-							my $possible = $by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
+						for (my $s = 0; $s < @{$by_start{$attributes{'_seq_name'}}{$attributes{'_strand'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}; $s++){
+							my $possible = $by_start{$attributes{'_seq_name'}}{$attributes{'_strand'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}[$s];
 							if ($possible eq $existing){
 								# remove and replace
-								splice(@{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}, $s, 1);
+								splice(@{$by_start{$attributes{'_seq_name'}}{$attributes{'_strand'}}{$attributes{'_type'}}{$existing->{attributes}->{'_start'}}}, $s, 1);
 								$existing->{attributes}->{'_start'} = $attributes{'_start'};
-								push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$existing;
+								push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_strand'}}{$attributes{'_type'}}{$attributes{'_start'}}},$existing;
 								last;
 							}
 						}
@@ -464,7 +464,7 @@ sub new {
 				else {
 					$ids{$attribs->{'ID'}}->name($attribs->{'ID'});
 				}
-				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
+				push @{$by_start{$attributes{'_seq_name'}}{$attributes{'_strand'}}{$attributes{'_type'}}{$attributes{'_start'}}},$ids{$attribs->{'ID'}};
 			}
 			if ($split_by && $split_by eq 'change'){
 				my $nextline = <>;
@@ -553,7 +553,7 @@ sub new {
 			$node->name($id);
 		}
 		$ids{$id} = $node;
-		push @{$by_start{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
+		push @{$by_start{$node->{attributes}->{_seq_name}}{$node->{attributes}->{_strand}}{$node->{attributes}->{_type}}{$node->{attributes}->{_start}}},$node;
 		return $id;
 	}
 
@@ -562,21 +562,22 @@ sub new {
   Function : Fetch an arrayref of nodes start position. If multiple types are given, and
              more than one type has a match, the first specified type will be returned
              preferentially.
-  Example  : $node_arrayref = by_start('scaf1','exon',432);
-             $node_arrayref = by_start('scaf1','mrna|exon',432);
+  Example  : $node_arrayref = by_start('scaf1','-','exon',432);
+             $node_arrayref = by_start('scaf1','-','mrna|exon',432);
 =cut
 
 	sub by_start  {
 		my $start = pop;
 		my $type = pop;
+		my $strand = pop;
 		my $seq_name = pop;
 		if ($type =~ m/\|/){
 			my @types = split /\|/,$type;
 			while ($type = shift @types){
-				return $by_start{$seq_name}{$type}{$start} if $by_start{$seq_name}{$type};
+				return $by_start{$seq_name}{$strand}{$type}{$start} if $by_start{$seq_name}{$strand}{$type};
 			}
 		}
-		return $by_start{$seq_name}{$type}{$start} if $type;
+		return $by_start{$seq_name}{$strand}{$type}{$start} if $type;
 		return;
 	}
 
@@ -591,6 +592,7 @@ sub new {
 	sub nearest_start  {
 		my $start = pop;
 		my $type = pop;
+    my $strand = pop;
 		my $seq_name = pop;
 		my $prev_begin = 0;
 		my @types;
@@ -601,15 +603,15 @@ sub new {
 			push @types, $type;
 		}
 		while (my $mtype = shift @types){
-			next unless $by_start{$seq_name}{$mtype};
-			foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$mtype}}){
+			next unless $by_start{$seq_name}{$strand}{$mtype};
+			foreach my $begin (sort { $a <=> $b } keys %{$by_start{$seq_name}{$strand}{$mtype}}){
 				next if $begin < $prev_begin;
 				last if $begin > $start;
 				$prev_begin = $begin;
 				$type = $mtype;
 			}
 		}
-		return $by_start{$seq_name}{$type}{$prev_begin};
+		return $by_start{$seq_name}{$strand}{$type}{$prev_begin};
 	}
 
 
@@ -791,7 +793,7 @@ sub undefined_parent  {
 	sub find_daughter {
 		my $self = shift;
 		my $attributes = shift;
-		my @possibles = by_start($attributes->{'_seq_name'},$attributes->{'_type'},$attributes->{'_start'});
+		my @possibles = by_start($attributes->{'_seq_name'},$attributes->{'_strand'},$attributes->{'_type'},$attributes->{'_start'});
 		while (my $feature = shift @possibles){
 			if ($attributes->{'_end'} == $feature->[0]->{attributes}->{'_end'}){
 				return $feature->[0];
@@ -1188,14 +1190,14 @@ sub undefined_parent  {
 
 		my $relative;
 		if ($expectation->{'relation'} eq 'hasParent'){
-			my @possibles = by_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
+			my @possibles = by_start($self->{attributes}->{'_seq_name'},$self->{attributes}->{'_strand'},$expectation->{'alt_type'},$self->{attributes}->{'_start'});
 			while ($relative = shift @possibles){
 				if ($self->{attributes}->{'_end'} == $relative->[0]->{attributes}->{'_end'}){
 					last;
 				}
 			}
 			unless ($relative){
-				@possibles = nearest_start($self->{attributes}->{'_seq_name'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
+				@possibles = nearest_start($self->{attributes}->{'_seq_name'},$attributes->{'_strand'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
 				while ($relative = shift @possibles){
 					if ($self->{attributes}->{'_end'} <= $relative->[0]->{attributes}->{'_end'}){
 						last;
