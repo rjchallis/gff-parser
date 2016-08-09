@@ -1197,7 +1197,7 @@ sub undefined_parent  {
 				}
 			}
 			unless ($relative){
-				@possibles = nearest_start($self->{attributes}->{'_seq_name'},$attributes->{'_strand'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
+				@possibles = nearest_start($self->{attributes}->{'_seq_name'},$self->{attributes}->{'_strand'},$expectation->{'alt_type'},$self->{attributes}->{'_start'}) unless @possibles;
 				while ($relative = shift @possibles){
 					if ($self->{attributes}->{'_end'} <= $relative->[0]->{attributes}->{'_end'}){
 						last;
