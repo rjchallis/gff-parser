@@ -1385,6 +1385,8 @@ sub make_region {
 						$value =~ s/,/\%2C/g unless $is_array{$key};
 	  					$value =~ s/=/\%3D/g;
 	  					$value =~ s/;/\%3B/g;
+	  					$value =~ s/\r/\%0D/gs;
+	  					$value =~ s/\n/\%0A/gs;
 	  					$col_nine[$s] .= $key.'='.$value.';';
 					}
 					else {
@@ -1393,6 +1395,8 @@ sub make_region {
 						$value =~ s/,/\%2C/g;
 	  					$value =~ s/=/\%3D/g;
 	  					$value =~ s/;/\%3B/g;
+	  					$value =~ s/\r/\%0D/gs;
+	  					$value =~ s/\n/\%0A/gs;
 						$col_nine[$s] .= $key.'='.$value.';';
 					}
 				}
@@ -1407,6 +1411,8 @@ sub make_region {
 					$value =~ s/,/\%2C/g unless $is_array{$key};
 	  				$value =~ s/=/\%3D/g;
 	  				$value =~ s/;/\%3B/g;
+            $value =~ s/\r/\%0D/gs;
+            $value =~ s/\n/\%0A/gs;
 		  			$col_nine[0] .= $key.'='.$value.';';
 				}
 				else {
@@ -1415,6 +1421,8 @@ sub make_region {
 					$value =~ s/,/\%2C/g;
 	  				$value =~ s/=/\%3D/g;
 	  				$value =~ s/;/\%3B/g;
+            $value =~ s/\r/\%0D/gs;
+            $value =~ s/\n/\%0A/gs;
 					$col_nine[0] .= $key.'='.$value.';';
 				}
 			}
