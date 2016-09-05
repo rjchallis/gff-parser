@@ -79,11 +79,9 @@ sub new {
 =cut
 
 	sub format {
-		my $filetype = pop;
-		if (ref $filetype ne 'HASH'){
-	    	$format = $filetype;
-	    }
-	    return $format;
+		my ($self,$filetype) = @_;
+		$format = $filetype if $filetype;
+	  return $format;
 	}
 
 =head2 separator
