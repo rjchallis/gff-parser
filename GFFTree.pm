@@ -1540,7 +1540,7 @@ sub make_region {
 		}
 		chomp $data[8];
 		$data[8] =~ s/;+$/;/;
-		if (scalar(split /=/) != scalar(split /;/) + 1){
+		if (scalar(split /=/,$data[8]) != scalar(split /;/,$data[8]) + 1){
 			warn "WARNING: Unable to parse key/value pairs on key=value;, skipping line\n$line\n\n";
 			return;
 		}
