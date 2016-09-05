@@ -1590,7 +1590,7 @@ sub make_region {
           $data[8] =~ s/gene_id "(g\d+)"/gene_id=$1/;
         }
   		}
-      $line = join $sep, @data;
+      $line = join "\t", @data;
       my ($data,$attribs) = parse_gff_line($line,$sep);
   		return $data,$attribs;
   	}
