@@ -70,7 +70,21 @@ sub new {
 	my $has_comments = undef;
 	my $lastline;
   my %override;
+  my $format = 'gff3';
 
+=head2 format
+  Function : Sets/returns the file format to be used when parsing a gtf/gff file
+  Example  : $gff->format('gff3');
+  Example  : $gff->format('gtf');
+=cut
+
+	sub format {
+		my $filetype = pop;
+		if (ref $filetype ne 'HASH'){
+	    	$format = $filetype;
+	    }
+	    return $format;
+	}
 
 =head2 separator
   Function : Sets/returns the separator to be used when parsing a gff file
@@ -258,7 +272,7 @@ sub new {
 			if ($has_comments){
 				$_ = delete_comments($_);
 			}
-			my ($data,$attribs) = parse_gff_line($_,$separator);
+			my ($data,$attribs) = $format eq 'gtf' ? parse_gtf_line($_,$separator) : parse_gff_line($_,$separator);
 			next unless $data;
 			my %attributes;
 			$attributes{'_seq_name'} = $data->[0];
@@ -475,7 +489,7 @@ sub new {
 					if ($has_comments){
 						$nextline = delete_comments($nextline);
 					}
-					my ($nextdata,undef) = parse_gff_line($nextline,$separator);
+					my ($nextdata,undef) =  $format eq 'gtf' ? parse_gtf_line($_,$separator) : parse_gff_line($nextline,$separator);
 					last if $nextdata && $nextdata->[0] ne $data->[0];
 				}
 				else {
@@ -1510,7 +1524,7 @@ sub make_region {
 =head2 parse_gff_line
   Function : splits a line of gff into 8 fields and a key-value hash, escaping encoded
              characters and building arrays of comma-separated values
-  Example  : parse_gff_line($line);
+  Example  : parse_gff_line($line,$sep);
 =cut
 
 	sub parse_gff_line {
@@ -1556,6 +1570,32 @@ sub make_region {
 		}
 		return \@data,\%attribs;
 	}
+
+=head2 parse_gtf_line
+    Function : modifies a line of gtf ready to be handled by parse_gff_line
+    Example  : parse_gtf_line($line,$sep);
+=cut
+
+  	sub parse_gtf_line {
+  		my ($line,$sep) = @_;
+  		my @data = split /$sep/,$line;
+      if ($data[8]){
+  		  chomp $data[8];
+        if ($data[8] =~ m/^g\d+$/){
+          $data[8] = 'ID='.$data[8].';';
+        }
+        elsif ($data[8] =~ m/^(g\d+)\.t\d+$/){
+          $data[8] = 'ID='.$data[8].';Parent=$1;';
+        }
+        else {
+          $data[8] =~ s/transcript_id "(g\d+.t\d+)"/transcript_id=$1; Parent=$1/;
+          $data[8] =~ s/gene_id "(g\d+)"/gene_id=$1/;
+        }
+  		}
+      $line = join $sep, @data;
+      my ($data,$attribs) = parse_gff_line($line,$sep);
+  		return $data,$attribs;
+  	}
 
 }
 
