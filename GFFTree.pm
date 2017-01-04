@@ -40,7 +40,6 @@ use strict;
 use warnings;
 package GFFTree;
 use Tree::DAG_Node;
-use Encode::Escape::ASCII;
 use IO::Unread;
 our @ISA=qw(Tree::DAG_Node);
 
@@ -1395,23 +1394,12 @@ sub make_region {
 						$attr = $self->{attributes}->{$key.'_array'}[$s] || $self->{attributes}->{$key};
 					}
 					if (ref $attr eq 'ARRAY') {
-						my $value = join(',',@{$attr});
-						$value =~ s/,/\%2C/g unless $is_array{$key};
-	  					$value =~ s/=/\%3D/g;
-	  					$value =~ s/;/\%3B/g;
-	  					$value =~ s/\r/\%0D/gs;
-	  					$value =~ s/\n/\%0A/gs;
-	  					$col_nine[$s] .= $key.'='.$value.';';
+						my $value = encode_special(join(',',@{$attr}),$is_array{$key});
+	  				$col_nine[$s] .= $key.'='.$value.';';
 					}
 					else {
-						my $value = $attr;
-						#$value =~ s/\._\d+$//;
-						$value =~ s/,/\%2C/g;
-	  					$value =~ s/=/\%3D/g;
-	  					$value =~ s/;/\%3B/g;
-	  					$value =~ s/\r/\%0D/gs;
-	  					$value =~ s/\n/\%0A/gs;
-						$col_nine[$s] .= $key.'='.$value.';';
+						my $value = encode_special($attr);
+	  				$col_nine[$s] .= $key.'='.$value.';';
 					}
 				}
 				chop $col_nine[$s];
@@ -1421,23 +1409,12 @@ sub make_region {
 			foreach my $key (sort keys %{$self->{attributes}}){
 				next if $key =~ m/^_/;
 				if (ref $self->{attributes}->{$key} eq 'ARRAY') {
-					my $value = join(',',@{$self->{attributes}->{$key}});
-					$value =~ s/,/\%2C/g unless $is_array{$key};
-	  				$value =~ s/=/\%3D/g;
-	  				$value =~ s/;/\%3B/g;
-            $value =~ s/\r/\%0D/gs;
-            $value =~ s/\n/\%0A/gs;
-		  			$col_nine[0] .= $key.'='.$value.';';
+					my $value = encode_special(join(',',@{$self->{attributes}->{$key}}),$is_array{$key});
+          $col_nine[0] .= $key.'='.$value.';';
 				}
 				else {
-					my $value = $self->{attributes}->{$key};
-					#$value =~ s/\._\d+$//;
-					$value =~ s/,/\%2C/g;
-	  				$value =~ s/=/\%3D/g;
-	  				$value =~ s/;/\%3B/g;
-            $value =~ s/\r/\%0D/gs;
-            $value =~ s/\n/\%0A/gs;
-					$col_nine[0] .= $key.'='.$value.';';
+					my $value = encode_special($self->{attributes}->{$key});
+          $col_nine[0] .= $key.'='.$value.';';
 				}
 			}
 			chop $col_nine[0];
@@ -1556,14 +1533,12 @@ sub make_region {
 			if ($parts[1] && $is_array{$key}){
 				$attribs{$key} = [];
 				while (my $part = shift @parts){
-					$part =~ s/\%/\\x/g;
-					$part = decode 'ascii-escape', $part;
+					$part = decode($part);
 					push @{$attribs{$key}},$part;
 				}
 			}
 			else {
-				$attribs{$key} =~ s/\%/\\x/g;
-				$attribs{$key} = decode 'ascii-escape', $attribs{$key};
+				$attribs{$key} = decode($attribs{$key});
 			}
 		}
 		return \@data,\%attribs;
@@ -1803,5 +1778,31 @@ sub by_not_attribute {
     return wantarray? @found : @found ? $found[0] : undef;
 }
 
+sub decode {
+  # http://stackoverflow.com/questions/3845518/how-do-i-convert-escaped-characters-into-actual-special-characters-in-perl
+  my $str = shift;
+  $str =~ s/\%(                   # %[hex] to \x[hex]
+    (?:[0-9a-fA-F]{2}) |          # 2 digit hex escape
+    (?:\{[0-9a-fA-F]+\}) |        # more than 2 digit hex
+  )/\\x$1/gx;
+  $str =~ s/\\(
+    (?:[arnt'"\\]) |               # Single char escapes
+    (?:[ul].) |                    # uc or lc next char
+    (?:x[0-9a-fA-F]{2}) |          # 2 digit hex escape
+    (?:x\{[0-9a-fA-F]+\}) |        # more than 2 digit hex
+    (?:\d{2,3}) |                  # octal
+    (?:N\{U\+[0-9a-fA-F]{2,4}\})   # unicode by hex
+    )/"qq|\\$1|"/geex;
+  return $str;
+}
 
+sub encode_special {
+  my ($str,$flag) = @_;
+  $str =~ s/,/\%2C/g unless $flag;
+  $str =~ s/=/\%3D/g;
+  $str =~ s/;/\%3B/g;
+  $str =~ s/\r/\%0D/gs;
+  $str =~ s/\n/\%0A/gs;
+  return $str;
+}
 1;
